@@ -1,0 +1,22 @@
+﻿[package]
+name = "csvp-protocol"
+version = "0.1.0"
+description = "Confidential Solana Vote Protocol"
+edition = "2021"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+solana-program = "1.18.0"
+borsh = { version = "1.0.0", features = ["derive"] }
+thiserror = "1.0.0"
+num-derive = "0.3.0"
+num-traits = "0.2.0"
+
+[lib]
+crate-type = ["cdylib", "lib"]

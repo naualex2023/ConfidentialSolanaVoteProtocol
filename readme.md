@@ -91,7 +91,7 @@ User → Biometric Device → CSVP Client → Arcium CPC Cluster → Solana Smar
 
 **CPC Cluster Architecture:**
 - 5-9 MPC nodes for each election
-- FHE encryption of all sensitive data
+- MPC encryption of all sensitive data
 - Hardware isolation (Intel SGX/AMD SEV)
 
 #### 3. Solana Blockchain Layer
@@ -112,11 +112,10 @@ User → Biometric Device → CSVP Client → Arcium CPC Cluster → Solana Smar
 
 2. **Secure VoterID Generation**:
    - Local biometric hashing with salt
-   - FHE encryption for Arcium cluster
+   - MPC encryption for Arcium cluster
 
 3. **Arcium CPC Registration**:
    - Encrypted VoterID transmission
-   - ZK proof generation
    - Voting credentials receipt
 
 #### Phase 2: Voting Process
@@ -124,7 +123,7 @@ User → Biometric Device → CSVP Client → Arcium CPC Cluster → Solana Smar
 1. **Authentication**:
    - Fingerprint scanning
    - Local VoterID generation
-   - FHE encryption
+   - MPC encryption
 
 2. **Confidential Rights Verification**:
    - Encrypted check against voter registry
@@ -134,7 +133,7 @@ User → Biometric Device → CSVP Client → Arcium CPC Cluster → Solana Smar
 3. **Encrypted Vote Submission**:
    - Vote encryption with election public key
    - Solana transaction signing
-   - ZK proof of vote correctness
+   - proof of vote correctness
 
 #### Phase 3: Tallying and Verification
 
@@ -205,7 +204,7 @@ Election Organizers → uCSVP payments → CSVP Network → Distribution to Node
 - First pilot projects with DAOs
 
 ### Phase 2: Q3 2026 -Q2 2027 — Scaling
-- [ ] **Q3 2026**: FHE and MPC implementation
+- [ ] **Q3 2026**: MPC implementation
 - [ ] **Q4 2026**: Mobile app with biometrics
 - [ ] **Q1 2027**: Corporate partnerships
 - [ ] **Q2 2027**: Government standards support
@@ -359,6 +358,7 @@ Work on one of the most important technological challenges of our time—creatin
 **Website:** csvp.io (coming soon)  
 **Email:** bravo4022@gmail.com  
 **Telegram:** @automate_more  
+**GitHub:** https://github.com/naualex2023/ConfidentialSolanaVoteProtocol
 **GitLab:** https://gitlab.com/bravo4022-group/confidentialsolanavoteprotocol
 
 ---

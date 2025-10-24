@@ -326,7 +326,7 @@ impl Processor {
         election_pda: &Pubkey,
         voter_hash: [u8; 32],
     ) -> Result<bool, ProgramError> {
-        let mut chunk_index = 0;
+        let mut chunk_index: u32 = 0;
         
         loop {
             let (chunk_pda, _) = Pubkey::find_program_address(
@@ -363,7 +363,7 @@ impl Processor {
         election_pda: &Pubkey,
         nullifier: [u8; 32],
     ) -> Result<bool, ProgramError> {
-        let mut chunk_index = 0;
+        let mut chunk_index: u32 = 0;
         
         loop {
             let (chunk_pda, _) = Pubkey::find_program_address(

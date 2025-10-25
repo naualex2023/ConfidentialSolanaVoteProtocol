@@ -1,0 +1,17 @@
+{
+  "name": "csvp-client",
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@solana/web3.js": "^1.87.6",
+    "@solana/spl-token": "^0.3.9",
+    "@arcium/sdk": "^0.1.7",
+    "bs58": "^5.0.0",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

@@ -15,7 +15,7 @@ use borsh::BorshSerialize;
 
 use crate::{
     error::VoteError,
-    instruction::VoteInstruction,
+    instructions::VoteInstruction,
     state::{
         Election, VoterChunk, ReceiptChunk, BallotChunk, EncryptedBallot, ElectionState,
         ELECTION_SEED, VOTER_CHUNK_SEED, RECEIPT_CHUNK_SEED, BALLOT_CHUNK_SEED,
@@ -233,13 +233,13 @@ impl Processor {
             return Err(VoteError::InvalidElectionPeriod.into());
         }
 
-        // Проверяем, что избиратель зарегистрирован (ищем по всем чанкам)
-        if !Self::is_voter_registered(program_id, election_account.key, voter_hash)? {
+        // Проверяем, что избиратель зарегистрирован (ищем по заранее найденному чанку)
+        if !Self::is_voter_registered(program_id, election_account.key, voter_chunk_account, voter_hash)? {
             return Err(VoteError::VoterNotRegistered.into());
         }
 
-        // Проверяем, что nullifier не использовался (ищем по всем чанкам)
-        if Self::has_voter_voted(program_id, election_account.key, nullifier)? {
+        // Проверяем, что nullifier не использовался (ищем по заранее найденному чанку)
+        if Self::has_voter_voted(program_id, election_account.key, receipt_chunk_account, nullifier)? {
             return Err(VoteError::AlreadyVoted.into());
         }
 
@@ -320,74 +320,76 @@ impl Processor {
         Ok(())
     }
 
-    // Поиск избирателя по всем чанкам
+    // Поиск избирателя по заранее найденному чанку
     fn is_voter_registered(
         program_id: &Pubkey,
         election_pda: &Pubkey,
+        chunk_account: &VoterChunk,
         voter_hash: [u8; 32],
     ) -> Result<bool, ProgramError> {
-        let mut chunk_index: u32 = 0;
+        //let mut chunk_index: u32 = 0;
         
-        loop {
-            let (chunk_pda, _) = Pubkey::find_program_address(
-                &[VOTER_CHUNK_SEED, election_pda.as_ref(), &chunk_index.to_le_bytes()],
-                program_id,
-            );
+        //loop {
+            //let (chunk_pda, _) = Pubkey::find_program_address(
+            //    &[VOTER_CHUNK_SEED, election_pda.as_ref(), &chunk_index.to_le_bytes()],
+            //    program_id,
+            //);
 
-            // Пытаемся получить аккаунт
-            // В реальной реализации нужно использовать cross-program invocation
-            // Для демо возвращаем true если нашли в первом чанке
-            let chunk_account = match crate::entrypoint::get_account(&chunk_pda) {
-                Ok(account) => account,
-                Err(_) => break, // Чанк не существует
-            };
+            //// Пытаемся получить аккаунт
+            //// В реальной реализации нужно использовать cross-program invocation
+            //// Для демо возвращаем true если нашли в первом чанке
+            //let chunk_account = match crate::entrypoint::get_account(&chunk_pda) {
+            //    Ok(account) => account,
+            //    Err(_) => break, // Чанк не существует
+            //};
 
             let chunk = VoterChunk::try_from_slice(&chunk_account.data.borrow())?;
             if chunk.voter_hashes.contains(&voter_hash) {
                 return Ok(true);
             }
 
-            if chunk.next_chunk.is_none() {
-                break;
-            }
+            //if chunk.next_chunk.is_none() {
+            //    Ok(false);
+            //}
             
-            chunk_index += 1;
-        }
+            //chunk_index += 1;
+        //}
 
         Ok(false)
     }
 
-    // Проверка nullifier по всем чанкам
+    // Проверка nullifier по заранее найденному чанку
     fn has_voter_voted(
         program_id: &Pubkey,
         election_pda: &Pubkey,
+        chunk_account: &ReceiptChunk,
         nullifier: [u8; 32],
     ) -> Result<bool, ProgramError> {
-        let mut chunk_index: u32 = 0;
+        //let mut chunk_index: u32 = 0;
         
-        loop {
-            let (chunk_pda, _) = Pubkey::find_program_address(
-                &[RECEIPT_CHUNK_SEED, election_pda.as_ref(), &chunk_index.to_le_bytes()],
-                program_id,
-            );
+        //loop {
+        //    let (chunk_pda, _) = Pubkey::find_program_address(
+        //        &[RECEIPT_CHUNK_SEED, election_pda.as_ref(), &chunk_index.to_le_bytes()],
+        //        program_id,
+        //    );
 
-            // Пытаемся получить аккаунт
-            let chunk_account = match crate::entrypoint::get_account(&chunk_pda) {
-                Ok(account) => account,
-                Err(_) => break,
-            };
+        //    // Пытаемся получить аккаунт
+        //    let chunk_account = match crate::entrypoint::get_account(&chunk_pda) {
+        //        Ok(account) => account,
+        //        Err(_) => break,
+        //    };
 
             let chunk = ReceiptChunk::try_from_slice(&chunk_account.data.borrow())?;
             if chunk.nullifiers.contains(&nullifier) {
                 return Ok(true);
             }
 
-            if chunk.next_chunk.is_none() {
-                break;
-            }
+            //if chunk.next_chunk.is_none() {
+            //    break;
+            //}
             
-            chunk_index += 1;
-        }
+            //chunk_index += 1;
+        //}
 
         Ok(false)
     }

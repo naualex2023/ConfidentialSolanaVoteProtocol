@@ -1,0 +1,27 @@
+{
+  "name": "confidentialsolanavoteprotocolgh",
+  "version": "1.0.0",
+  "description": "---",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naualex2023/ConfidentialSolanaVoteProtocol.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/naualex2023/ConfidentialSolanaVoteProtocol/issues"
+  },
+  "homepage": "https://github.com/naualex2023/ConfidentialSolanaVoteProtocol#readme",
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "typescript": "^5.9.3"
+  }
+}

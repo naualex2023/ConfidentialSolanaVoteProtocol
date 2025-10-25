@@ -1,0 +1,9 @@
+[package]
+name = "csvp-confidential-ixs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arcium-macros = "0.1.0"
+arcium-precludes = "0.1.0"
+serde = { version = "1.0", features = ["derive"] }

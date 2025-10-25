@@ -17,6 +17,9 @@ borsh = { version = "1.0.0", features = ["derive"] }
 thiserror = "1.0.0"
 num-derive = "0.3.0"
 num-traits = "0.2.0"
-
-[lib]
-crate-type = ["cdylib", "lib"]
+anchor-lang = "0.31.0"
+anchor-spl = "0.31.0"
+arcium-sdk = "0.1.0"
+arcium-macros = "0.1.0"
+csvp-confidential-ixs = { path = "../confidential-ixs" }
+borsh = "0.10.3"

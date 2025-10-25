@@ -385,3 +385,29 @@ csvp-project/
 │       └── test.ts
 └── tests/                     # Тесты
     └── voting.test.ts
+
+csvp-project/
+├── program/                     # On-chain Solana программа
+│   ├── Cargo.toml
+│   └── src/
+│       ├── lib.rs
+│       ├── state.rs
+│       ├── error.rs
+│       └── instructions/
+│           ├── mod.rs
+│           ├── initialize_poll.rs
+│           ├── vote_encrypted.rs
+│           └── reveal_results.rs
+├── confidential-ixs/            #Конфиденциальные инструкции Arcium
+│   ├── Cargo.toml
+│   └── src/
+│       ├── lib.rs
+│       └── voting.rs
+├── tsclient/                      # TypeScript клиент
+│   ├── package.json
+│   └── src/
+│       ├── index.ts
+│       ├── arciumClient.ts
+│       └── csvpClient.ts
+└── tests/                          # Тесты
+    └── csvp.test.ts

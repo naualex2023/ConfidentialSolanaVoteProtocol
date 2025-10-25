@@ -9,19 +9,19 @@ use solana_program::{
     system_instruction,
     msg,
 };
-use crate::state::*;
-use crate::error::VoteError;
-//use crate::{
-//    error::VoteError,
-//    instructions::VoteInstruction,
-//    state::{
-//        Election, VoterChunk, ReceiptChunk, BallotChunk, EncryptedBallot, ElectionState,
-//        ELECTION_SEED, VOTER_CHUNK_SEED, RECEIPT_CHUNK_SEED, BALLOT_CHUNK_SEED,
-//        ELECTION_DISCRIMINATOR, VOTER_CHUNK_DISCRIMINATOR, 
-//        RECEIPT_CHUNK_DISCRIMINATOR, BALLOT_CHUNK_DISCRIMINATOR,
-//        MAX_ITEMS_PER_CHUNK,
-//    },
-//};
+//use crate::state::*;
+//use crate::error::VoteError;
+use crate::{
+    error::VoteError,
+    instructions::VoteInstruction,
+    state::{
+        Election, VoterChunk, ReceiptChunk, BallotChunk, EncryptedBallot, ElectionState,
+        ELECTION_SEED, VOTER_CHUNK_SEED, RECEIPT_CHUNK_SEED, BALLOT_CHUNK_SEED,
+        ELECTION_DISCRIMINATOR, VOTER_CHUNK_DISCRIMINATOR, 
+        RECEIPT_CHUNK_DISCRIMINATOR, BALLOT_CHUNK_DISCRIMINATOR,
+        MAX_ITEMS_PER_CHUNK,
+    },
+};
 
 pub struct Processor;
 
@@ -192,10 +192,15 @@ impl Processor {
         }
 
         // Добавляем избирателей
+        let added = voter_hashes.len();
         voter_chunk.voter_hashes.extend(voter_hashes);
         voter_chunk.serialize(&mut &mut voter_chunk_account.data.borrow_mut()[..])?;
 
-        msg!("Registered {} voters in chunk {}", voter_hashes.len(), chunk_index);
+        msg!("Registered {} voters in chunk {}", added, chunk_index);
+        //voter_chunk.voter_hashes.extend(voter_hashes);
+        //voter_chunk.serialize(&mut &mut voter_chunk_account.data.borrow_mut()[..])?;
+
+        //msg!("Registered {} voters in chunk {}", voter_hashes.len(), chunk_index);
         Ok(())
     }
 

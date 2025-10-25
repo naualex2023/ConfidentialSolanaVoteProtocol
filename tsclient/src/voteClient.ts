@@ -14,13 +14,13 @@ import * as borsh from 'borsh';
 // Borsh схемы для сериализации инструкций
 class InitializeElectionSchema {
     instruction = 0;
-    electionId: number;
-    title: string;
-    description: string;
-    startTime: number;
-    endTime: number;
-    arciumCluster: string;
-    publicKey: number[];
+    electionId!: number;
+    title!: string;
+    description!: string;
+    startTime!: number;
+    endTime!: number;
+    arciumCluster!: string;
+    publicKey!: number[];
 
     constructor(fields: any) {
         Object.assign(this, fields);
@@ -29,8 +29,8 @@ class InitializeElectionSchema {
 
 class RegisterVotersSchema {
     instruction = 1;
-    voterHashes: number[][];
-    chunkIndex: number;
+    voterHashes!: number[][];
+    chunkIndex!: number;
 
     constructor(fields: any) {
         Object.assign(this, fields);
@@ -39,11 +39,11 @@ class RegisterVotersSchema {
 
 class CastVoteSchema {
     instruction = 2;
-    voterHash: number[];
-    encryptedVote: number[];
-    receiptId: number[];
-    nullifier: number[];
-    arciumProof: number[];
+    voterHash!: number[];
+    encryptedVote!: number[];
+    receiptId!: number[];
+    nullifier!: number[];
+    arciumProof!: number[];
 
     constructor(fields: any) {
         Object.assign(this, fields);

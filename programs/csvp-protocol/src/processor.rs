@@ -1,29 +1,27 @@
-﻿use solana_program::{
+﻿use borsh::{BorshDeserialize, BorshSerialize};
+use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
+    program::{invoke_signed},
     program_error::ProgramError,
     pubkey::Pubkey,
     sysvar::{clock::Clock, Sysvar},
-    msg,
-    program::invoke_signed,
     system_instruction,
-    rent::Rent,
-    sysvar::Sysvar as SolanaSysvar,
+    msg,
 };
-
-use borsh::BorshSerialize;
-
-use crate::{
-    error::VoteError,
-    instructions::VoteInstruction,
-    state::{
-        Election, VoterChunk, ReceiptChunk, BallotChunk, EncryptedBallot, ElectionState,
-        ELECTION_SEED, VOTER_CHUNK_SEED, RECEIPT_CHUNK_SEED, BALLOT_CHUNK_SEED,
-        ELECTION_DISCRIMINATOR, VOTER_CHUNK_DISCRIMINATOR, 
-        RECEIPT_CHUNK_DISCRIMINATOR, BALLOT_CHUNK_DISCRIMINATOR,
-        MAX_ITEMS_PER_CHUNK,
-    },
-};
+use crate::state::*;
+use crate::error::VoteError;
+//use crate::{
+//    error::VoteError,
+//    instructions::VoteInstruction,
+//    state::{
+//        Election, VoterChunk, ReceiptChunk, BallotChunk, EncryptedBallot, ElectionState,
+//        ELECTION_SEED, VOTER_CHUNK_SEED, RECEIPT_CHUNK_SEED, BALLOT_CHUNK_SEED,
+//        ELECTION_DISCRIMINATOR, VOTER_CHUNK_DISCRIMINATOR, 
+//        RECEIPT_CHUNK_DISCRIMINATOR, BALLOT_CHUNK_DISCRIMINATOR,
+//        MAX_ITEMS_PER_CHUNK,
+//    },
+//};
 
 pub struct Processor;
 
@@ -201,7 +199,7 @@ impl Processor {
         Ok(())
     }
 
-    fn process_cast_vote(
+    pub fn process_cast_vote(
         program_id: &Pubkey,
         accounts: &[AccountInfo],
         voter_hash: [u8; 32],
@@ -211,17 +209,20 @@ impl Processor {
         arcium_proof: Vec<u8>,
     ) -> ProgramResult {
         let accounts_iter = &mut accounts.iter();
-        
+
         let voter = next_account_info(accounts_iter)?;
         let election_account = next_account_info(accounts_iter)?;
         let voter_chunk_account = next_account_info(accounts_iter)?;
         let receipt_chunk_account = next_account_info(accounts_iter)?;
         let ballot_chunk_account = next_account_info(accounts_iter)?;
+        let nullifier_pda_account = next_account_info(accounts_iter)?;
+        let system_program = next_account_info(accounts_iter)?;
 
         if !voter.is_signer {
             return Err(ProgramError::MissingRequiredSignature);
         }
 
+        // Десериализация и базовые проверки выборов
         let mut election = Election::try_from_slice(&election_account.data.borrow())?;
         let clock = Clock::get()?;
 
@@ -233,23 +234,72 @@ impl Processor {
             return Err(VoteError::InvalidElectionPeriod.into());
         }
 
-        // Проверяем, что избиратель зарегистрирован (ищем по заранее найденному чанку)
+        // Проверяем регистрацию избирателя
         if !Self::is_voter_registered(program_id, election_account.key, voter_chunk_account, voter_hash)? {
             return Err(VoteError::VoterNotRegistered.into());
         }
 
-        // Проверяем, что nullifier не использовался (ищем по заранее найденному чанку)
+        // Проверка — не голосовал ли уже (по чанку)
         if Self::has_voter_voted(program_id, election_account.key, receipt_chunk_account, nullifier)? {
             return Err(VoteError::AlreadyVoted.into());
         }
 
-        // Обновляем receipt чанк
+        // === 🔒 АТОМАРНАЯ РЕГИСТРАЦИЯ НУЛИФИКАТОРА (защита от гонок) ===
+        let seeds: &[&[u8]] = &[
+            b"election",
+            election_account.key.as_ref(),
+            b"nullifier",
+            &nullifier,
+        ];
+        let (expected_pda, bump) = Pubkey::find_program_address(seeds, program_id);
+        if *nullifier_pda_account.key != expected_pda {
+            msg!("Invalid nullifier PDA passed");
+            return Err(ProgramError::InvalidSeeds);
+        }
+
+        // Пытаемся создать PDA — если аккаунт уже существует, create_account упадёт
+        if nullifier_pda_account.data_is_empty() {
+            let rent = solana_program::rent::Rent::get()?;
+            let lamports = rent.minimum_balance(8);
+            let ix = system_instruction::create_account(
+                voter.key,
+                &expected_pda,
+                lamports,
+                8,
+                program_id,
+            );
+
+            let bump_slice = &[bump];
+            let signer_seeds: &[&[u8]] = &[
+                b"election",
+                election_account.key.as_ref(),
+                b"nullifier",
+                &nullifier,
+                bump_slice,
+            ];
+
+            invoke_signed(
+                &ix,
+                &[
+                    voter.clone(),
+                    nullifier_pda_account.clone(),
+                    system_program.clone(),
+                ],
+                &[signer_seeds],
+            )?;
+            msg!("Nullifier PDA created successfully");
+        } else {
+            msg!("Nullifier already exists -> double vote attempt");
+            return Err(VoteError::AlreadyVoted.into());
+        }
+
+        // === Обновление receipt чанка ===
         let mut receipt_chunk = ReceiptChunk::try_from_slice(&receipt_chunk_account.data.borrow())?;
         receipt_chunk.receipt_ids.push(receipt_id);
         receipt_chunk.nullifiers.push(nullifier);
         receipt_chunk.serialize(&mut &mut receipt_chunk_account.data.borrow_mut()[..])?;
 
-        // Обновляем ballot чанк
+        // === Обновление ballot чанка ===
         let mut ballot_chunk = BallotChunk::try_from_slice(&ballot_chunk_account.data.borrow())?;
         let ballot = EncryptedBallot {
             encrypted_data: encrypted_vote,
@@ -260,11 +310,11 @@ impl Processor {
         ballot_chunk.ballots.push(ballot);
         ballot_chunk.serialize(&mut &mut ballot_chunk_account.data.borrow_mut()[..])?;
 
-        // Обновляем election
+        // === Обновление election ===
         election.total_votes += 1;
         election.serialize(&mut &mut election_account.data.borrow_mut()[..])?;
 
-        msg!("Vote cast successfully");
+        msg!("✅ Vote cast successfully and nullifier registered");
         Ok(())
     }
 
@@ -321,76 +371,26 @@ impl Processor {
     }
 
     // Поиск избирателя по заранее найденному чанку
+    // Проверка, зарегистрирован ли избиратель
     fn is_voter_registered(
-        program_id: &Pubkey,
-        election_pda: &Pubkey,
-        chunk_account: &VoterChunk,
+        _program_id: &Pubkey,
+        _election_pda: &Pubkey,
+        chunk_account: &AccountInfo,
         voter_hash: [u8; 32],
     ) -> Result<bool, ProgramError> {
-        //let mut chunk_index: u32 = 0;
-        
-        //loop {
-            //let (chunk_pda, _) = Pubkey::find_program_address(
-            //    &[VOTER_CHUNK_SEED, election_pda.as_ref(), &chunk_index.to_le_bytes()],
-            //    program_id,
-            //);
-
-            //// Пытаемся получить аккаунт
-            //// В реальной реализации нужно использовать cross-program invocation
-            //// Для демо возвращаем true если нашли в первом чанке
-            //let chunk_account = match crate::entrypoint::get_account(&chunk_pda) {
-            //    Ok(account) => account,
-            //    Err(_) => break, // Чанк не существует
-            //};
-
-            let chunk = VoterChunk::try_from_slice(&chunk_account.data.borrow())?;
-            if chunk.voter_hashes.contains(&voter_hash) {
-                return Ok(true);
-            }
-
-            //if chunk.next_chunk.is_none() {
-            //    Ok(false);
-            //}
-            
-            //chunk_index += 1;
-        //}
-
-        Ok(false)
+        let chunk = VoterChunk::try_from_slice(&chunk_account.data.borrow())?;
+        Ok(chunk.voter_hashes.contains(&voter_hash))
     }
 
     // Проверка nullifier по заранее найденному чанку
+    // Проверка, использовался ли nullifier
     fn has_voter_voted(
-        program_id: &Pubkey,
-        election_pda: &Pubkey,
-        chunk_account: &ReceiptChunk,
+        _program_id: &Pubkey,
+        _election_pda: &Pubkey,
+        chunk_account: &AccountInfo,
         nullifier: [u8; 32],
     ) -> Result<bool, ProgramError> {
-        //let mut chunk_index: u32 = 0;
-        
-        //loop {
-        //    let (chunk_pda, _) = Pubkey::find_program_address(
-        //        &[RECEIPT_CHUNK_SEED, election_pda.as_ref(), &chunk_index.to_le_bytes()],
-        //        program_id,
-        //    );
-
-        //    // Пытаемся получить аккаунт
-        //    let chunk_account = match crate::entrypoint::get_account(&chunk_pda) {
-        //        Ok(account) => account,
-        //        Err(_) => break,
-        //    };
-
-            let chunk = ReceiptChunk::try_from_slice(&chunk_account.data.borrow())?;
-            if chunk.nullifiers.contains(&nullifier) {
-                return Ok(true);
-            }
-
-            //if chunk.next_chunk.is_none() {
-            //    break;
-            //}
-            
-            //chunk_index += 1;
-        //}
-
-        Ok(false)
+        let chunk = ReceiptChunk::try_from_slice(&chunk_account.data.borrow())?;
+        Ok(chunk.nullifiers.contains(&nullifier))
     }
 }

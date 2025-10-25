@@ -214,40 +214,37 @@ export class CSVPVoteClient {
         candidateId: number,
         electionId: string
     ): Promise<{ receiptId: Uint8Array; signature: string }> {
-
-        // Генерируем receipt_id и nullifier
         const receiptSeed = crypto.getRandomValues(new Uint8Array(32));
         const receiptId = await this.computeReceiptId(receiptSeed, electionPda);
         const nullifier = await this.computeNullifier(voterHash, electionPda);
 
-        // Создаем объект голоса
         const vote: Vote = {
             candidateId,
             electionId,
-            voterId: Buffer.from(voterHash).toString('hex'), // Используем hex представление voterHash
-            timestamp: Date.now()
+            voterId: Buffer.from(voterHash).toString('hex'),
+            timestamp: Date.now(),
         };
-
-        // Шифруем голос через Arcium SDK
         const encryptedVote = await this.arciumClient.encryptVote(vote);
 
-        // Получаем PDA чанков
         const [voterChunkPda] = await PublicKey.findProgramAddress(
             [Buffer.from('voter_chunk'), electionPda.toBuffer(), Buffer.from('0')],
             this.programId
         );
-
         const [receiptChunkPda] = await PublicKey.findProgramAddress(
             [Buffer.from('receipt_chunk'), electionPda.toBuffer(), Buffer.from('0')],
             this.programId
         );
-
         const [ballotChunkPda] = await PublicKey.findProgramAddress(
             [Buffer.from('ballot_chunk'), electionPda.toBuffer(), Buffer.from('0')],
             this.programId
         );
 
-        // Создаем инструкцию для голосования
+        // === PDA для нулификатора ===
+        const [nullifierPda] = await PublicKey.findProgramAddress(
+            [Buffer.from('election'), electionPda.toBuffer(), Buffer.from('nullifier'), Buffer.from(nullifier)],
+            this.programId
+        );
+
         const instructionData = new CastVoteSchema({
             voterHash: Array.from(voterHash),
             encryptedVote: Array.from(encryptedVote.data),
@@ -279,22 +276,33 @@ export class CSVPVoteClient {
                 { pubkey: voterChunkPda, isSigner: false, isWritable: false },
                 { pubkey: receiptChunkPda, isSigner: false, isWritable: true },
                 { pubkey: ballotChunkPda, isSigner: false, isWritable: true },
+                { pubkey: nullifierPda, isSigner: false, isWritable: true },
+                { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
             ],
             programId: this.programId,
             data: Buffer.from(serializedData),
         });
 
-        const transaction = new Transaction().add(instruction);
-        const signature = await sendAndConfirmTransaction(
-            this.connection,
-            transaction,
-            [voter]
-        );
+        const tx = new Transaction().add(instruction);
+        const signature = await sendAndConfirmTransaction(this.connection, tx, [voter]);
 
+        //console.log('Vote cast successfully. Nullifier registered.');
         console.log('Vote cast with Arcium encryption, receipt ID:', Buffer.from(receiptId).toString('hex'));
         return { receiptId, signature };
     }
+    // === Utility hash functions ===
+    //private async hashData(data: Uint8Array): Promise<Uint8Array> {
+    //    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    //    return new Uint8Array(hashBuffer);
+    //}
 
+    //async computeReceiptId(seed: Uint8Array, electionPda: PublicKey): Promise<Uint8Array> {
+    //    return this.hashData(new Uint8Array([...seed, ...electionPda.toBytes()]));
+    //}
+
+    //async computeNullifier(voterHash: Uint8Array, electionPda: PublicKey): Promise<Uint8Array> {
+    //    return this.hashData(new Uint8Array([...voterHash, ...electionPda.toBytes()]));
+    //}
     /**
      * Подсчет результатов через реальный Arcium MPC
      */

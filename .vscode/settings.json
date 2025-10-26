@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./programs/csvp-protocol/Cargo.toml"
+    ]
+}

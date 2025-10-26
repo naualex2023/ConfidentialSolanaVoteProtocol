@@ -10,7 +10,7 @@ const COMP_DEF_OFFSET_INIT_VOTE_STATS: u32 = comp_def_offset("init_vote_stats");
 const COMP_DEF_OFFSET_VOTE: u32 = comp_def_offset("vote");
 const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
 
-declare_id!("G9sN2L8tD1G9K2J3A8tW4T1D7C3F2B1E6H9g5P4Q2R"); // Ваш Program ID
+declare_id!("G9sN2L8tD1G9K2J3A8tW4T1D7C3F2B1E6H9g5P4Q2R3"); // Ваш Program ID
 
 #[arcium_program]
 pub mod confidential_voting {

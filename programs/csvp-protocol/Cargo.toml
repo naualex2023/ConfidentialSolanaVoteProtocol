@@ -19,8 +19,9 @@ num-derive = "0.3.0"
 num-traits = "0.2.0"
 anchor-lang = { version = "0.32.1", features = ["derive"] }
 # Используйте актуальные версии Arcium
-arcium-anchor = { version = "0.3.0" } 
-arcium-client = { version = "0.3.0" } 
+arcium-client = { version = "0.3.0", default-features = false }
+arcium-macros = { version = "0.3.0" }
+arcium-anchor = { version = "0.3.0" }
 
 [lib]
 crate-type = ["cdylib", "lib"]

@@ -1,7 +1,10 @@
 [package]
-name = "encrypted-ixs"
+name = "circuit"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 arcis-imports = { version = "0.3.0" }
+
+[lib]
+crate-type = ["cdylib", "lib"]

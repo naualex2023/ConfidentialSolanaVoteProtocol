@@ -1,5 +1,5 @@
 [workspace]
-members = ["programs/*", "circuit"]
+members = ["programs/csvp-protocol", "circuit"]
 resolver = "2"
 
 [profile.release]

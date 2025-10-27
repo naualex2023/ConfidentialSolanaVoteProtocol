@@ -1,6 +1,9 @@
 ﻿use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
-use arcium_client::idl::arcium::types::CallbackAccount;
+//use arcium_client::idl::arcium::types::CallbackAccount;
+
+pub mod state;
+pub mod error;
 
 use crate::state::*; 
 use crate::error::VoteError; 

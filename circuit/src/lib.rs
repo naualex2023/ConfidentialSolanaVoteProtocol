@@ -1,23 +1,34 @@
+//use super::MAX_CANDIDATES; 
 use arcis_imports::*;
-use borsh::{BorshDeserialize, BorshSerialize};
+//use borsh::{BorshDeserialize, BorshSerialize};
 
 // Импортируем константу из on-chain кода (нужно настроить пути в Cargo.toml)
-const MAX_CANDIDATES: usize = 5; 
+//pub const MAX_CANDIDATES: usize = 5;
 
 #[encrypted]
 mod circuits {
+    // Import the constant from parent module
+    //use super::MAX_CANDIDATES;
     use arcis_imports::*;
-    use borsh::{BorshDeserialize, BorshSerialize};
-    use super::MAX_CANDIDATES; 
+
+    const MAX_CANDIDATES: usize = 5; 
+    //use arcis_imports::Public; 
+    //use borsh::{BorshDeserialize, BorshSerialize};    
 
     /// Отслеживает зашифрованный счет голосов для MAX_CANDIDATES.
-    #[derive(BorshSerialize, BorshDeserialize)]
-    pub struct VoteStats {
-        candidate_counts: [u64; MAX_CANDIDATES], 
-    }
-
+    //#[derive(BorshSerialize, BorshDeserialize)]
+#[instruction]
+pub fn init_vote_stats(mxe: Mxe) -> Enc<Mxe, VoteStats> {
+    // Инициализируем массив candidate_counts нулями
+    let vote_stats = VoteStats {
+        candidate_counts: [0; MAX_CANDIDATES],
+    };
+    
+    // Передаем инициализированную структуру в Arcium
+    mxe.from_arcis(vote_stats)
+}
     /// Представляет сложный голос: индекс выбранного кандидата.
-    #[derive(BorshSerialize, BorshDeserialize)]
+    //#[derive(BorshSerialize, BorshDeserialize)]
     pub struct UserVote {
         candidate_index: u64, // Индекс кандидата (0, 1, ..., N-1)
     }
@@ -65,6 +76,6 @@ mod circuits {
             public_results[i] = vote_stats.candidate_counts[i].to_public();
         }
         
-        public_results
+        public_results.reveal()
     }
 }

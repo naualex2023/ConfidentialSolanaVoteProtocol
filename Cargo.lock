@@ -702,7 +702,6 @@ name = "circuit"
 version = "0.1.0"
 dependencies = [
  "arcis-imports",
- "borsh 1.5.7",
 ]
 
 [[package]]

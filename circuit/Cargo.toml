@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 arcis-imports = { version = "0.3.0" }
+borsh = { version = "1.0.0", features = ["derive"] }
 
 [lib]
 crate-type = ["cdylib", "lib"]

@@ -1,9 +1,190 @@
-error: failed to load manifest for workspace member `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit`
-referenced by workspace at `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/Cargo.toml`
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   0.407641813s  INFO prepare_target{force=false package_id=circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit) target="circuit"}: cargo::core::compiler::fingerprint: fingerprint error for circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("circuit", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit/src/lib.rs", Edition2021) }
+   0.407688862s  INFO prepare_target{force=false package_id=circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit) target="circuit"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/circuit-7c798fcb0334dbd1/lib-circuit`
 
 Caused by:
-  failed to parse manifest at `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit/Cargo.toml`
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  25: __libc_start_main_impl
+             at ./csu/../csu/libc-start.c:360:3
+  26: <unknown>
+   0.531853240s  INFO prepare_target{force=false package_id=circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit) target="circuit"}: cargo::core::compiler::fingerprint: fingerprint error for circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("circuit", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit/src/lib.rs", Edition2021) }
+   0.531875923s  INFO prepare_target{force=false package_id=circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit) target="circuit"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/circuit-f3106fa620860e87/test-lib-circuit`
 
 Caused by:
-  no targets specified in the manifest
-  either src/lib.rs, src/main.rs, a [lib] section, or [[bin]] section must be present
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  25: __libc_start_main_impl
+             at ./csu/../csu/libc-start.c:360:3
+  26: <unknown>
+   0.557178048s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
+   0.557211029s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-1b502f214bc70f2a/lib-csvp_protocol`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  25: __libc_start_main_impl
+             at ./csu/../csu/libc-start.c:360:3
+  26: <unknown>
+   0.590850371s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
+   0.590876149s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-f1b7b81a956afe98/test-lib-csvp_protocol`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  25: __libc_start_main_impl
+             at ./csu/../csu/libc-start.c:360:3
+  26: <unknown>
+    Checking circuit v0.1.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/circuit)
+    Checking csvp-protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)
+error: could not compile `circuit` (lib test) due to 8 previous errors; 1 warning emitted
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `circuit` (lib) due to 8 previous errors; 1 warning emitted
+error: could not compile `csvp-protocol` (lib test) due to 59 previous errors; 15 warnings emitted
+error: could not compile `csvp-protocol` (lib) due to 59 previous errors; 15 warnings emitted

@@ -601,7 +601,10 @@ pub struct CastVote<'info> {
     //     has_one = creator
     // )]
     // pub election_account: Account<'info, Election>,
-    
+    #[account(
+        address = voter_chunk.election,
+    )]
+    pub election: UncheckedAccount<'info>,
     // Аккаунт VoterChunk (для проверки регистрации)
     #[account(
         seeds = [
@@ -712,6 +715,10 @@ pub struct RevealResult<'info> {
     //     bump
     // )]
     // pub election_account: Account<'info, Election>,
+    #[account(
+        address = election_account.creator,
+    )]
+    pub creator: UncheckedAccount<'info>,
     #[account(
         mut,
         has_one = creator // Только создатель может раскрыть результаты

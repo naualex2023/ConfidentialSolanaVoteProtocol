@@ -121,7 +121,7 @@ pub mod confidential_voting {
             0, // computation_offset (0 для нового)
             vec![], // Нет входных аргументов
             None, // Нет arcium_proof
-            vec![InitCallback::callback_ix(&[CallbackAccount {
+            vec![InitVoteStatsCallback::callback_ix(&[CallbackAccount {
                 pubkey: ctx.accounts.election_account.key(),
                 is_writable: true,
             }])],
@@ -134,7 +134,7 @@ pub mod confidential_voting {
     /// Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей.
     #[arcium_callback(encrypted_ix = "init_vote_stats")]
     pub fn init_vote_stats_callback(
-        ctx: Context<InitCallback>,
+        ctx: Context<InitVoteStatsCallback>,
         output: ComputationOutputs<InitVoteStatsOutput>,
     ) -> Result<()> {
         let o = match output {
@@ -154,7 +154,7 @@ pub mod confidential_voting {
         // Сохраняем зашифрованные нули и nonce
         election.encrypted_tally = o.ciphertexts.try_into().map_err(|_| ErrorCode::ConstraintRaw)?;
         election.nonce = o.nonce;
-        election.state = ElectionState::Active; // Выборы готовы к голосованию
+        election.state = 1;//ElectionState::Active; // Выборы готовы к голосованию
 
         Ok(())
     }
@@ -270,8 +270,8 @@ pub mod confidential_voting {
 
     /// Запускает MPC `reveal_result` (только создатель).
     pub fn reveal_result(ctx: Context<RevealResult>) -> Result<()> {
-        let election = &ctx.accounts.election_account;
-
+        let election = &mut ctx.accounts.election_account;
+        
         // 1. ПРОВЕРКА (уже сделана в `has_one = authority`)
         
         // 2. ПРОВЕРКА: Выборы должны быть завершены (или в процессе подсчета)
@@ -291,20 +291,19 @@ pub mod confidential_voting {
         for ct in election.encrypted_tally {
             args.push(Argument::EncryptedU64(ct));
         }
-
+        election.state = 2;//ElectionState::Tallying;
         // 4. ЗАПУСК MPC
         queue_computation(
             ctx.accounts,
             0, // computation_offset
             args,
             None, // arcium_proof
-            vec![RevealCallback::callback_ix(&[CallbackAccount {
+            vec![RevealResultCallback::callback_ix(&[CallbackAccount {
                 pubkey: ctx.accounts.election_account.key(),
                 is_writable: true,
             }])],
         )?;
-
-        election.state = 2;//ElectionState::Tallying;
+        
         msg!("Reveal requested. Awaiting Arcium callback for final results.");
 
         Ok(())
@@ -314,7 +313,7 @@ pub mod confidential_voting {
     /// Коллбэк: записывает финальный РАСШИФРОВАННЫЙ результат.
     #[arcium_callback(encrypted_ix = "reveal_result")]
     pub fn reveal_result_callback(
-        ctx: Context<RevealCallback>,
+        ctx: Context<RevealResultCallback>,
         output: ComputationOutputs<RevealResultOutput>,
     ) -> Result<()> {
         let public_results = match output {
@@ -333,7 +332,7 @@ pub mod confidential_voting {
 
         // Записываем публичный, расшифрованный результат
         election.final_result = public_results.try_into().map_err(|_| ErrorCode::ConstraintRaw)?;
-        election.state = ElectionState::Completed;
+        election.state = 3;//ElectionState::Completed;
 
         Ok(())
     }
@@ -434,7 +433,7 @@ pub struct InitializeElection<'info> {
     #[account(
         init, // 👈 Обязательно init
         payer = authority,
-        space = 8 + SignPdaAccount::INIT_SPACE, 
+        space = 8 + Election::INIT_SPACE, 
         seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
         bump // 👈 Обязательно bump
     )]
@@ -596,6 +595,12 @@ pub struct CastVote<'info> {
     // pub election_account: Account<'info, Election>,
     #[account(mut)]
     pub election_account: Account<'info, Election>,
+    // #[account(mut,
+    //     seeds = [b"election", creator.key().as_ref(), election_id.to_le_bytes().as_ref()],
+    //     bump = election_account.bump,
+    //     has_one = creator
+    // )]
+    // pub election_account: Account<'info, Election>,
     
     // Аккаунт VoterChunk (для проверки регистрации)
     #[account(
@@ -605,7 +610,7 @@ pub struct CastVote<'info> {
             voter_chunk_index.to_le_bytes().as_ref()
         ],
         bump = voter_chunk.bump,
-        has_one = election // Проверяем, что чанк принадлежит этим выборам
+        has_one = election, // Проверяем, что чанк принадлежит этим выборам
     )]
     pub voter_chunk: Account<'info, VoterChunk>, 
     
@@ -652,7 +657,7 @@ pub struct RevealResult<'info> {
         #[account(
         init, // 👈 Обязательно init
         payer = authority,
-        space = 8 + SignPdaAccount::INIT_SPACE, 
+        space = 8 + Election::INIT_SPACE, 
         seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
         bump // 👈 Обязательно bump
     )]
@@ -712,6 +717,12 @@ pub struct RevealResult<'info> {
         has_one = creator // Только создатель может раскрыть результаты
     )]
     pub election_account: Account<'info, Election>,
+    //     #[account(mut,
+    //     seeds = [b"election", authority.key().as_ref(), id.to_le_bytes().as_ref()],
+    //     bump = election_account.bump,
+    //     has_one = creator
+    // )]
+    // pub election_account: Account<'info, Election>,
 
     // system_program, arcium_program и аккаунты Arcium
     // добавляются макросом

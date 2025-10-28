@@ -16,4 +16,10 @@ pub enum VoteError {
     ElectionNotDraft,
     #[msg("Invalid Candidate Index. Must be less than MAX_CANDIDATES.")]
     InvalidCandidateIndex,
+    #[msg("AbortedComputation")]
+    AbortedComputation,            
+    #[msg("Invalid Tally Size.")]
+    InvalidTallySize,
+    #[msg("ClusterNotSet")]
+    ClusterNotSet,
 }

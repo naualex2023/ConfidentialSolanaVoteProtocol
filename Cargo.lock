@@ -807,7 +807,6 @@ dependencies = [
  "arcium-anchor",
  "arcium-client",
  "arcium-macros",
- "borsh 1.5.7",
  "num-derive 0.3.3",
  "num-traits",
  "solana-program",

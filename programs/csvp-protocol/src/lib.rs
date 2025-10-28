@@ -96,8 +96,8 @@ pub mod confidential_voting {
         ctx: Context<InitializeElection>,
         election_id: u64,
         title: String,
-        start_time: i64,
-        end_time: i64,
+        start_time: u64,
+        end_time: u64,
     ) -> Result<()> {
         msg!("Initializing new election...");
         let election = &mut ctx.accounts.election_account;
@@ -107,7 +107,7 @@ pub mod confidential_voting {
         election.title = title;
         election.start_time = start_time;
         election.end_time = end_time;
-        election.state = ElectionState::Draft; // Начинаем с Draft
+        election.state = 0;//ElectionState::Draft; // Начинаем с Draft
         election.total_votes = 0;
         election.bump = ctx.bumps.election_account;
         // `nonce` и `encrypted_tally` будут установлены коллбэком
@@ -175,14 +175,15 @@ pub mod confidential_voting {
         nullifier_hash: [u8; 32],
         voter_hash: [u8; 32],
     ) -> Result<()> {
-        let election = &mut ctx.accounts.election_account;
+        let election = & ctx.accounts.election_account;
+        let el_key = election.key();
         let clock = Clock::get()?;
         
         // 1. ПРОВЕРКА ПЕРИОДА ВЫБОРОВ
         require!(
-            election.state == ElectionState::Active &&
-            clock.unix_timestamp >= election.start_time &&
-            clock.unix_timestamp <= election.end_time,
+            election.state == 1 && //ElectionState::Active &&
+            clock.unix_timestamp as u64 >= election.start_time &&
+            clock.unix_timestamp as u64 <= election.end_time,
             VoteError::InvalidElectionPeriod
         );
 
@@ -202,13 +203,13 @@ pub mod confidential_voting {
         nullifier.bump = ctx.bumps.nullifier_account;
 
         // 4. ПОДГОТОВКА АРГУМЕНТОВ ДЛЯ MPC `vote`
-        ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
+        //ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
         
         let mut args = vec![
             // Аргумент 1: Enc<Shared, UserVote>
             Argument::ArcisPubkey(vote_encryption_pubkey),
             Argument::PlaintextU128(vote_nonce),
-            Argument::Encrypted(vote_ciphertext), // т.к. UserVote { u64 } - это 1 шифротекст
+            Argument::EncryptedU64(vote_ciphertext), // т.к. UserVote { u64 } - это 1 шифротекст
 
             // Аргумент 2: Enc<Mxe, VoteStats>
             Argument::PlaintextU128(election.nonce),
@@ -216,7 +217,7 @@ pub mod confidential_voting {
         
         // Добавляем N шифротекстов из `encrypted_tally`
         for ct in election.encrypted_tally {
-            args.push(Argument::Encrypted(ct));
+            args.push(Argument::EncryptedU64(ct));
         }
 
         // 5. ЗАПУСК MPC для агрегации голоса
@@ -226,13 +227,12 @@ pub mod confidential_voting {
             args,
             None, // arcium_proof
             vec![VoteCallback::callback_ix(&[CallbackAccount {
-                pubkey: ctx.accounts.election_account.key(),
+                pubkey: el_key,
                 is_writable: true,
             }])],
         )?;
         
-        election.total_votes += 1; // Увеличиваем публичный счетчик
-        
+              
         msg!("Vote cast successfully. Awaiting Arcium callback to update tally.");
         Ok(())
     }
@@ -259,6 +259,7 @@ pub mod confidential_voting {
         // Обновляем зашифрованный счет и nonce
         election.encrypted_tally = o.ciphertexts.try_into().map_err(|_| ErrorCode::ConstraintRaw)?;
         election.nonce = o.nonce;
+        election.total_votes += 1; // Увеличиваем публичный счетчик
         
         Ok(())
     }
@@ -276,7 +277,7 @@ pub mod confidential_voting {
         // 2. ПРОВЕРКА: Выборы должны быть завершены (или в процессе подсчета)
         let clock = Clock::get()?;
         require!(
-            clock.unix_timestamp > election.end_time || election.state == ElectionState::Tallying,
+            clock.unix_timestamp as u64 > election.end_time || election.state == 2, //ElectionState::Tallying,
             VoteError::InvalidElectionPeriod
         );
 
@@ -288,7 +289,7 @@ pub mod confidential_voting {
             Argument::PlaintextU128(election.nonce),
         ];
         for ct in election.encrypted_tally {
-            args.push(Argument::Encrypted(ct));
+            args.push(Argument::EncryptedU64(ct));
         }
 
         // 4. ЗАПУСК MPC
@@ -303,7 +304,7 @@ pub mod confidential_voting {
             }])],
         )?;
 
-        election.state = ElectionState::Tallying;
+        election.state = 2;//ElectionState::Tallying;
         msg!("Reveal requested. Awaiting Arcium callback for final results.");
 
         Ok(())
@@ -420,11 +421,24 @@ pub struct RegisterVoters<'info> {
 pub struct InitializeElection<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
-    pub sign_pda_account: Account<'info, SignerAccount>,
+    // pub sign_pda_account: Account<'info, SignerAccount>,
+    // #[account(
+    //     address = derive_mxe_pda!()
+    // )]
+    // pub mxe_account: Account<'info, MXEAccount>,
     #[account(
         address = derive_mxe_pda!()
     )]
     pub mxe_account: Account<'info, MXEAccount>,
+    // 🔥 КОРРЕКТНАЯ ДЕКЛАРАЦИЯ SIGN PDA:
+    #[account(
+        init, // 👈 Обязательно init
+        payer = authority,
+        space = 8 + SignPdaAccount::INIT_SPACE, 
+        seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+        bump // 👈 Обязательно bump
+    )]
+    pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
         mut,
         address = derive_mempool_pda!()
@@ -517,7 +531,19 @@ pub struct InitVoteStatsCallback<'info> {
 pub struct CastVote<'info> {
     #[account(mut)]
     pub voter: Signer<'info>,
-        pub sign_pda_account: Account<'info, SignerAccount>,
+        //pub sign_pda_account: Account<'info, SignerAccount>,
+// 🔥 ДОБАВИТЬ ЭТОТ АККАУНТ ДЛЯ ПОДПИСИ MPC
+    // Он должен быть помечен #[account(mut)] для использования в queue_computation
+    #[account(
+        mut, 
+        // Ищем PDA, используя те же сиды, что и при инициализации
+        seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+        // Указываем, что бамп должен совпадать с полем в аккаунте
+        bump = sign_pda_account.bump, 
+    )]
+    // ВНИМАНИЕ: Если вы переименовали его в `mpc_signer_pda` в InitializeElection,
+    // вы должны использовать здесь то же имя: `mpc_signer_pda`!
+    pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
         address = derive_mxe_pda!()
     )]
@@ -622,7 +648,15 @@ pub struct VoteCallback<'info> {
 pub struct RevealResult<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
-        pub sign_pda_account: Account<'info, SignerAccount>,
+        //pub sign_pda_account: Account<'info, SignerAccount>,
+        #[account(
+        init, // 👈 Обязательно init
+        payer = authority,
+        space = 8 + SignPdaAccount::INIT_SPACE, 
+        seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+        bump // 👈 Обязательно bump
+    )]
+    pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
         address = derive_mxe_pda!()
     )]

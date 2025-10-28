@@ -1,6 +1,6 @@
 ﻿use anchor_lang::prelude::*;
 //use ::borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::clock::UnixTimestamp;
+//use solana_program::clock::UnixTimestamp;
 
 // Константы
 pub const MAX_CANDIDATES: usize = 5; // Фиксированное число кандидатов
@@ -36,7 +36,7 @@ pub struct Election {
     pub end_time: u64,
     pub state: u64,
     pub total_votes: u32,
-    
+    pub bump: u8, // <-- Необходим для сохранения bump-сида
     // Поля Arcium/MPC
     pub nonce: u128,
     /// Encrypted vote tallies: [32-byte ciphertext; MAX_CANDIDATES]

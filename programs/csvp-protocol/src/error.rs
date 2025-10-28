@@ -22,4 +22,6 @@ pub enum VoteError {
     InvalidTallySize,
     #[msg("ClusterNotSet")]
     ClusterNotSet,
+    #[msg("Invalid authority")]
+    InvalidAuthority,
 }

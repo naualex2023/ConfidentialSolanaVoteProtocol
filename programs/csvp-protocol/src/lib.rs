@@ -403,7 +403,7 @@ pub struct RegisterVoters<'info> {
     #[account(
         init_if_needed,
         payer = authority,
-        space = 8 + VoterChunk::calculate_space(MAX_ITEMS_PER_CHUNK), 
+        space = 8 + VoterChunk::MAX_SPACE, 
         seeds = [VOTER_CHUNK_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
         bump
     )]
@@ -605,7 +605,7 @@ pub struct CastVote<'info> {
             voter_chunk_index.to_le_bytes().as_ref()
         ],
         bump = voter_chunk.bump,
-        has_one = election_account // Проверяем, что чанк принадлежит этим выборам
+        has_one = election // Проверяем, что чанк принадлежит этим выборам
     )]
     pub voter_chunk: Account<'info, VoterChunk>, 
     
@@ -709,7 +709,7 @@ pub struct RevealResult<'info> {
     // pub election_account: Account<'info, Election>,
     #[account(
         mut,
-        has_one = authority // Только создатель может раскрыть результаты
+        has_one = creator // Только создатель может раскрыть результаты
     )]
     pub election_account: Account<'info, Election>,
 
@@ -732,4 +732,27 @@ pub struct RevealResultCallback<'info> {
     /// CHECK: election_account, верифицируется Arcium
     #[account(mut)]
     pub election_account: Account<'info, Election>,
+}
+
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Invalid authority")]
+    InvalidAuthority,
+    #[msg("The computation was aborted")]
+    AbortedComputation,
+    #[msg("Cluster not set")]    
+    ClusterNotSet,
+    #[msg("Constraint raw data conversion failed")]
+    ConstraintRaw,
+}
+
+#[event]
+pub struct VoteEvent {
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct RevealResultEvent {
+    pub output: bool,
 }

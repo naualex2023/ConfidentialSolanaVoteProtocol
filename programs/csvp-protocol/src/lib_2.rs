@@ -1,4 +1,4 @@
-﻿// Stops Rust Analyzer complaining about missing configs
+// Stops Rust Analyzer complaining about missing configs
 // See https://solana.stackexchange.com/questions/17777
 #![allow(unexpected_cfgs)]
 // Fix warning: use of deprecated method `anchor_lang::prelude::AccountInfo::<'a>::realloc`: Use AccountInfo::resize() instead
@@ -133,7 +133,7 @@ pub mod confidential_voting {
 
     /// Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей.
     #[arcium_callback(encrypted_ix = "init_vote_stats")]
-    pub fn init_vote_stats_callback(
+    pub fn init_callback(
         ctx: Context<InitCallback>,
         output: ComputationOutputs<InitVoteStatsOutput>,
     ) -> Result<()> {
@@ -312,7 +312,7 @@ pub mod confidential_voting {
 
     /// Коллбэк: записывает финальный РАСШИФРОВАННЫЙ результат.
     #[arcium_callback(encrypted_ix = "reveal_result")]
-    pub fn reveal_result_callback(
+    pub fn reveal_callback(
         ctx: Context<RevealCallback>,
         output: ComputationOutputs<RevealResultOutput>,
     ) -> Result<()> {
@@ -415,54 +415,11 @@ pub struct RegisterVoters<'info> {
 
 #[queue_computation_accounts("init_vote_stats", authority)]
 #[derive(Accounts)]
-#[instruction(election_id: u64,computation_offset: u64)]
-//#[instruction(computation_offset: u64, id: u32)]
+#[instruction(election_id: u64)]
 pub struct InitializeElection<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
-    pub sign_pda_account: Account<'info, SignerAccount>,
-    #[account(
-        address = derive_mxe_pda!()
-    )]
-    pub mxe_account: Account<'info, MXEAccount>,
-    #[account(
-        mut,
-        address = derive_mempool_pda!()
-    )]
-    /// CHECK: mempool_account, checked by the arcium program
-    pub mempool_account: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_execpool_pda!()
-    )]
-    /// CHECK: executing_pool, checked by the arcium program
-    pub executing_pool: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_comp_pda!(computation_offset)
-    )]
-    /// CHECK: computation_account, checked by the arcium program.
-    pub computation_account: UncheckedAccount<'info>,
-    #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_INIT_VOTE_STATS)
-    )]
-    pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
-    #[account(
-        mut,
-        address = derive_cluster_pda!(mxe_account)
-    )]
-    pub cluster_account: Account<'info, Cluster>,
-    #[account(
-        mut,
-        address = ARCIUM_FEE_POOL_ACCOUNT_ADDRESS,
-    )]
-    pub pool_account: Account<'info, FeePool>,
-    #[account(
-        address = ARCIUM_CLOCK_ACCOUNT_ADDRESS,
-    )]
-    pub clock_account: Account<'info, ClockAccount>,
-    pub system_program: Program<'info, System>,
-    pub arcium_program: Program<'info, Arcium>,
+    
     #[account(
         init,
         payer = authority,
@@ -472,19 +429,10 @@ pub struct InitializeElection<'info> {
     )]
     pub election_account: Account<'info, Election>,
     
-    // // system_program, arcium_program и все аккаунты Arcium
-    // // автоматически добавляются макросом `queue_computation_accounts`
-    // pub system_program: Program<'info, System>,
-    // pub arcium_program: Program<'info, Arcium>,
-    
-    // #[account(
-    //     init,
-    //     payer = payer,
-    //     space = 8 + PollAccount::INIT_SPACE,
-    //     seeds = [b"poll", payer.key().as_ref(), id.to_le_bytes().as_ref()],
-    //     bump,
-    // )]
-    // pub poll_acc: Account<'info, PollAccount>,
+    // system_program, arcium_program и все аккаунты Arcium
+    // автоматически добавляются макросом `queue_computation_accounts`
+    pub system_program: Program<'info, System>,
+    pub arcium_program: Program<'info, Arcium>,
 }
 
 #[callback_accounts("init_vote_stats")]
@@ -512,62 +460,12 @@ pub struct InitCallback<'info> {
     vote_encryption_pubkey: [u8; 32],
     vote_nonce: u128,
     nullifier_hash: [u8; 32], 
-    voter_hash: [u8; 32],computation_offset: u64
+    voter_hash: [u8; 32]
 )]
 pub struct CastVote<'info> {
     #[account(mut)]
     pub voter: Signer<'info>,
-        pub sign_pda_account: Account<'info, SignerAccount>,
-    #[account(
-        address = derive_mxe_pda!()
-    )]
-    pub mxe_account: Account<'info, MXEAccount>,
-    #[account(
-        mut,
-        address = derive_mempool_pda!()
-    )]
-    /// CHECK: mempool_account, checked by the arcium program
-    pub mempool_account: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_execpool_pda!()
-    )]
-    /// CHECK: executing_pool, checked by the arcium program
-    pub executing_pool: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_comp_pda!(computation_offset)
-    )]
-    /// CHECK: computation_account, checked by the arcium program.
-    pub computation_account: UncheckedAccount<'info>,
-    #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_INIT_VOTE_STATS)
-    )]
-    pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
-    #[account(
-        mut,
-        address = derive_cluster_pda!(mxe_account)
-    )]
-    pub cluster_account: Account<'info, Cluster>,
-    #[account(
-        mut,
-        address = ARCIUM_FEE_POOL_ACCOUNT_ADDRESS,
-    )]
-    pub pool_account: Account<'info, FeePool>,
-    #[account(
-        address = ARCIUM_CLOCK_ACCOUNT_ADDRESS,
-    )]
-    pub clock_account: Account<'info, ClockAccount>,
-    pub system_program: Program<'info, System>,
-    pub arcium_program: Program<'info, Arcium>,
-    // #[account(
-    //     init,
-    //     payer = authority,
-    //     space = 8 + Election::INIT_SPACE, // Убедитесь, что INIT_SPACE в state.rs верный
-    //     seeds = [ELECTION_SEED, authority.key().as_ref(), election_id.to_le_bytes().as_ref()],
-    //     bump
-    // )]
-    // pub election_account: Account<'info, Election>,
+    
     #[account(mut)]
     pub election_account: Account<'info, Election>,
     
@@ -595,8 +493,8 @@ pub struct CastVote<'info> {
     
     // system_program, arcium_program и аккаунты Arcium
     // добавляются макросом
-    // pub system_program: Program<'info, System>,
-    // pub arcium_program: Program<'info, Arcium>,
+    pub system_program: Program<'info, System>,
+    pub arcium_program: Program<'info, Arcium>,
 }
 
 #[callback_accounts("vote")]
@@ -618,61 +516,10 @@ pub struct VoteCallback<'info> {
 
 #[queue_computation_accounts("reveal_result", authority)]
 #[derive(Accounts)]
-#[instruction(computation_offset: u64)]
 pub struct RevealResult<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
-        pub sign_pda_account: Account<'info, SignerAccount>,
-    #[account(
-        address = derive_mxe_pda!()
-    )]
-    pub mxe_account: Account<'info, MXEAccount>,
-    #[account(
-        mut,
-        address = derive_mempool_pda!()
-    )]
-    /// CHECK: mempool_account, checked by the arcium program
-    pub mempool_account: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_execpool_pda!()
-    )]
-    /// CHECK: executing_pool, checked by the arcium program
-    pub executing_pool: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_comp_pda!(computation_offset)
-    )]
-    /// CHECK: computation_account, checked by the arcium program.
-    pub computation_account: UncheckedAccount<'info>,
-    #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_INIT_VOTE_STATS)
-    )]
-    pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
-    #[account(
-        mut,
-        address = derive_cluster_pda!(mxe_account)
-    )]
-    pub cluster_account: Account<'info, Cluster>,
-    #[account(
-        mut,
-        address = ARCIUM_FEE_POOL_ACCOUNT_ADDRESS,
-    )]
-    pub pool_account: Account<'info, FeePool>,
-    #[account(
-        address = ARCIUM_CLOCK_ACCOUNT_ADDRESS,
-    )]
-    pub clock_account: Account<'info, ClockAccount>,
-    pub system_program: Program<'info, System>,
-    pub arcium_program: Program<'info, Arcium>,
-    // #[account(
-    //     init,
-    //     payer = authority,
-    //     space = 8 + Election::INIT_SPACE, // Убедитесь, что INIT_SPACE в state.rs верный
-    //     seeds = [ELECTION_SEED, authority.key().as_ref(), election_id.to_le_bytes().as_ref()],
-    //     bump
-    // )]
-    // pub election_account: Account<'info, Election>,
+    
     #[account(
         mut,
         has_one = authority // Только создатель может раскрыть результаты
@@ -681,8 +528,8 @@ pub struct RevealResult<'info> {
 
     // system_program, arcium_program и аккаунты Arcium
     // добавляются макросом
-    // pub system_program: Program<'info, System>,
-    // pub arcium_program: Program<'info, Arcium>,
+    pub system_program: Program<'info, System>,
+    pub arcium_program: Program<'info, Arcium>,
 }
 
 #[callback_accounts("reveal_result")]

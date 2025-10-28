@@ -74,7 +74,7 @@ pub mod confidential_voting {
         
         // 3. Проверка: Выборы еще не начались
         require!(
-            election.state == ElectionState::Draft,
+            election.state == 0,//ElectionState::Draft,
             VoteError::ElectionNotDraft
         );
 

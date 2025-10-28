@@ -1,5 +1,5 @@
 ﻿use anchor_lang::prelude::*;
-use ::borsh::{BorshDeserialize, BorshSerialize};
+//use ::borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::clock::UnixTimestamp;
 
 // Константы
@@ -14,7 +14,7 @@ pub const NULLIFIER_SEED: &[u8] = b"nullifier";
 // Структуры Аккаунтов
 // ------------------------------------------------------------------
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone, PartialEq, AnchorSerialize, AnchorDeserialize)]
+#[derive( Debug, Clone, PartialEq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
 pub enum ElectionState {
     Draft,
@@ -32,9 +32,9 @@ pub struct Election {
     pub election_id: u64,
     #[max_len(50)]
     pub title: String,
-    pub start_time: UnixTimestamp,
-    pub end_time: UnixTimestamp,
-    pub state: ElectionState,
+    pub start_time: u64,
+    pub end_time: u64,
+    pub state: u64,
     pub total_votes: u32,
     
     // Поля Arcium/MPC

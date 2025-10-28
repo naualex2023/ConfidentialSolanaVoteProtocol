@@ -1,12 +1,103 @@
-   0.240705657s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: stale: changed "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs"
-   0.240739922s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:           (vs) "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-eb30da29b44ce8d6/dep-lib-csvp_protocol"
-   0.240745472s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1761685492, nanos: 287051746 } < FileTime { seconds: 1761685801, nanos: 228089342 }
-   0.241217130s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint dirty for csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
-   0.241245083s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-eb30da29b44ce8d6/dep-lib-csvp_protocol", reference_mtime: FileTime { seconds: 1761685492, nanos: 287051746 }, stale: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", stale_mtime: FileTime { seconds: 1761685801, nanos: 228089342 } }))
-   0.254094577s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: stale: changed "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs"
-   0.254111830s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:           (vs) "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-e160b0f78f77a2dd/dep-test-lib-csvp_protocol"
-   0.254116639s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1761685492, nanos: 287051746 } < FileTime { seconds: 1761685801, nanos: 228089342 }
-   0.254183705s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint dirty for csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
-   0.254202320s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-e160b0f78f77a2dd/dep-test-lib-csvp_protocol", reference_mtime: FileTime { seconds: 1761685492, nanos: 287051746 }, stale: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", stale_mtime: FileTime { seconds: 1761685801, nanos: 228089342 } }))
+   0.620943927s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: stale: changed "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs"
+   0.620971008s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:           (vs) "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-eb30da29b44ce8d6/dep-lib-csvp_protocol"
+   0.620977150s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1761685801, nanos: 824459178 } < FileTime { seconds: 1761686003, nanos: 406289165 }
+   0.623013636s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint dirty for csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
+   0.623068479s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-eb30da29b44ce8d6/dep-lib-csvp_protocol", reference_mtime: FileTime { seconds: 1761685801, nanos: 824459178 }, stale: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", stale_mtime: FileTime { seconds: 1761686003, nanos: 406289165 } }))
+   0.641614561s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: stale: changed "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs"
+   0.641641181s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:           (vs) "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-e160b0f78f77a2dd/dep-test-lib-csvp_protocol"
+   0.641649646s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1761685801, nanos: 824459178 } < FileTime { seconds: 1761686003, nanos: 406289165 }
+   0.642559456s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint dirty for csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
+   0.642627995s  INFO prepare_target{force=false package_id=csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp-protocol-e160b0f78f77a2dd/dep-test-lib-csvp_protocol", reference_mtime: FileTime { seconds: 1761685801, nanos: 824459178 }, stale: "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", stale_mtime: FileTime { seconds: 1761686003, nanos: 406289165 } }))
+   0.648907756s  INFO prepare_target{force=false package_id=encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs) target="encrypted_ixs"}: cargo::core::compiler::fingerprint: fingerprint error for encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("encrypted_ixs", ["lib"], "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs/src/lib.rs", Edition2021) }
+   0.648958080s  INFO prepare_target{force=false package_id=encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs) target="encrypted_ixs"}: cargo::core::compiler::fingerprint:     err: failed to read `/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/encrypted-ixs-76142ecbccba1d3d/lib-encrypted_ixs`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/core/src/ops/function.rs:284:13
+  15: std::panicking::try::do_call
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:589:40
+  16: std::panicking::try
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/rt.rs:168:24
+  19: std::panicking::try::do_call
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:589:40
+  20: std::panicking::try
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/rt.rs:164:5
+  23: main
+  24: __libc_start_call_main
+             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  25: __libc_start_main_impl
+             at ./csu/../csu/libc-start.c:360:3
+  26: <unknown>
+   0.772919934s  INFO prepare_target{force=false package_id=encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs) target="encrypted_ixs"}: cargo::core::compiler::fingerprint: fingerprint error for encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("encrypted_ixs", ["lib"], "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs/src/lib.rs", Edition2021) }
+   0.772969738s  INFO prepare_target{force=false package_id=encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs) target="encrypted_ixs"}: cargo::core::compiler::fingerprint:     err: failed to read `/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/encrypted-ixs-d90a676b531d1545/test-lib-encrypted_ixs`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/core/src/ops/function.rs:284:13
+  15: std::panicking::try::do_call
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:589:40
+  16: std::panicking::try
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/rt.rs:168:24
+  19: std::panicking::try::do_call
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:589:40
+  20: std::panicking::try
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/6b00bc3880198600130e1cf62b8f8a93494488cc/library/std/src/rt.rs:164:5
+  23: main
+  24: __libc_start_call_main
+             at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  25: __libc_start_main_impl
+             at ./csu/../csu/libc-start.c:360:3
+  26: <unknown>
     Checking csvp-protocol v0.2.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.72s
+    Checking encrypted-ixs v0.1.0 (/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/encrypted-ixs)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.13s

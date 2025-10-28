@@ -1,5 +1,5 @@
 ﻿use anchor_lang::prelude::*;
-use borsh::{BorshDeserialize, BorshSerialize};
+use ::borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::clock::UnixTimestamp;
 
 // Константы
@@ -45,24 +45,33 @@ pub struct Election {
 }
 
 /// Аккаунт для реестра голосующих (VoterChunk)
-// Используем ручной расчет размера, чтобы позволить Anchor-десериализацию Vec<[u8; 32]>
 #[account]
 pub struct VoterChunk {
     pub election: Pubkey,
     pub chunk_index: u32,
     #[max_len(MAX_ITEMS_PER_CHUNK)] 
     pub voter_hashes: Vec<[u8; 32]>, // Хеши зарегистрированных избирателей
+    pub bump: u8, // Добавьте bump для полноты
 }
 
 impl VoterChunk {
-    // Размер: 8 (дискриминатор) + 32 (election) + 4 (index) + 4 (len) + MAX_ITEMS_PER_CHUNK * 32 (hashes)
-    pub const MAX_SPACE: usize = 8 + 32 + 4 + 4 + MAX_ITEMS_PER_CHUNK * 32;
+    // Включая 8 байт для discriminator Anchor
+    pub const HEADER_SIZE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 1 /* bump */;
+    
+    // 4 байта для длины Vec + (32 байта * MAX_ITEMS_PER_CHUNK)
+    pub const VEC_SIZE: usize = 4 + 32 * MAX_ITEMS_PER_CHUNK;
+    
+    pub const MAX_SPACE: usize = Self::HEADER_SIZE + Self::VEC_SIZE;
 }
 
-/// Аккаунт для Nullifier (предотвращение двойного голосования)
+/// Аккаунт для предотвращения двойного голосования (NullifierAccount)
 #[account]
-#[derive(InitSpace)]
+#[derive(InitSpace)] // <<---- ЭТО КРИТИЧНО!
 pub struct NullifierAccount {
     pub election_pda: Pubkey,
-    pub nullifier_hash: [u8; 32], 
+    pub nullifier_hash: [u8; 32],
+    pub bump: u8, // <<---- ДОБАВЛЕНО
 }
+
+// Константа INIT_SPACE будет сгенерирована:
+// 8 (дискриминатор) + 32 (Pubkey) + 32 ([u8; 32]) + 1 (u8 bump) = 73 байта

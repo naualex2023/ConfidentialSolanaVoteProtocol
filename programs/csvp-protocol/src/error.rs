@@ -12,6 +12,8 @@ pub enum VoteError {
     ChunkFull,
     #[msg("Invalid Election Period.")]
     InvalidElectionPeriod,
+    #[msg("Election Not Draft.")]
+    ElectionNotDraft,
     #[msg("Invalid Candidate Index. Must be less than MAX_CANDIDATES.")]
     InvalidCandidateIndex,
 }

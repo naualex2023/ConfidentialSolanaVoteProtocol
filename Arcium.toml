@@ -1,3 +1,5 @@
+[testnet]
+enabled = false
 [localnet]
 # number of nodes in the single cluster of the localnet
 nodes = 2

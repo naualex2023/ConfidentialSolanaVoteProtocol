@@ -8,6 +8,9 @@
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;
+// use crate::__cpi_client_accounts_reveal_result_callback::RevealResultCallback;
+// use crate::__cpi_client_accounts_vote_callback::VoteCallback;
+// use crate::__cpi_client_accounts_init_vote_stats_callback::InitVoteStatsCallback;
 
 // Предполагается, что эти модули существуют в вашем проекте
 pub mod state;

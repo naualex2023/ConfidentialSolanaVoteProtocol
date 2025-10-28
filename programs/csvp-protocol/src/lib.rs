@@ -489,7 +489,7 @@ pub struct InitializeElection<'info> {
 
 #[callback_accounts("init_vote_stats")]
 #[derive(Accounts)]
-pub struct InitCallback<'info> {
+pub struct InitVoteStatsCallback<'info> {
     pub arcium_program: Program<'info, Arcium>,
     #[account(address = derive_comp_def_pda!(COMP_DEF_OFFSET_INIT_VOTE_STATS))]
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
@@ -687,7 +687,7 @@ pub struct RevealResult<'info> {
 
 #[callback_accounts("reveal_result")]
 #[derive(Accounts)]
-pub struct RevealCallback<'info> {
+pub struct RevealResultCallback<'info> {
     pub arcium_program: Program<'info, Arcium>,
     #[account(address = derive_comp_def_pda!(COMP_DEF_OFFSET_REVEAL))]
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,

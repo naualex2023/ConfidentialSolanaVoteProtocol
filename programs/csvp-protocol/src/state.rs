@@ -15,6 +15,7 @@ pub const NULLIFIER_SEED: &[u8] = b"nullifier";
 // ------------------------------------------------------------------
 
 #[derive(BorshSerialize, BorshDeserialize, Debug, Clone, PartialEq, AnchorSerialize, AnchorDeserialize)]
+#[repr(u8)]
 pub enum ElectionState {
     Draft,
     Active,
@@ -49,7 +50,7 @@ pub struct Election {
 pub struct VoterChunk {
     pub election: Pubkey,
     pub chunk_index: u32,
-    #[max_len(MAX_ITEMS_PER_CHUNK)] 
+    #[cfg_attr(feature = "anchor", max_len(MAX_ITEMS_PER_CHUNK))] 
     pub voter_hashes: Vec<[u8; 32]>, // Хеши зарегистрированных избирателей
     pub bump: u8, // Добавьте bump для полноты
 }

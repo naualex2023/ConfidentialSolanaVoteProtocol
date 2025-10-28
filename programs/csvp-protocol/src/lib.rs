@@ -133,7 +133,7 @@ pub mod confidential_voting {
 
     /// Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей.
     #[arcium_callback(encrypted_ix = "init_vote_stats")]
-    pub fn init_callback(
+    pub fn init_vote_stats_callback(
         ctx: Context<InitCallback>,
         output: ComputationOutputs<InitVoteStatsOutput>,
     ) -> Result<()> {
@@ -312,7 +312,7 @@ pub mod confidential_voting {
 
     /// Коллбэк: записывает финальный РАСШИФРОВАННЫЙ результат.
     #[arcium_callback(encrypted_ix = "reveal_result")]
-    pub fn reveal_callback(
+    pub fn reveal_result_callback(
         ctx: Context<RevealCallback>,
         output: ComputationOutputs<RevealResultOutput>,
     ) -> Result<()> {

@@ -18,7 +18,7 @@ borsh = { version = "1.0.0", features = ["derive"] }
 thiserror = "1.0.0"
 num-derive = "0.3.0"
 num-traits = "0.2.0"
-anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+anchor-lang = { version = "0.31.1", features = ["init-if-needed","derive"] }
 # Используйте актуальные версии Arcium
 arcium-client = { version = "0.3.0", default-features = false }
 arcium-macros = { version = "0.3.0" }

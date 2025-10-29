@@ -121,7 +121,7 @@ describe("CsvpProtocol", () => {
     const initSig = await program.methods
       .initializeElection(
         anchor.BN(ELECTION_ID), 
-        "Выборы Президента Галактики",
+        'Выборы Президента Галактики',
         anchor.BN(startTime),
         anchor.BN(endTime),
         //initCompOffset // Этот аргумент нужен из-за `#[instruction]` на структуре
@@ -134,7 +134,7 @@ describe("CsvpProtocol", () => {
         systemProgram: SystemProgram.programId,
         arciumProgram: getArciumProgAddress(),
         // Arcium аккаунты
-        mxeAccount: mxeAccountPda,
+        mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(program.programId),
         executingPool: getExecutingPoolAccAddress(program.programId),
         computationAccount: getComputationAccAddress(program.programId, initCompOffset),

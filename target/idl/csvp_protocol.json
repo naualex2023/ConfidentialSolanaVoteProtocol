@@ -1,20 +1,14 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/confidential_voting.json`.
- */
-export type ConfidentialVoting = {
+{
   "address": "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs",
   "metadata": {
-    "name": "confidentialVoting",
+    "name": "csvp_protocol",
     "version": "0.2.0",
     "spec": "0.1.0",
     "description": "Confidential Solana Vote Protocol"
   },
   "instructions": [
     {
-      "name": "castVote",
+      "name": "cast_vote",
       "docs": [
         "Принимает голос: проверяет регистрацию, Nullifier и запускает MPC `vote`."
       ],
@@ -35,7 +29,7 @@ export type ConfidentialVoting = {
           "signer": true
         },
         {
-          "name": "signPdaAccount",
+          "name": "sign_pda_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -59,62 +53,62 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "account",
-                "path": "electionAccount"
+                "path": "election_account"
               }
             ]
           }
         },
         {
-          "name": "mxeAccount"
+          "name": "mxe_account"
         },
         {
-          "name": "mempoolAccount",
+          "name": "mempool_account",
           "writable": true
         },
         {
-          "name": "executingPool",
+          "name": "executing_pool",
           "writable": true
         },
         {
-          "name": "computationAccount",
+          "name": "computation_account",
           "writable": true
         },
         {
-          "name": "compDefAccount"
+          "name": "comp_def_account"
         },
         {
-          "name": "clusterAccount",
+          "name": "cluster_account",
           "writable": true
         },
         {
-          "name": "poolAccount",
+          "name": "pool_account",
           "writable": true,
           "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
         },
         {
-          "name": "clockAccount",
+          "name": "clock_account",
           "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "electionAccount",
+          "name": "election_account",
           "writable": true
         },
         {
           "name": "election",
           "relations": [
-            "voterRegistry"
+            "voter_registry"
           ]
         },
         {
-          "name": "voterRegistry",
+          "name": "voter_registry",
           "pda": {
             "seeds": [
               {
@@ -138,17 +132,17 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "account",
-                "path": "electionAccount"
+                "path": "election_account"
               },
               {
                 "kind": "arg",
-                "path": "voterChunkIndex"
+                "path": "voter_chunk_index"
               }
             ]
           }
         },
         {
-          "name": "nullifierAccount",
+          "name": "nullifier_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -168,11 +162,11 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "account",
-                "path": "electionAccount"
+                "path": "election_account"
               },
               {
                 "kind": "arg",
-                "path": "nullifierHash"
+                "path": "nullifier_hash"
               }
             ]
           }
@@ -180,11 +174,11 @@ export type ConfidentialVoting = {
       ],
       "args": [
         {
-          "name": "voterChunkIndex",
+          "name": "voter_chunk_index",
           "type": "u32"
         },
         {
-          "name": "voteCiphertext",
+          "name": "vote_ciphertext",
           "type": {
             "array": [
               "u8",
@@ -193,7 +187,7 @@ export type ConfidentialVoting = {
           }
         },
         {
-          "name": "voteEncryptionPubkey",
+          "name": "vote_encryption_pubkey",
           "type": {
             "array": [
               "u8",
@@ -202,11 +196,11 @@ export type ConfidentialVoting = {
           }
         },
         {
-          "name": "voteNonce",
+          "name": "vote_nonce",
           "type": "u128"
         },
         {
-          "name": "nullifierHash",
+          "name": "nullifier_hash",
           "type": {
             "array": [
               "u8",
@@ -215,7 +209,7 @@ export type ConfidentialVoting = {
           }
         },
         {
-          "name": "voterHash",
+          "name": "voter_hash",
           "type": {
             "array": [
               "u8",
@@ -226,7 +220,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "initRevealResultCompDef",
+      "name": "init_reveal_result_comp_def",
       "discriminator": [
         37,
         58,
@@ -244,26 +238,26 @@ export type ConfidentialVoting = {
           "signer": true
         },
         {
-          "name": "mxeAccount",
+          "name": "mxe_account",
           "writable": true
         },
         {
-          "name": "compDefAccount",
+          "name": "comp_def_account",
           "writable": true
         },
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "initVoteCompDef",
+      "name": "init_vote_comp_def",
       "discriminator": [
         227,
         119,
@@ -281,26 +275,26 @@ export type ConfidentialVoting = {
           "signer": true
         },
         {
-          "name": "mxeAccount",
+          "name": "mxe_account",
           "writable": true
         },
         {
-          "name": "compDefAccount",
+          "name": "comp_def_account",
           "writable": true
         },
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "initVoteStatsCallback",
+      "name": "init_vote_stats_callback",
       "docs": [
         "Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей."
       ],
@@ -316,18 +310,18 @@ export type ConfidentialVoting = {
       ],
       "accounts": [
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "compDefAccount"
+          "name": "comp_def_account"
         },
         {
-          "name": "instructionsSysvar",
+          "name": "instructions_sysvar",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "electionAccount",
+          "name": "election_account",
           "writable": true
         }
       ],
@@ -336,13 +330,13 @@ export type ConfidentialVoting = {
           "name": "output",
           "type": {
             "defined": {
-              "name": "computationOutputs",
+              "name": "ComputationOutputs",
               "generics": [
                 {
                   "kind": "type",
                   "type": {
                     "defined": {
-                      "name": "initVoteStatsOutput"
+                      "name": "InitVoteStatsOutput"
                     }
                   }
                 }
@@ -353,7 +347,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "initVoteStatsCompDef",
+      "name": "init_vote_stats_comp_def",
       "discriminator": [
         7,
         191,
@@ -371,26 +365,26 @@ export type ConfidentialVoting = {
           "signer": true
         },
         {
-          "name": "mxeAccount",
+          "name": "mxe_account",
           "writable": true
         },
         {
-          "name": "compDefAccount",
+          "name": "comp_def_account",
           "writable": true
         },
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "initializeElection",
+      "name": "initialize_election",
       "docs": [
         "Создает выборы и запускает MPC для инициализации encrypted_tally нулями."
       ],
@@ -411,10 +405,10 @@ export type ConfidentialVoting = {
           "signer": true
         },
         {
-          "name": "mxeAccount"
+          "name": "mxe_account"
         },
         {
-          "name": "signPdaAccount",
+          "name": "sign_pda_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -438,49 +432,49 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "account",
-                "path": "electionAccount"
+                "path": "election_account"
               }
             ]
           }
         },
         {
-          "name": "mempoolAccount",
+          "name": "mempool_account",
           "writable": true
         },
         {
-          "name": "executingPool",
+          "name": "executing_pool",
           "writable": true
         },
         {
-          "name": "computationAccount",
+          "name": "computation_account",
           "writable": true
         },
         {
-          "name": "compDefAccount"
+          "name": "comp_def_account"
         },
         {
-          "name": "clusterAccount",
+          "name": "cluster_account",
           "writable": true
         },
         {
-          "name": "poolAccount",
+          "name": "pool_account",
           "writable": true,
           "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
         },
         {
-          "name": "clockAccount",
+          "name": "clock_account",
           "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "electionAccount",
+          "name": "election_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -503,7 +497,7 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "arg",
-                "path": "electionId"
+                "path": "election_id"
               }
             ]
           }
@@ -511,7 +505,7 @@ export type ConfidentialVoting = {
       ],
       "args": [
         {
-          "name": "electionId",
+          "name": "election_id",
           "type": "u64"
         },
         {
@@ -519,17 +513,17 @@ export type ConfidentialVoting = {
           "type": "string"
         },
         {
-          "name": "startTime",
+          "name": "start_time",
           "type": "u64"
         },
         {
-          "name": "endTime",
+          "name": "end_time",
           "type": "u64"
         }
       ]
     },
     {
-      "name": "registerVoters",
+      "name": "register_voters",
       "docs": [
         "Регистрирует группу голосующих в чанке."
       ],
@@ -554,7 +548,7 @@ export type ConfidentialVoting = {
           "writable": true
         },
         {
-          "name": "voterRegistry",
+          "name": "voter_registry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -583,23 +577,23 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "arg",
-                "path": "chunkIndex"
+                "path": "chunk_index"
               }
             ]
           }
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "chunkIndex",
+          "name": "chunk_index",
           "type": "u32"
         },
         {
-          "name": "voterHashes",
+          "name": "voter_hashes",
           "type": {
             "vec": {
               "array": [
@@ -612,7 +606,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "revealResult",
+      "name": "reveal_result",
       "docs": [
         "Запускает MPC `reveal_result` (только создатель)."
       ],
@@ -633,7 +627,7 @@ export type ConfidentialVoting = {
           "signer": true
         },
         {
-          "name": "signPdaAccount",
+          "name": "sign_pda_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -657,65 +651,65 @@ export type ConfidentialVoting = {
               },
               {
                 "kind": "account",
-                "path": "electionAccount"
+                "path": "election_account"
               }
             ]
           }
         },
         {
-          "name": "mxeAccount"
+          "name": "mxe_account"
         },
         {
-          "name": "mempoolAccount",
+          "name": "mempool_account",
           "writable": true
         },
         {
-          "name": "executingPool",
+          "name": "executing_pool",
           "writable": true
         },
         {
-          "name": "computationAccount",
+          "name": "computation_account",
           "writable": true
         },
         {
-          "name": "compDefAccount"
+          "name": "comp_def_account"
         },
         {
-          "name": "clusterAccount",
+          "name": "cluster_account",
           "writable": true
         },
         {
-          "name": "poolAccount",
+          "name": "pool_account",
           "writable": true,
           "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
         },
         {
-          "name": "clockAccount",
+          "name": "clock_account",
           "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
           "name": "creator",
           "relations": [
-            "electionAccount"
+            "election_account"
           ]
         },
         {
-          "name": "electionAccount",
+          "name": "election_account",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "revealResultCallback",
+      "name": "reveal_result_callback",
       "docs": [
         "Коллбэк: записывает финальный РАСШИФРОВАННЫЙ результат."
       ],
@@ -731,18 +725,18 @@ export type ConfidentialVoting = {
       ],
       "accounts": [
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "compDefAccount"
+          "name": "comp_def_account"
         },
         {
-          "name": "instructionsSysvar",
+          "name": "instructions_sysvar",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "electionAccount",
+          "name": "election_account",
           "writable": true
         }
       ],
@@ -751,13 +745,13 @@ export type ConfidentialVoting = {
           "name": "output",
           "type": {
             "defined": {
-              "name": "computationOutputs",
+              "name": "ComputationOutputs",
               "generics": [
                 {
                   "kind": "type",
                   "type": {
                     "defined": {
-                      "name": "revealResultOutput"
+                      "name": "RevealResultOutput"
                     }
                   }
                 }
@@ -768,7 +762,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "voteCallback",
+      "name": "vote_callback",
       "docs": [
         "Коллбэк: записывает новый обновленный зашифрованный счет (`encrypted_tally`)."
       ],
@@ -784,18 +778,18 @@ export type ConfidentialVoting = {
       ],
       "accounts": [
         {
-          "name": "arciumProgram",
+          "name": "arcium_program",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "compDefAccount"
+          "name": "comp_def_account"
         },
         {
-          "name": "instructionsSysvar",
+          "name": "instructions_sysvar",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "electionAccount",
+          "name": "election_account",
           "writable": true
         }
       ],
@@ -804,13 +798,13 @@ export type ConfidentialVoting = {
           "name": "output",
           "type": {
             "defined": {
-              "name": "computationOutputs",
+              "name": "ComputationOutputs",
               "generics": [
                 {
                   "kind": "type",
                   "type": {
                     "defined": {
-                      "name": "voteOutput"
+                      "name": "VoteOutput"
                     }
                   }
                 }
@@ -823,7 +817,7 @@ export type ConfidentialVoting = {
   ],
   "accounts": [
     {
-      "name": "clockAccount",
+      "name": "ClockAccount",
       "discriminator": [
         152,
         171,
@@ -836,7 +830,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "cluster",
+      "name": "Cluster",
       "discriminator": [
         236,
         225,
@@ -849,7 +843,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "computationDefinitionAccount",
+      "name": "ComputationDefinitionAccount",
       "discriminator": [
         245,
         176,
@@ -862,7 +856,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "election",
+      "name": "Election",
       "discriminator": [
         68,
         191,
@@ -875,7 +869,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "feePool",
+      "name": "FeePool",
       "discriminator": [
         172,
         38,
@@ -888,7 +882,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "mxeAccount",
+      "name": "MXEAccount",
       "discriminator": [
         103,
         26,
@@ -901,7 +895,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "nullifierAccount",
+      "name": "NullifierAccount",
       "discriminator": [
         250,
         31,
@@ -914,7 +908,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "signerAccount",
+      "name": "SignerAccount",
       "discriminator": [
         127,
         212,
@@ -927,7 +921,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "voterRegistry",
+      "name": "VoterRegistry",
       "discriminator": [
         146,
         143,
@@ -942,7 +936,7 @@ export type ConfidentialVoting = {
   ],
   "events": [
     {
-      "name": "revealResultEvent",
+      "name": "RevealResultEvent",
       "discriminator": [
         20,
         154,
@@ -955,7 +949,7 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "voteEvent",
+      "name": "VoteEvent",
       "discriminator": [
         195,
         71,
@@ -971,79 +965,79 @@ export type ConfidentialVoting = {
   "errors": [
     {
       "code": 6000,
-      "name": "voterNotRegistered",
+      "name": "VoterNotRegistered",
       "msg": "Voter is not registered in the Voter Chunk."
     },
     {
       "code": 6001,
-      "name": "alreadyVoted",
+      "name": "AlreadyVoted",
       "msg": "The voter has already cast a vote (Nullifier already exists)."
     },
     {
       "code": 6002,
-      "name": "notAuthorized",
+      "name": "NotAuthorized",
       "msg": "Not authorized to perform this action."
     },
     {
       "code": 6003,
-      "name": "chunkFull",
+      "name": "ChunkFull",
       "msg": "Chunk Full, cannot register more voters in this chunk."
     },
     {
       "code": 6004,
-      "name": "invalidElectionPeriod",
+      "name": "InvalidElectionPeriod",
       "msg": "Invalid Election Period."
     },
     {
       "code": 6005,
-      "name": "electionNotDraft",
+      "name": "ElectionNotDraft",
       "msg": "Election Not Draft."
     },
     {
       "code": 6006,
-      "name": "invalidCandidateIndex",
+      "name": "InvalidCandidateIndex",
       "msg": "Invalid Candidate Index. Must be less than MAX_CANDIDATES."
     },
     {
       "code": 6007,
-      "name": "abortedComputation",
-      "msg": "abortedComputation"
+      "name": "AbortedComputation",
+      "msg": "AbortedComputation"
     },
     {
       "code": 6008,
-      "name": "invalidTallySize",
+      "name": "InvalidTallySize",
       "msg": "Invalid Tally Size."
     },
     {
       "code": 6009,
-      "name": "clusterNotSet",
-      "msg": "clusterNotSet"
+      "name": "ClusterNotSet",
+      "msg": "ClusterNotSet"
     },
     {
       "code": 6010,
-      "name": "invalidAuthority",
+      "name": "InvalidAuthority",
       "msg": "Invalid authority"
     }
   ],
   "types": [
     {
-      "name": "activation",
+      "name": "Activation",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "activationEpoch",
+            "name": "activation_epoch",
             "type": {
               "defined": {
-                "name": "epoch"
+                "name": "Epoch"
               }
             }
           },
           {
-            "name": "deactivationEpoch",
+            "name": "deactivation_epoch",
             "type": {
               "defined": {
-                "name": "epoch"
+                "name": "Epoch"
               }
             }
           }
@@ -1051,36 +1045,36 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "circuitSource",
+      "name": "CircuitSource",
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "local",
+            "name": "Local",
             "fields": [
               {
                 "defined": {
-                  "name": "localCircuitSource"
+                  "name": "LocalCircuitSource"
                 }
               }
             ]
           },
           {
-            "name": "onChain",
+            "name": "OnChain",
             "fields": [
               {
                 "defined": {
-                  "name": "onChainCircuitSource"
+                  "name": "OnChainCircuitSource"
                 }
               }
             ]
           },
           {
-            "name": "offChain",
+            "name": "OffChain",
             "fields": [
               {
                 "defined": {
-                  "name": "offChainCircuitSource"
+                  "name": "OffChainCircuitSource"
                 }
               }
             ]
@@ -1089,7 +1083,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "clockAccount",
+      "name": "ClockAccount",
       "docs": [
         "An account storing the current network epoch"
       ],
@@ -1097,26 +1091,26 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "startEpoch",
+            "name": "start_epoch",
             "type": {
               "defined": {
-                "name": "epoch"
+                "name": "Epoch"
               }
             }
           },
           {
-            "name": "currentEpoch",
+            "name": "current_epoch",
             "type": {
               "defined": {
-                "name": "epoch"
+                "name": "Epoch"
               }
             }
           },
           {
-            "name": "startEpochTimestamp",
+            "name": "start_epoch_timestamp",
             "type": {
               "defined": {
-                "name": "timestamp"
+                "name": "Timestamp"
               }
             }
           },
@@ -1128,7 +1122,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "cluster",
+      "name": "Cluster",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1139,27 +1133,27 @@ export type ConfidentialVoting = {
             }
           },
           {
-            "name": "maxSize",
+            "name": "max_size",
             "type": "u32"
           },
           {
             "name": "activation",
             "type": {
               "defined": {
-                "name": "activation"
+                "name": "Activation"
               }
             }
           },
           {
-            "name": "maxCapacity",
+            "name": "max_capacity",
             "type": "u64"
           },
           {
-            "name": "cuPrice",
+            "name": "cu_price",
             "type": "u64"
           },
           {
-            "name": "cuPriceProposals",
+            "name": "cu_price_proposals",
             "type": {
               "array": [
                 "u64",
@@ -1168,10 +1162,10 @@ export type ConfidentialVoting = {
             }
           },
           {
-            "name": "lastUpdatedEpoch",
+            "name": "last_updated_epoch",
             "type": {
               "defined": {
-                "name": "epoch"
+                "name": "Epoch"
               }
             }
           },
@@ -1186,17 +1180,17 @@ export type ConfidentialVoting = {
             "type": {
               "vec": {
                 "defined": {
-                  "name": "nodeRef"
+                  "name": "NodeRef"
                 }
               }
             }
           },
           {
-            "name": "pendingNodes",
+            "name": "pending_nodes",
             "type": {
               "vec": {
                 "defined": {
-                  "name": "nodeRef"
+                  "name": "NodeRef"
                 }
               }
             }
@@ -1209,7 +1203,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "computationDefinitionAccount",
+      "name": "ComputationDefinitionAccount",
       "docs": [
         "An account representing a [ComputationDefinition] in a MXE."
       ],
@@ -1217,32 +1211,32 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "finalizationAuthority",
+            "name": "finalization_authority",
             "type": {
               "option": "pubkey"
             }
           },
           {
-            "name": "finalizeDuringCallback",
+            "name": "finalize_during_callback",
             "type": "bool"
           },
           {
-            "name": "cuAmount",
+            "name": "cu_amount",
             "type": "u64"
           },
           {
             "name": "definition",
             "type": {
               "defined": {
-                "name": "computationDefinitionMeta"
+                "name": "ComputationDefinitionMeta"
               }
             }
           },
           {
-            "name": "circuitSource",
+            "name": "circuit_source",
             "type": {
               "defined": {
-                "name": "circuitSource"
+                "name": "CircuitSource"
               }
             }
           },
@@ -1254,7 +1248,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "computationDefinitionMeta",
+      "name": "ComputationDefinitionMeta",
       "docs": [
         "A computation definition for execution in a MXE."
       ],
@@ -1262,14 +1256,14 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "circuitLen",
+            "name": "circuit_len",
             "type": "u32"
           },
           {
             "name": "signature",
             "type": {
               "defined": {
-                "name": "computationSignature"
+                "name": "ComputationSignature"
               }
             }
           }
@@ -1277,32 +1271,32 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "computationOutputs",
+      "name": "ComputationOutputs",
       "generics": [
         {
           "kind": "type",
-          "name": "o"
+          "name": "O"
         }
       ],
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "success",
+            "name": "Success",
             "fields": [
               {
-                "generic": "o"
+                "generic": "O"
               }
             ]
           },
           {
-            "name": "failure"
+            "name": "Failure"
           }
         ]
       }
     },
     {
-      "name": "computationSignature",
+      "name": "ComputationSignature",
       "docs": [
         "The signature of a computation defined in a [ComputationDefinition]."
       ],
@@ -1314,7 +1308,7 @@ export type ConfidentialVoting = {
             "type": {
               "vec": {
                 "defined": {
-                  "name": "parameter"
+                  "name": "Parameter"
                 }
               }
             }
@@ -1324,7 +1318,7 @@ export type ConfidentialVoting = {
             "type": {
               "vec": {
                 "defined": {
-                  "name": "output"
+                  "name": "Output"
                 }
               }
             }
@@ -1333,7 +1327,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "election",
+      "name": "Election",
       "docs": [
         "Главный аккаунт выборов (Election)"
       ],
@@ -1345,7 +1339,7 @@ export type ConfidentialVoting = {
             "type": "pubkey"
           },
           {
-            "name": "electionId",
+            "name": "election_id",
             "type": "u64"
           },
           {
@@ -1353,11 +1347,11 @@ export type ConfidentialVoting = {
             "type": "string"
           },
           {
-            "name": "startTime",
+            "name": "start_time",
             "type": "u64"
           },
           {
-            "name": "endTime",
+            "name": "end_time",
             "type": "u64"
           },
           {
@@ -1365,7 +1359,7 @@ export type ConfidentialVoting = {
             "type": "u64"
           },
           {
-            "name": "totalVotes",
+            "name": "total_votes",
             "type": "u32"
           },
           {
@@ -1377,7 +1371,7 @@ export type ConfidentialVoting = {
             "type": "u128"
           },
           {
-            "name": "encryptedTally",
+            "name": "encrypted_tally",
             "docs": [
               "Encrypted vote tallies: [32-byte ciphertext; MAX_CANDIDATES]"
             ],
@@ -1394,7 +1388,7 @@ export type ConfidentialVoting = {
             }
           },
           {
-            "name": "finalResult",
+            "name": "final_result",
             "docs": [
               "Final decrypted result: [u64; MAX_CANDIDATES]"
             ],
@@ -1409,7 +1403,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "epoch",
+      "name": "Epoch",
       "docs": [
         "The network epoch"
       ],
@@ -1421,7 +1415,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "feePool",
+      "name": "FeePool",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1433,7 +1427,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "initVoteStatsOutput",
+      "name": "InitVoteStatsOutput",
       "docs": [
         "The output of the callback instruction. Provided as a struct with ordered fields",
         "as anchor does not support tuples and tuple structs yet."
@@ -1442,10 +1436,10 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "field0",
+            "name": "field_0",
             "type": {
               "defined": {
-                "name": "mxeEncryptedStruct",
+                "name": "MXEEncryptedStruct",
                 "generics": [
                   {
                     "kind": "const",
@@ -1459,18 +1453,18 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "localCircuitSource",
+      "name": "LocalCircuitSource",
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "mxeKeygen"
+            "name": "MxeKeygen"
           }
         ]
       }
     },
     {
-      "name": "mxeAccount",
+      "name": "MXEAccount",
       "docs": [
         "A MPC Execution Environment."
       ],
@@ -1490,27 +1484,27 @@ export type ConfidentialVoting = {
             }
           },
           {
-            "name": "x25519Pubkey",
+            "name": "x25519_pubkey",
             "type": {
               "defined": {
-                "name": "x25519Pubkey"
+                "name": "X25519Pubkey"
               }
             }
           },
           {
-            "name": "fallbackClusters",
+            "name": "fallback_clusters",
             "type": {
               "vec": "u32"
             }
           },
           {
-            "name": "rejectedClusters",
+            "name": "rejected_clusters",
             "type": {
               "vec": "u32"
             }
           },
           {
-            "name": "computationDefinitions",
+            "name": "computation_definitions",
             "type": {
               "vec": "u32"
             }
@@ -1523,11 +1517,11 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "mxeEncryptedStruct",
+      "name": "MXEEncryptedStruct",
       "generics": [
         {
           "kind": "const",
-          "name": "len",
+          "name": "LEN",
           "type": "usize"
         }
       ],
@@ -1549,7 +1543,7 @@ export type ConfidentialVoting = {
                   ]
                 },
                 {
-                  "generic": "len"
+                  "generic": "LEN"
                 }
               ]
             }
@@ -1558,7 +1552,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "nodeRef",
+      "name": "NodeRef",
       "docs": [
         "A reference to a node in the cluster.",
         "The offset is to derive the Node Account.",
@@ -1573,7 +1567,7 @@ export type ConfidentialVoting = {
             "type": "u32"
           },
           {
-            "name": "currentTotalRewards",
+            "name": "current_total_rewards",
             "type": "u64"
           },
           {
@@ -1584,7 +1578,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "nullifierAccount",
+      "name": "NullifierAccount",
       "docs": [
         "Аккаунт для предотвращения двойного голосования (NullifierAccount)"
       ],
@@ -1592,11 +1586,11 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "electionPda",
+            "name": "election_pda",
             "type": "pubkey"
           },
           {
-            "name": "nullifierHash",
+            "name": "nullifier_hash",
             "type": {
               "array": [
                 "u8",
@@ -1612,7 +1606,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "offChainCircuitSource",
+      "name": "OffChainCircuitSource",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1633,23 +1627,23 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "onChainCircuitSource",
+      "name": "OnChainCircuitSource",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "isCompleted",
+            "name": "is_completed",
             "type": "bool"
           },
           {
-            "name": "uploadAuth",
+            "name": "upload_auth",
             "type": "pubkey"
           }
         ]
       }
     },
     {
-      "name": "output",
+      "name": "Output",
       "docs": [
         "An output of a computation.",
         "We currently don't support encrypted outputs yet since encrypted values are passed via",
@@ -1659,37 +1653,37 @@ export type ConfidentialVoting = {
         "kind": "enum",
         "variants": [
           {
-            "name": "plaintextBool"
+            "name": "PlaintextBool"
           },
           {
-            "name": "plaintextU8"
+            "name": "PlaintextU8"
           },
           {
-            "name": "plaintextU16"
+            "name": "PlaintextU16"
           },
           {
-            "name": "plaintextU32"
+            "name": "PlaintextU32"
           },
           {
-            "name": "plaintextU64"
+            "name": "PlaintextU64"
           },
           {
-            "name": "plaintextU128"
+            "name": "PlaintextU128"
           },
           {
-            "name": "ciphertext"
+            "name": "Ciphertext"
           },
           {
-            "name": "arcisPubkey"
+            "name": "ArcisPubkey"
           },
           {
-            "name": "plaintextFloat"
+            "name": "PlaintextFloat"
           }
         ]
       }
     },
     {
-      "name": "parameter",
+      "name": "Parameter",
       "docs": [
         "A parameter of a computation.",
         "We differentiate between plaintext and encrypted parameters and data objects.",
@@ -1701,46 +1695,46 @@ export type ConfidentialVoting = {
         "kind": "enum",
         "variants": [
           {
-            "name": "plaintextBool"
+            "name": "PlaintextBool"
           },
           {
-            "name": "plaintextU8"
+            "name": "PlaintextU8"
           },
           {
-            "name": "plaintextU16"
+            "name": "PlaintextU16"
           },
           {
-            "name": "plaintextU32"
+            "name": "PlaintextU32"
           },
           {
-            "name": "plaintextU64"
+            "name": "PlaintextU64"
           },
           {
-            "name": "plaintextU128"
+            "name": "PlaintextU128"
           },
           {
-            "name": "ciphertext"
+            "name": "Ciphertext"
           },
           {
-            "name": "arcisPubkey"
+            "name": "ArcisPubkey"
           },
           {
-            "name": "arcisSignature"
+            "name": "ArcisSignature"
           },
           {
-            "name": "plaintextFloat"
+            "name": "PlaintextFloat"
           },
           {
-            "name": "manticoreAlgo"
+            "name": "ManticoreAlgo"
           },
           {
-            "name": "inputDataset"
+            "name": "InputDataset"
           }
         ]
       }
     },
     {
-      "name": "revealResultEvent",
+      "name": "RevealResultEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1752,7 +1746,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "revealResultOutput",
+      "name": "RevealResultOutput",
       "docs": [
         "The output of the callback instruction. Provided as a struct with ordered fields",
         "as anchor does not support tuples and tuple structs yet."
@@ -1761,7 +1755,7 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "field0",
+            "name": "field_0",
             "type": {
               "array": [
                 "u64",
@@ -1773,7 +1767,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "signerAccount",
+      "name": "SignerAccount",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1785,7 +1779,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "timestamp",
+      "name": "Timestamp",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1797,7 +1791,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "voteEvent",
+      "name": "VoteEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1809,7 +1803,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "voteOutput",
+      "name": "VoteOutput",
       "docs": [
         "The output of the callback instruction. Provided as a struct with ordered fields",
         "as anchor does not support tuples and tuple structs yet."
@@ -1818,10 +1812,10 @@ export type ConfidentialVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "field0",
+            "name": "field_0",
             "type": {
               "defined": {
-                "name": "mxeEncryptedStruct",
+                "name": "MXEEncryptedStruct",
                 "generics": [
                   {
                     "kind": "const",
@@ -1835,7 +1829,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "voterRegistry",
+      "name": "VoterRegistry",
       "docs": [
         "Аккаунт для реестра голосующих (VoterChunk)"
       ],
@@ -1847,11 +1841,11 @@ export type ConfidentialVoting = {
             "type": "pubkey"
           },
           {
-            "name": "chunkIndex",
+            "name": "chunk_index",
             "type": "u32"
           },
           {
-            "name": "voterHashes",
+            "name": "voter_hashes",
             "type": {
               "vec": {
                 "array": [
@@ -1869,12 +1863,12 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "x25519Pubkey",
+      "name": "X25519Pubkey",
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "set",
+            "name": "Set",
             "fields": [
               {
                 "array": [
@@ -1885,7 +1879,7 @@ export type ConfidentialVoting = {
             ]
           },
           {
-            "name": "unset",
+            "name": "Unset",
             "fields": [
               {
                 "array": [
@@ -1902,4 +1896,4 @@ export type ConfidentialVoting = {
       }
     }
   ]
-};
+}

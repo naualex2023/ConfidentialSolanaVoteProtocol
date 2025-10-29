@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { ConfidentialVoting } from "../target/types/confidential_voting"; // <-- Убедитесь, что имя типа верное
+import { CsvpProtocol } from "../target/types/csvp_protocol"; // <-- Убедитесь, что имя типа верное
 import { randomBytes } from "crypto";
 import {
   awaitComputationFinalization,
@@ -39,10 +39,10 @@ import {
 // @ts-ignore
 const SECONDS = 1000;
 
-describe("ConfidentialVoting", () => {
+describe("CsvpProtocol", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
-  const program = anchor.workspace.ConfidentialVoting as Program<ConfidentialVoting>;
+  const program = anchor.workspace.CsvpProtocol as Program<CsvpProtocol>;
   const provider = anchor.getProvider();
 
   type Event = anchor.IdlEvents<(typeof program)["idl"]>;
@@ -305,7 +305,7 @@ describe("ConfidentialVoting", () => {
   // --- Функции инициализации CompDef (без изменений) ---
 
   async function initVoteStatsCompDef(
-    program: Program<ConfidentialVoting>,
+    program: Program<CsvpProtocol>,
     owner: anchor.web3.Keypair,
     uploadRawCircuit: boolean,
     offchainSource: boolean
@@ -363,7 +363,7 @@ describe("ConfidentialVoting", () => {
   }
 
   async function initVoteCompDef(
-    program: Program<ConfidentialVoting>,
+    program: Program<CsvpProtocol>,
     owner: anchor.web3.Keypair,
     uploadRawCircuit: boolean,
     offchainSource: boolean
@@ -423,7 +423,7 @@ describe("ConfidentialVoting", () => {
   }
 
   async function initRevealResultCompDef(
-    program: Program<ConfidentialVoting>,
+    program: Program<CsvpProtocol>,
     owner: anchor.web3.Keypair,
     uploadRawCircuit: boolean,
     offchainSource: boolean

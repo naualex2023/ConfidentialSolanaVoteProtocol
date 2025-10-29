@@ -1,14 +1,20 @@
-{
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/csvp_protocol.json`.
+ */
+export type CsvpProtocol = {
   "address": "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs",
   "metadata": {
-    "name": "confidential_voting",
+    "name": "csvpProtocol",
     "version": "0.2.0",
     "spec": "0.1.0",
     "description": "Confidential Solana Vote Protocol"
   },
   "instructions": [
     {
-      "name": "cast_vote",
+      "name": "castVote",
       "docs": [
         "Принимает голос: проверяет регистрацию, Nullifier и запускает MPC `vote`."
       ],
@@ -29,7 +35,7 @@
           "signer": true
         },
         {
-          "name": "sign_pda_account",
+          "name": "signPdaAccount",
           "writable": true,
           "pda": {
             "seeds": [
@@ -53,62 +59,62 @@
               },
               {
                 "kind": "account",
-                "path": "election_account"
+                "path": "electionAccount"
               }
             ]
           }
         },
         {
-          "name": "mxe_account"
+          "name": "mxeAccount"
         },
         {
-          "name": "mempool_account",
+          "name": "mempoolAccount",
           "writable": true
         },
         {
-          "name": "executing_pool",
+          "name": "executingPool",
           "writable": true
         },
         {
-          "name": "computation_account",
+          "name": "computationAccount",
           "writable": true
         },
         {
-          "name": "comp_def_account"
+          "name": "compDefAccount"
         },
         {
-          "name": "cluster_account",
+          "name": "clusterAccount",
           "writable": true
         },
         {
-          "name": "pool_account",
+          "name": "poolAccount",
           "writable": true,
           "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
         },
         {
-          "name": "clock_account",
+          "name": "clockAccount",
           "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "election_account",
+          "name": "electionAccount",
           "writable": true
         },
         {
           "name": "election",
           "relations": [
-            "voter_registry"
+            "voterRegistry"
           ]
         },
         {
-          "name": "voter_registry",
+          "name": "voterRegistry",
           "pda": {
             "seeds": [
               {
@@ -132,17 +138,17 @@
               },
               {
                 "kind": "account",
-                "path": "election_account"
+                "path": "electionAccount"
               },
               {
                 "kind": "arg",
-                "path": "voter_chunk_index"
+                "path": "voterChunkIndex"
               }
             ]
           }
         },
         {
-          "name": "nullifier_account",
+          "name": "nullifierAccount",
           "writable": true,
           "pda": {
             "seeds": [
@@ -162,11 +168,11 @@
               },
               {
                 "kind": "account",
-                "path": "election_account"
+                "path": "electionAccount"
               },
               {
                 "kind": "arg",
-                "path": "nullifier_hash"
+                "path": "nullifierHash"
               }
             ]
           }
@@ -174,11 +180,11 @@
       ],
       "args": [
         {
-          "name": "voter_chunk_index",
+          "name": "voterChunkIndex",
           "type": "u32"
         },
         {
-          "name": "vote_ciphertext",
+          "name": "voteCiphertext",
           "type": {
             "array": [
               "u8",
@@ -187,7 +193,7 @@
           }
         },
         {
-          "name": "vote_encryption_pubkey",
+          "name": "voteEncryptionPubkey",
           "type": {
             "array": [
               "u8",
@@ -196,11 +202,11 @@
           }
         },
         {
-          "name": "vote_nonce",
+          "name": "voteNonce",
           "type": "u128"
         },
         {
-          "name": "nullifier_hash",
+          "name": "nullifierHash",
           "type": {
             "array": [
               "u8",
@@ -209,7 +215,7 @@
           }
         },
         {
-          "name": "voter_hash",
+          "name": "voterHash",
           "type": {
             "array": [
               "u8",
@@ -220,7 +226,7 @@
       ]
     },
     {
-      "name": "init_reveal_result_comp_def",
+      "name": "initRevealResultCompDef",
       "discriminator": [
         37,
         58,
@@ -238,26 +244,26 @@
           "signer": true
         },
         {
-          "name": "mxe_account",
+          "name": "mxeAccount",
           "writable": true
         },
         {
-          "name": "comp_def_account",
+          "name": "compDefAccount",
           "writable": true
         },
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "init_vote_comp_def",
+      "name": "initVoteCompDef",
       "discriminator": [
         227,
         119,
@@ -275,26 +281,26 @@
           "signer": true
         },
         {
-          "name": "mxe_account",
+          "name": "mxeAccount",
           "writable": true
         },
         {
-          "name": "comp_def_account",
+          "name": "compDefAccount",
           "writable": true
         },
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "init_vote_stats_callback",
+      "name": "initVoteStatsCallback",
       "docs": [
         "Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей."
       ],
@@ -310,18 +316,18 @@
       ],
       "accounts": [
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "comp_def_account"
+          "name": "compDefAccount"
         },
         {
-          "name": "instructions_sysvar",
+          "name": "instructionsSysvar",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "election_account",
+          "name": "electionAccount",
           "writable": true
         }
       ],
@@ -330,13 +336,13 @@
           "name": "output",
           "type": {
             "defined": {
-              "name": "ComputationOutputs",
+              "name": "computationOutputs",
               "generics": [
                 {
                   "kind": "type",
                   "type": {
                     "defined": {
-                      "name": "InitVoteStatsOutput"
+                      "name": "initVoteStatsOutput"
                     }
                   }
                 }
@@ -347,7 +353,7 @@
       ]
     },
     {
-      "name": "init_vote_stats_comp_def",
+      "name": "initVoteStatsCompDef",
       "discriminator": [
         7,
         191,
@@ -365,26 +371,26 @@
           "signer": true
         },
         {
-          "name": "mxe_account",
+          "name": "mxeAccount",
           "writable": true
         },
         {
-          "name": "comp_def_account",
+          "name": "compDefAccount",
           "writable": true
         },
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "initialize_election",
+      "name": "initializeElection",
       "docs": [
         "Создает выборы и запускает MPC для инициализации encrypted_tally нулями."
       ],
@@ -405,10 +411,10 @@
           "signer": true
         },
         {
-          "name": "mxe_account"
+          "name": "mxeAccount"
         },
         {
-          "name": "sign_pda_account",
+          "name": "signPdaAccount",
           "writable": true,
           "pda": {
             "seeds": [
@@ -432,49 +438,49 @@
               },
               {
                 "kind": "account",
-                "path": "election_account"
+                "path": "electionAccount"
               }
             ]
           }
         },
         {
-          "name": "mempool_account",
+          "name": "mempoolAccount",
           "writable": true
         },
         {
-          "name": "executing_pool",
+          "name": "executingPool",
           "writable": true
         },
         {
-          "name": "computation_account",
+          "name": "computationAccount",
           "writable": true
         },
         {
-          "name": "comp_def_account"
+          "name": "compDefAccount"
         },
         {
-          "name": "cluster_account",
+          "name": "clusterAccount",
           "writable": true
         },
         {
-          "name": "pool_account",
+          "name": "poolAccount",
           "writable": true,
           "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
         },
         {
-          "name": "clock_account",
+          "name": "clockAccount",
           "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "election_account",
+          "name": "electionAccount",
           "writable": true,
           "pda": {
             "seeds": [
@@ -497,7 +503,7 @@
               },
               {
                 "kind": "arg",
-                "path": "election_id"
+                "path": "electionId"
               }
             ]
           }
@@ -505,7 +511,7 @@
       ],
       "args": [
         {
-          "name": "election_id",
+          "name": "electionId",
           "type": "u64"
         },
         {
@@ -513,17 +519,17 @@
           "type": "string"
         },
         {
-          "name": "start_time",
+          "name": "startTime",
           "type": "u64"
         },
         {
-          "name": "end_time",
+          "name": "endTime",
           "type": "u64"
         }
       ]
     },
     {
-      "name": "register_voters",
+      "name": "registerVoters",
       "docs": [
         "Регистрирует группу голосующих в чанке."
       ],
@@ -548,7 +554,7 @@
           "writable": true
         },
         {
-          "name": "voter_registry",
+          "name": "voterRegistry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -577,23 +583,23 @@
               },
               {
                 "kind": "arg",
-                "path": "chunk_index"
+                "path": "chunkIndex"
               }
             ]
           }
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "chunk_index",
+          "name": "chunkIndex",
           "type": "u32"
         },
         {
-          "name": "voter_hashes",
+          "name": "voterHashes",
           "type": {
             "vec": {
               "array": [
@@ -606,7 +612,7 @@
       ]
     },
     {
-      "name": "reveal_result",
+      "name": "revealResult",
       "docs": [
         "Запускает MPC `reveal_result` (только создатель)."
       ],
@@ -627,7 +633,7 @@
           "signer": true
         },
         {
-          "name": "sign_pda_account",
+          "name": "signPdaAccount",
           "writable": true,
           "pda": {
             "seeds": [
@@ -651,65 +657,65 @@
               },
               {
                 "kind": "account",
-                "path": "election_account"
+                "path": "electionAccount"
               }
             ]
           }
         },
         {
-          "name": "mxe_account"
+          "name": "mxeAccount"
         },
         {
-          "name": "mempool_account",
+          "name": "mempoolAccount",
           "writable": true
         },
         {
-          "name": "executing_pool",
+          "name": "executingPool",
           "writable": true
         },
         {
-          "name": "computation_account",
+          "name": "computationAccount",
           "writable": true
         },
         {
-          "name": "comp_def_account"
+          "name": "compDefAccount"
         },
         {
-          "name": "cluster_account",
+          "name": "clusterAccount",
           "writable": true
         },
         {
-          "name": "pool_account",
+          "name": "poolAccount",
           "writable": true,
           "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
         },
         {
-          "name": "clock_account",
+          "name": "clockAccount",
           "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
           "name": "creator",
           "relations": [
-            "election_account"
+            "electionAccount"
           ]
         },
         {
-          "name": "election_account",
+          "name": "electionAccount",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "reveal_result_callback",
+      "name": "revealResultCallback",
       "docs": [
         "Коллбэк: записывает финальный РАСШИФРОВАННЫЙ результат."
       ],
@@ -725,18 +731,18 @@
       ],
       "accounts": [
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "comp_def_account"
+          "name": "compDefAccount"
         },
         {
-          "name": "instructions_sysvar",
+          "name": "instructionsSysvar",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "election_account",
+          "name": "electionAccount",
           "writable": true
         }
       ],
@@ -745,13 +751,13 @@
           "name": "output",
           "type": {
             "defined": {
-              "name": "ComputationOutputs",
+              "name": "computationOutputs",
               "generics": [
                 {
                   "kind": "type",
                   "type": {
                     "defined": {
-                      "name": "RevealResultOutput"
+                      "name": "revealResultOutput"
                     }
                   }
                 }
@@ -762,7 +768,7 @@
       ]
     },
     {
-      "name": "vote_callback",
+      "name": "voteCallback",
       "docs": [
         "Коллбэк: записывает новый обновленный зашифрованный счет (`encrypted_tally`)."
       ],
@@ -778,18 +784,18 @@
       ],
       "accounts": [
         {
-          "name": "arcium_program",
+          "name": "arciumProgram",
           "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
         },
         {
-          "name": "comp_def_account"
+          "name": "compDefAccount"
         },
         {
-          "name": "instructions_sysvar",
+          "name": "instructionsSysvar",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "election_account",
+          "name": "electionAccount",
           "writable": true
         }
       ],
@@ -798,13 +804,13 @@
           "name": "output",
           "type": {
             "defined": {
-              "name": "ComputationOutputs",
+              "name": "computationOutputs",
               "generics": [
                 {
                   "kind": "type",
                   "type": {
                     "defined": {
-                      "name": "VoteOutput"
+                      "name": "voteOutput"
                     }
                   }
                 }
@@ -817,7 +823,7 @@
   ],
   "accounts": [
     {
-      "name": "ClockAccount",
+      "name": "clockAccount",
       "discriminator": [
         152,
         171,
@@ -830,7 +836,7 @@
       ]
     },
     {
-      "name": "Cluster",
+      "name": "cluster",
       "discriminator": [
         236,
         225,
@@ -843,7 +849,7 @@
       ]
     },
     {
-      "name": "ComputationDefinitionAccount",
+      "name": "computationDefinitionAccount",
       "discriminator": [
         245,
         176,
@@ -856,7 +862,7 @@
       ]
     },
     {
-      "name": "Election",
+      "name": "election",
       "discriminator": [
         68,
         191,
@@ -869,7 +875,7 @@
       ]
     },
     {
-      "name": "FeePool",
+      "name": "feePool",
       "discriminator": [
         172,
         38,
@@ -882,7 +888,7 @@
       ]
     },
     {
-      "name": "MXEAccount",
+      "name": "mxeAccount",
       "discriminator": [
         103,
         26,
@@ -895,7 +901,7 @@
       ]
     },
     {
-      "name": "NullifierAccount",
+      "name": "nullifierAccount",
       "discriminator": [
         250,
         31,
@@ -908,7 +914,7 @@
       ]
     },
     {
-      "name": "SignerAccount",
+      "name": "signerAccount",
       "discriminator": [
         127,
         212,
@@ -921,7 +927,7 @@
       ]
     },
     {
-      "name": "VoterRegistry",
+      "name": "voterRegistry",
       "discriminator": [
         146,
         143,
@@ -936,7 +942,7 @@
   ],
   "events": [
     {
-      "name": "RevealResultEvent",
+      "name": "revealResultEvent",
       "discriminator": [
         20,
         154,
@@ -949,7 +955,7 @@
       ]
     },
     {
-      "name": "VoteEvent",
+      "name": "voteEvent",
       "discriminator": [
         195,
         71,
@@ -965,79 +971,79 @@
   "errors": [
     {
       "code": 6000,
-      "name": "VoterNotRegistered",
+      "name": "voterNotRegistered",
       "msg": "Voter is not registered in the Voter Chunk."
     },
     {
       "code": 6001,
-      "name": "AlreadyVoted",
+      "name": "alreadyVoted",
       "msg": "The voter has already cast a vote (Nullifier already exists)."
     },
     {
       "code": 6002,
-      "name": "NotAuthorized",
+      "name": "notAuthorized",
       "msg": "Not authorized to perform this action."
     },
     {
       "code": 6003,
-      "name": "ChunkFull",
+      "name": "chunkFull",
       "msg": "Chunk Full, cannot register more voters in this chunk."
     },
     {
       "code": 6004,
-      "name": "InvalidElectionPeriod",
+      "name": "invalidElectionPeriod",
       "msg": "Invalid Election Period."
     },
     {
       "code": 6005,
-      "name": "ElectionNotDraft",
+      "name": "electionNotDraft",
       "msg": "Election Not Draft."
     },
     {
       "code": 6006,
-      "name": "InvalidCandidateIndex",
+      "name": "invalidCandidateIndex",
       "msg": "Invalid Candidate Index. Must be less than MAX_CANDIDATES."
     },
     {
       "code": 6007,
-      "name": "AbortedComputation",
-      "msg": "AbortedComputation"
+      "name": "abortedComputation",
+      "msg": "abortedComputation"
     },
     {
       "code": 6008,
-      "name": "InvalidTallySize",
+      "name": "invalidTallySize",
       "msg": "Invalid Tally Size."
     },
     {
       "code": 6009,
-      "name": "ClusterNotSet",
-      "msg": "ClusterNotSet"
+      "name": "clusterNotSet",
+      "msg": "clusterNotSet"
     },
     {
       "code": 6010,
-      "name": "InvalidAuthority",
+      "name": "invalidAuthority",
       "msg": "Invalid authority"
     }
   ],
   "types": [
     {
-      "name": "Activation",
+      "name": "activation",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "activation_epoch",
+            "name": "activationEpoch",
             "type": {
               "defined": {
-                "name": "Epoch"
+                "name": "epoch"
               }
             }
           },
           {
-            "name": "deactivation_epoch",
+            "name": "deactivationEpoch",
             "type": {
               "defined": {
-                "name": "Epoch"
+                "name": "epoch"
               }
             }
           }
@@ -1045,36 +1051,36 @@
       }
     },
     {
-      "name": "CircuitSource",
+      "name": "circuitSource",
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "Local",
+            "name": "local",
             "fields": [
               {
                 "defined": {
-                  "name": "LocalCircuitSource"
+                  "name": "localCircuitSource"
                 }
               }
             ]
           },
           {
-            "name": "OnChain",
+            "name": "onChain",
             "fields": [
               {
                 "defined": {
-                  "name": "OnChainCircuitSource"
+                  "name": "onChainCircuitSource"
                 }
               }
             ]
           },
           {
-            "name": "OffChain",
+            "name": "offChain",
             "fields": [
               {
                 "defined": {
-                  "name": "OffChainCircuitSource"
+                  "name": "offChainCircuitSource"
                 }
               }
             ]
@@ -1083,7 +1089,7 @@
       }
     },
     {
-      "name": "ClockAccount",
+      "name": "clockAccount",
       "docs": [
         "An account storing the current network epoch"
       ],
@@ -1091,26 +1097,26 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "start_epoch",
+            "name": "startEpoch",
             "type": {
               "defined": {
-                "name": "Epoch"
+                "name": "epoch"
               }
             }
           },
           {
-            "name": "current_epoch",
+            "name": "currentEpoch",
             "type": {
               "defined": {
-                "name": "Epoch"
+                "name": "epoch"
               }
             }
           },
           {
-            "name": "start_epoch_timestamp",
+            "name": "startEpochTimestamp",
             "type": {
               "defined": {
-                "name": "Timestamp"
+                "name": "timestamp"
               }
             }
           },
@@ -1122,7 +1128,7 @@
       }
     },
     {
-      "name": "Cluster",
+      "name": "cluster",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1133,27 +1139,27 @@
             }
           },
           {
-            "name": "max_size",
+            "name": "maxSize",
             "type": "u32"
           },
           {
             "name": "activation",
             "type": {
               "defined": {
-                "name": "Activation"
+                "name": "activation"
               }
             }
           },
           {
-            "name": "max_capacity",
+            "name": "maxCapacity",
             "type": "u64"
           },
           {
-            "name": "cu_price",
+            "name": "cuPrice",
             "type": "u64"
           },
           {
-            "name": "cu_price_proposals",
+            "name": "cuPriceProposals",
             "type": {
               "array": [
                 "u64",
@@ -1162,10 +1168,10 @@
             }
           },
           {
-            "name": "last_updated_epoch",
+            "name": "lastUpdatedEpoch",
             "type": {
               "defined": {
-                "name": "Epoch"
+                "name": "epoch"
               }
             }
           },
@@ -1180,17 +1186,17 @@
             "type": {
               "vec": {
                 "defined": {
-                  "name": "NodeRef"
+                  "name": "nodeRef"
                 }
               }
             }
           },
           {
-            "name": "pending_nodes",
+            "name": "pendingNodes",
             "type": {
               "vec": {
                 "defined": {
-                  "name": "NodeRef"
+                  "name": "nodeRef"
                 }
               }
             }
@@ -1203,7 +1209,7 @@
       }
     },
     {
-      "name": "ComputationDefinitionAccount",
+      "name": "computationDefinitionAccount",
       "docs": [
         "An account representing a [ComputationDefinition] in a MXE."
       ],
@@ -1211,32 +1217,32 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "finalization_authority",
+            "name": "finalizationAuthority",
             "type": {
               "option": "pubkey"
             }
           },
           {
-            "name": "finalize_during_callback",
+            "name": "finalizeDuringCallback",
             "type": "bool"
           },
           {
-            "name": "cu_amount",
+            "name": "cuAmount",
             "type": "u64"
           },
           {
             "name": "definition",
             "type": {
               "defined": {
-                "name": "ComputationDefinitionMeta"
+                "name": "computationDefinitionMeta"
               }
             }
           },
           {
-            "name": "circuit_source",
+            "name": "circuitSource",
             "type": {
               "defined": {
-                "name": "CircuitSource"
+                "name": "circuitSource"
               }
             }
           },
@@ -1248,7 +1254,7 @@
       }
     },
     {
-      "name": "ComputationDefinitionMeta",
+      "name": "computationDefinitionMeta",
       "docs": [
         "A computation definition for execution in a MXE."
       ],
@@ -1256,14 +1262,14 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "circuit_len",
+            "name": "circuitLen",
             "type": "u32"
           },
           {
             "name": "signature",
             "type": {
               "defined": {
-                "name": "ComputationSignature"
+                "name": "computationSignature"
               }
             }
           }
@@ -1271,32 +1277,32 @@
       }
     },
     {
-      "name": "ComputationOutputs",
+      "name": "computationOutputs",
       "generics": [
         {
           "kind": "type",
-          "name": "O"
+          "name": "o"
         }
       ],
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "Success",
+            "name": "success",
             "fields": [
               {
-                "generic": "O"
+                "generic": "o"
               }
             ]
           },
           {
-            "name": "Failure"
+            "name": "failure"
           }
         ]
       }
     },
     {
-      "name": "ComputationSignature",
+      "name": "computationSignature",
       "docs": [
         "The signature of a computation defined in a [ComputationDefinition]."
       ],
@@ -1308,7 +1314,7 @@
             "type": {
               "vec": {
                 "defined": {
-                  "name": "Parameter"
+                  "name": "parameter"
                 }
               }
             }
@@ -1318,7 +1324,7 @@
             "type": {
               "vec": {
                 "defined": {
-                  "name": "Output"
+                  "name": "output"
                 }
               }
             }
@@ -1327,7 +1333,7 @@
       }
     },
     {
-      "name": "Election",
+      "name": "election",
       "docs": [
         "Главный аккаунт выборов (Election)"
       ],
@@ -1339,7 +1345,7 @@
             "type": "pubkey"
           },
           {
-            "name": "election_id",
+            "name": "electionId",
             "type": "u64"
           },
           {
@@ -1347,11 +1353,11 @@
             "type": "string"
           },
           {
-            "name": "start_time",
+            "name": "startTime",
             "type": "u64"
           },
           {
-            "name": "end_time",
+            "name": "endTime",
             "type": "u64"
           },
           {
@@ -1359,7 +1365,7 @@
             "type": "u64"
           },
           {
-            "name": "total_votes",
+            "name": "totalVotes",
             "type": "u32"
           },
           {
@@ -1371,7 +1377,7 @@
             "type": "u128"
           },
           {
-            "name": "encrypted_tally",
+            "name": "encryptedTally",
             "docs": [
               "Encrypted vote tallies: [32-byte ciphertext; MAX_CANDIDATES]"
             ],
@@ -1388,7 +1394,7 @@
             }
           },
           {
-            "name": "final_result",
+            "name": "finalResult",
             "docs": [
               "Final decrypted result: [u64; MAX_CANDIDATES]"
             ],
@@ -1403,7 +1409,7 @@
       }
     },
     {
-      "name": "Epoch",
+      "name": "epoch",
       "docs": [
         "The network epoch"
       ],
@@ -1415,7 +1421,7 @@
       }
     },
     {
-      "name": "FeePool",
+      "name": "feePool",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1427,7 +1433,7 @@
       }
     },
     {
-      "name": "InitVoteStatsOutput",
+      "name": "initVoteStatsOutput",
       "docs": [
         "The output of the callback instruction. Provided as a struct with ordered fields",
         "as anchor does not support tuples and tuple structs yet."
@@ -1436,10 +1442,10 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "field_0",
+            "name": "field0",
             "type": {
               "defined": {
-                "name": "MXEEncryptedStruct",
+                "name": "mxeEncryptedStruct",
                 "generics": [
                   {
                     "kind": "const",
@@ -1453,18 +1459,18 @@
       }
     },
     {
-      "name": "LocalCircuitSource",
+      "name": "localCircuitSource",
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "MxeKeygen"
+            "name": "mxeKeygen"
           }
         ]
       }
     },
     {
-      "name": "MXEAccount",
+      "name": "mxeAccount",
       "docs": [
         "A MPC Execution Environment."
       ],
@@ -1484,27 +1490,27 @@
             }
           },
           {
-            "name": "x25519_pubkey",
+            "name": "x25519Pubkey",
             "type": {
               "defined": {
-                "name": "X25519Pubkey"
+                "name": "x25519Pubkey"
               }
             }
           },
           {
-            "name": "fallback_clusters",
+            "name": "fallbackClusters",
             "type": {
               "vec": "u32"
             }
           },
           {
-            "name": "rejected_clusters",
+            "name": "rejectedClusters",
             "type": {
               "vec": "u32"
             }
           },
           {
-            "name": "computation_definitions",
+            "name": "computationDefinitions",
             "type": {
               "vec": "u32"
             }
@@ -1517,11 +1523,11 @@
       }
     },
     {
-      "name": "MXEEncryptedStruct",
+      "name": "mxeEncryptedStruct",
       "generics": [
         {
           "kind": "const",
-          "name": "LEN",
+          "name": "len",
           "type": "usize"
         }
       ],
@@ -1543,7 +1549,7 @@
                   ]
                 },
                 {
-                  "generic": "LEN"
+                  "generic": "len"
                 }
               ]
             }
@@ -1552,7 +1558,7 @@
       }
     },
     {
-      "name": "NodeRef",
+      "name": "nodeRef",
       "docs": [
         "A reference to a node in the cluster.",
         "The offset is to derive the Node Account.",
@@ -1567,7 +1573,7 @@
             "type": "u32"
           },
           {
-            "name": "current_total_rewards",
+            "name": "currentTotalRewards",
             "type": "u64"
           },
           {
@@ -1578,7 +1584,7 @@
       }
     },
     {
-      "name": "NullifierAccount",
+      "name": "nullifierAccount",
       "docs": [
         "Аккаунт для предотвращения двойного голосования (NullifierAccount)"
       ],
@@ -1586,11 +1592,11 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "election_pda",
+            "name": "electionPda",
             "type": "pubkey"
           },
           {
-            "name": "nullifier_hash",
+            "name": "nullifierHash",
             "type": {
               "array": [
                 "u8",
@@ -1606,7 +1612,7 @@
       }
     },
     {
-      "name": "OffChainCircuitSource",
+      "name": "offChainCircuitSource",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1627,23 +1633,23 @@
       }
     },
     {
-      "name": "OnChainCircuitSource",
+      "name": "onChainCircuitSource",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "is_completed",
+            "name": "isCompleted",
             "type": "bool"
           },
           {
-            "name": "upload_auth",
+            "name": "uploadAuth",
             "type": "pubkey"
           }
         ]
       }
     },
     {
-      "name": "Output",
+      "name": "output",
       "docs": [
         "An output of a computation.",
         "We currently don't support encrypted outputs yet since encrypted values are passed via",
@@ -1653,37 +1659,37 @@
         "kind": "enum",
         "variants": [
           {
-            "name": "PlaintextBool"
+            "name": "plaintextBool"
           },
           {
-            "name": "PlaintextU8"
+            "name": "plaintextU8"
           },
           {
-            "name": "PlaintextU16"
+            "name": "plaintextU16"
           },
           {
-            "name": "PlaintextU32"
+            "name": "plaintextU32"
           },
           {
-            "name": "PlaintextU64"
+            "name": "plaintextU64"
           },
           {
-            "name": "PlaintextU128"
+            "name": "plaintextU128"
           },
           {
-            "name": "Ciphertext"
+            "name": "ciphertext"
           },
           {
-            "name": "ArcisPubkey"
+            "name": "arcisPubkey"
           },
           {
-            "name": "PlaintextFloat"
+            "name": "plaintextFloat"
           }
         ]
       }
     },
     {
-      "name": "Parameter",
+      "name": "parameter",
       "docs": [
         "A parameter of a computation.",
         "We differentiate between plaintext and encrypted parameters and data objects.",
@@ -1695,46 +1701,46 @@
         "kind": "enum",
         "variants": [
           {
-            "name": "PlaintextBool"
+            "name": "plaintextBool"
           },
           {
-            "name": "PlaintextU8"
+            "name": "plaintextU8"
           },
           {
-            "name": "PlaintextU16"
+            "name": "plaintextU16"
           },
           {
-            "name": "PlaintextU32"
+            "name": "plaintextU32"
           },
           {
-            "name": "PlaintextU64"
+            "name": "plaintextU64"
           },
           {
-            "name": "PlaintextU128"
+            "name": "plaintextU128"
           },
           {
-            "name": "Ciphertext"
+            "name": "ciphertext"
           },
           {
-            "name": "ArcisPubkey"
+            "name": "arcisPubkey"
           },
           {
-            "name": "ArcisSignature"
+            "name": "arcisSignature"
           },
           {
-            "name": "PlaintextFloat"
+            "name": "plaintextFloat"
           },
           {
-            "name": "ManticoreAlgo"
+            "name": "manticoreAlgo"
           },
           {
-            "name": "InputDataset"
+            "name": "inputDataset"
           }
         ]
       }
     },
     {
-      "name": "RevealResultEvent",
+      "name": "revealResultEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1746,7 +1752,7 @@
       }
     },
     {
-      "name": "RevealResultOutput",
+      "name": "revealResultOutput",
       "docs": [
         "The output of the callback instruction. Provided as a struct with ordered fields",
         "as anchor does not support tuples and tuple structs yet."
@@ -1755,7 +1761,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "field_0",
+            "name": "field0",
             "type": {
               "array": [
                 "u64",
@@ -1767,7 +1773,7 @@
       }
     },
     {
-      "name": "SignerAccount",
+      "name": "signerAccount",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1779,7 +1785,7 @@
       }
     },
     {
-      "name": "Timestamp",
+      "name": "timestamp",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1791,7 +1797,7 @@
       }
     },
     {
-      "name": "VoteEvent",
+      "name": "voteEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1803,7 +1809,7 @@
       }
     },
     {
-      "name": "VoteOutput",
+      "name": "voteOutput",
       "docs": [
         "The output of the callback instruction. Provided as a struct with ordered fields",
         "as anchor does not support tuples and tuple structs yet."
@@ -1812,10 +1818,10 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "field_0",
+            "name": "field0",
             "type": {
               "defined": {
-                "name": "MXEEncryptedStruct",
+                "name": "mxeEncryptedStruct",
                 "generics": [
                   {
                     "kind": "const",
@@ -1829,7 +1835,7 @@
       }
     },
     {
-      "name": "VoterRegistry",
+      "name": "voterRegistry",
       "docs": [
         "Аккаунт для реестра голосующих (VoterChunk)"
       ],
@@ -1841,11 +1847,11 @@
             "type": "pubkey"
           },
           {
-            "name": "chunk_index",
+            "name": "chunkIndex",
             "type": "u32"
           },
           {
-            "name": "voter_hashes",
+            "name": "voterHashes",
             "type": {
               "vec": {
                 "array": [
@@ -1863,12 +1869,12 @@
       }
     },
     {
-      "name": "X25519Pubkey",
+      "name": "x25519Pubkey",
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "Set",
+            "name": "set",
             "fields": [
               {
                 "array": [
@@ -1879,7 +1885,7 @@
             ]
           },
           {
-            "name": "Unset",
+            "name": "unset",
             "fields": [
               {
                 "array": [
@@ -1896,4 +1902,4 @@
       }
     }
   ]
-}
+};

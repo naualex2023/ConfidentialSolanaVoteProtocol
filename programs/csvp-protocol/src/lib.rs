@@ -27,7 +27,7 @@ const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
 declare_id!("GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"); // Ваш Program ID
 
 #[arcium_program]
-pub mod confidential_voting {
+pub mod csvp_protocol {
     use super::*;
 
     // ------------------------------------

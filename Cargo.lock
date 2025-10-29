@@ -800,7 +800,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "csvp-protocol"
+name = "csvp_protocol"
 version = "0.2.0"
 dependencies = [
  "anchor-lang",

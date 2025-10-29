@@ -1,5 +1,5 @@
 ﻿[package]
-name = "csvp-protocol"
+name = "csvp_protocol"
 version = "0.2.0"
 description = "Confidential Solana Vote Protocol"
 edition = "2021"

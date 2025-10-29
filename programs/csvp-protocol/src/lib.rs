@@ -59,7 +59,7 @@ pub mod confidential_voting {
         chunk_index: u32,
         voter_hashes: Vec<[u8; 32]>,
     ) -> Result<()> {
-        let chunk = &mut ctx.accounts.voter_chunk;
+        let chunk = &mut ctx.accounts.voter_registry;
         let election = &ctx.accounts.election;
 
         // 1. Проверка: Только создатель выборов может добавлять избирателей
@@ -85,7 +85,7 @@ pub mod confidential_voting {
         chunk.election = election.key();
         chunk.chunk_index = chunk_index;
         chunk.voter_hashes.extend(voter_hashes);
-        chunk.bump = ctx.bumps.voter_chunk;
+        chunk.bump = ctx.bumps.voter_registry;
 
         Ok(())
     }
@@ -193,7 +193,7 @@ pub mod confidential_voting {
         // 2. ПРОВЕРКА РЕГИСТРАЦИИ (Voter Chunk)
         // `voter_chunk` уже верифицирован (seeds, has_one) в `#[derive(Accounts)]`
         require!(
-            ctx.accounts.voter_chunk.voter_hashes.contains(&voter_hash),
+            ctx.accounts.voter_registry.voter_hashes.contains(&voter_hash),
             VoteError::VoterNotRegistered
         );
 
@@ -405,11 +405,11 @@ pub struct RegisterVoters<'info> {
     #[account(
         init_if_needed,
         payer = authority,
-        space = 8 + VoterChunk::MAX_SPACE, 
-        seeds = [VOTER_CHUNK_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
+        space = 8 + VoterRegistry::MAX_SPACE, 
+        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
         bump
     )]
-    pub voter_chunk: Account<'info, VoterChunk>,
+    pub voter_registry: Account<'info, VoterRegistry>,
     
     pub system_program: Program<'info, System>,
 }
@@ -605,20 +605,20 @@ pub struct CastVote<'info> {
     // )]
     // pub election_account: Account<'info, Election>,
     #[account(
-        address = voter_chunk.election,
+        address = voter_registry.election,
     )]
     pub election: UncheckedAccount<'info>,
     // Аккаунт VoterChunk (для проверки регистрации)
     #[account(
         seeds = [
-            VOTER_CHUNK_SEED, 
+            VOTER_REGISTRY_SEED, 
             election_account.key().as_ref(), 
             voter_chunk_index.to_le_bytes().as_ref()
         ],
-        bump = voter_chunk.bump,
+        bump = voter_registry.bump,
         has_one = election, // Проверяем, что чанк принадлежит этим выборам
     )]
-    pub voter_chunk: Account<'info, VoterChunk>, 
+    pub voter_registry: Account<'info, VoterRegistry>, 
     
     // Nullifier (init) - предотвращение двойного голосования
     #[account(

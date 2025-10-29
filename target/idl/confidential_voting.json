@@ -104,11 +104,11 @@
         {
           "name": "election",
           "relations": [
-            "voter_chunk"
+            "voter_registry"
           ]
         },
         {
-          "name": "voter_chunk",
+          "name": "voter_registry",
           "pda": {
             "seeds": [
               {
@@ -120,11 +120,14 @@
                   101,
                   114,
                   95,
-                  99,
-                  104,
-                  117,
-                  110,
-                  107
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
@@ -545,7 +548,7 @@
           "writable": true
         },
         {
-          "name": "voter_chunk",
+          "name": "voter_registry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -558,11 +561,14 @@
                   101,
                   114,
                   95,
-                  99,
-                  104,
-                  117,
-                  110,
-                  107
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
@@ -915,16 +921,16 @@
       ]
     },
     {
-      "name": "VoterChunk",
+      "name": "VoterRegistry",
       "discriminator": [
-        229,
-        10,
-        37,
-        84,
-        88,
-        130,
-        157,
-        7
+        146,
+        143,
+        24,
+        89,
+        70,
+        216,
+        173,
+        189
       ]
     }
   ],
@@ -1823,7 +1829,7 @@
       }
     },
     {
-      "name": "VoterChunk",
+      "name": "VoterRegistry",
       "docs": [
         "Аккаунт для реестра голосующих (VoterChunk)"
       ],

@@ -49,7 +49,7 @@ describe("ConfidentialVoting", () => {
   const awaitEvent = async <E extends keyof Event>(eventName: E) => {
     let listenerId: number| null = null;
     const event = await new Promise<Event[E]>((resolve) => {
-      listenerId = program.addEventListener(eventName, (event) => {
+      listenerId = program.addEventListener(eventName, (event: Event[E]) => {
         resolve(event);
       });
     });
@@ -170,7 +170,7 @@ describe("ConfidentialVoting", () => {
       .accounts({
         authority: owner.publicKey,
         election: electionPda,
-        voterChunkAccount: voterChunkPda,
+        voterRegistry: voterChunkPda,
         systemProgram: SystemProgram.programId,
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
@@ -202,7 +202,7 @@ describe("ConfidentialVoting", () => {
         // Аккаунты из Rust-структуры `CastVote`
         voter: voter.publicKey,
         electionAccount: electionPda,
-        voterChunk: voterChunkPda,
+        voterRegistry: voterChunkPda,
         nullifierAccount: nullifierPda,
         signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,

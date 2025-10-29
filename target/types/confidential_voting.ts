@@ -110,11 +110,11 @@ export type ConfidentialVoting = {
         {
           "name": "election",
           "relations": [
-            "voterChunk"
+            "voterRegistry"
           ]
         },
         {
-          "name": "voterChunk",
+          "name": "voterRegistry",
           "pda": {
             "seeds": [
               {
@@ -126,11 +126,14 @@ export type ConfidentialVoting = {
                   101,
                   114,
                   95,
-                  99,
-                  104,
-                  117,
-                  110,
-                  107
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
@@ -551,7 +554,7 @@ export type ConfidentialVoting = {
           "writable": true
         },
         {
-          "name": "voterChunk",
+          "name": "voterRegistry",
           "writable": true,
           "pda": {
             "seeds": [
@@ -564,11 +567,14 @@ export type ConfidentialVoting = {
                   101,
                   114,
                   95,
-                  99,
-                  104,
-                  117,
-                  110,
-                  107
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
@@ -921,16 +927,16 @@ export type ConfidentialVoting = {
       ]
     },
     {
-      "name": "voterChunk",
+      "name": "voterRegistry",
       "discriminator": [
-        229,
-        10,
-        37,
-        84,
-        88,
-        130,
-        157,
-        7
+        146,
+        143,
+        24,
+        89,
+        70,
+        216,
+        173,
+        189
       ]
     }
   ],
@@ -1829,7 +1835,7 @@ export type ConfidentialVoting = {
       }
     },
     {
-      "name": "voterChunk",
+      "name": "voterRegistry",
       "docs": [
         "Аккаунт для реестра голосующих (VoterChunk)"
       ],

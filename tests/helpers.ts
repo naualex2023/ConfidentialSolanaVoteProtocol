@@ -8,7 +8,7 @@ import { randomBytes } from "crypto";
 // --- Константы из state.rs ---
 export const ELECTION_SEED = Buffer.from("election");
 export const SIGN_PDA_SEED = Buffer.from("sign_pda"); // Убедитесь, что это совпадает с lib.rs
-export const VOTER_CHUNK_SEED = Buffer.from("voter_chunk");
+export const VOTER_REGISTRY_SEED = Buffer.from("voter_registry");
 export const NULLIFIER_SEED = Buffer.from("nullifier");
 
 /**
@@ -58,7 +58,7 @@ export const findVoterChunkPda = (
 
   return PublicKey.findProgramAddressSync(
     [
-      VOTER_CHUNK_SEED,
+      VOTER_REGISTRY_SEED,
       electionPda.toBuffer(),
       chunkIndexBuffer,
     ],

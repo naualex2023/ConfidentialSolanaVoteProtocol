@@ -6,7 +6,8 @@
 pub const MAX_CANDIDATES: usize = 5; // Фиксированное число кандидатов
 pub const MAX_ITEMS_PER_CHUNK: usize = 500;
 pub const ELECTION_SEED: &[u8] = b"election";
-pub const VOTER_CHUNK_SEED: &[u8] = b"voter_chunk";
+// pub const VOTER_CHUNK_SEED: &[u8] = b"voter_chunk";
+pub const VOTER_REGISTRY_SEED: &[u8] = b"voter_registry"; // <-- НОВОЕ ИМЯ
 pub const NULLIFIER_SEED: &[u8] = b"nullifier";
 
 
@@ -46,8 +47,10 @@ pub struct Election {
 }
 
 /// Аккаунт для реестра голосующих (VoterChunk)
+// pub struct VoterChunk { ... }
+// Замените VoterChunk на VoterRegistry
 #[account]
-pub struct VoterChunk {
+pub struct VoterRegistry { // <-- НОВОЕ ИМЯ
     pub election: Pubkey,
     pub chunk_index: u32,
     #[cfg_attr(feature = "anchor", max_len(MAX_ITEMS_PER_CHUNK))] 
@@ -55,7 +58,7 @@ pub struct VoterChunk {
     pub bump: u8, // Добавьте bump для полноты
 }
 
-impl VoterChunk {
+impl VoterRegistry {
     // Включая 8 байт для discriminator Anchor
     pub const HEADER_SIZE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 1 /* bump */;
     

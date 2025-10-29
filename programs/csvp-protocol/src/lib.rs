@@ -409,7 +409,7 @@ pub struct RegisterVoters<'info> {
         seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
         bump
     )]
-    pub voter_registry: Account<'info, VoterRegistry>,
+    pub voter_registry: Box<Account<'info, VoterRegistry>>,
     
     pub system_program: Program<'info, System>,
 }
@@ -431,7 +431,7 @@ pub struct InitializeElection<'info> {
     #[account(
         address = derive_mxe_pda!()
     )]
-    pub mxe_account: Account<'info, MXEAccount>,
+    pub mxe_account: Box<Account<'info, MXEAccount>>,
     // 🔥 КОРРЕКТНАЯ ДЕКЛАРАЦИЯ SIGN PDA:
     #[account(
         init, // 👈 Обязательно init
@@ -549,7 +549,7 @@ pub struct CastVote<'info> {
     #[account(
         address = derive_mxe_pda!()
     )]
-    pub mxe_account: Account<'info, MXEAccount>,
+    pub mxe_account: Box<Account<'info, MXEAccount>>,
     #[account(
         mut,
         address = derive_mempool_pda!()
@@ -618,7 +618,7 @@ pub struct CastVote<'info> {
         bump = voter_registry.bump,
         has_one = election, // Проверяем, что чанк принадлежит этим выборам
     )]
-    pub voter_registry: Account<'info, VoterRegistry>, 
+    pub voter_registry: Box<Account<'info, VoterRegistry>>, 
     
     // Nullifier (init) - предотвращение двойного голосования
     #[account(
@@ -671,7 +671,7 @@ pub struct RevealResult<'info> {
     #[account(
         address = derive_mxe_pda!()
     )]
-    pub mxe_account: Account<'info, MXEAccount>,
+    pub mxe_account: Box<Account<'info, MXEAccount>>,
     #[account(
         mut,
         address = derive_mempool_pda!()

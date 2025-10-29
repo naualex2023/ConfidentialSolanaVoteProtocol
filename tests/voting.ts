@@ -18,8 +18,8 @@ import {
   getCompDefAccAddress,
   getExecutingPoolAccAddress,
   getComputationAccAddress,
-  getArciumFeePoolAccAddress,
-  getArciumClockAccAddress,
+  // getArciumFeePoolAccAddress,
+  // getArciumClockAccAddress,
   getClusterAccAddress,
 } from "@arcium-hq/client";
 import * as fs from "fs/promises";
@@ -47,13 +47,13 @@ describe("ConfidentialVoting", () => {
 
   type Event = anchor.IdlEvents<(typeof program)["idl"]>;
   const awaitEvent = async <E extends keyof Event>(eventName: E) => {
-    let listenerId: number;
+    let listenerId: number| null = null;
     const event = await new Promise<Event[E]>((resolve) => {
       listenerId = program.addEventListener(eventName, (event) => {
         resolve(event);
       });
     });
-    await program.removeEventListener(listenerId);
+    if (listenerId !== null) await program.removeEventListener(listenerId);
 
     return event;
   };
@@ -124,7 +124,7 @@ describe("ConfidentialVoting", () => {
         "Выборы Президента Галактики",
         startTime,
         endTime,
-        initCompOffset // Этот аргумент нужен из-за `#[instruction]` на структуре
+        //initCompOffset // Этот аргумент нужен из-за `#[instruction]` на структуре
       )
       .accountsPartial({
         // Аккаунты из Rust-структуры `InitializeElection`
@@ -142,9 +142,9 @@ describe("ConfidentialVoting", () => {
           program.programId,
           Buffer.from(getCompDefAccOffset("init_vote_stats")).readUInt32LE()
         ),
-        clusterAccount: getClusterAccAddress(mxeAccountPda),
-        poolAccount: getArciumFeePoolAccAddress(),
-        clockAccount: getArciumClockAccAddress(),
+        clusterAccount: arciumEnv.arciumClusterPubkey,
+        // poolAccount: getArciumFeePoolAccAddress(),
+        // clockAccount: getArciumClockAccAddress(),
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
@@ -170,7 +170,7 @@ describe("ConfidentialVoting", () => {
       .accounts({
         authority: owner.publicKey,
         election: electionPda,
-        voterChunk: voterChunkPda,
+        voterChunkAccount: voterChunkPda,
         systemProgram: SystemProgram.programId,
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
@@ -196,7 +196,7 @@ describe("ConfidentialVoting", () => {
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce
         nullifierHash, // nullifier_hash
         voterHash, // voter_hash
-        voteCompOffset // computation_offset
+       // voteCompOffset // computation_offset
       )
       .accountsPartial({
         // Аккаунты из Rust-структуры `CastVote`
@@ -216,16 +216,16 @@ describe("ConfidentialVoting", () => {
           program.programId,
           Buffer.from(getCompDefAccOffset("vote")).readUInt32LE()
         ),
-        clusterAccount: getClusterAccAddress(mxeAccountPda),
-        poolAccount: getArciumFeePoolAccAddress(),
-        clockAccount: getArciumClockAccAddress(),
+        clusterAccount: arciumEnv.arciumClusterPubkey,
+        // poolAccount: getArciumFeePoolAccAddress(),
+        // clockAccount: getArciumClockAccAddress(),
       })
       .signers([voter]) // 'voter' должен подписать
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
     console.log("... Транзакция голосования отправлена:", voteSig);
 
-    const voteEventPromise = awaitEvent("VoteEvent"); // <-- Исправлен регистр
+    const voteEventPromise = awaitEvent("voteEvent"); // <-- Исправлен регистр
     
     const finalizeVoteSig = await awaitComputationFinalization(
       provider as anchor.AnchorProvider,
@@ -250,7 +250,7 @@ describe("ConfidentialVoting", () => {
     
     const revealSig = await program.methods
       .revealResult(
-        revealCompOffset // computation_offset
+      //  revealCompOffset // computation_offset
       )
       .accountsPartial({
         // Аккаунты из Rust-структуры `RevealResult`
@@ -268,9 +268,9 @@ describe("ConfidentialVoting", () => {
           program.programId,
           Buffer.from(getCompDefAccOffset("reveal_result")).readUInt32LE()
         ),
-        clusterAccount: getClusterAccAddress(mxeAccountPda),
-        poolAccount: getArciumFeePoolAccAddress(),
-        clockAccount: getArciumClockAccAddress(),
+        clusterAccount: arciumEnv.arciumClusterPubkey,
+        // poolAccount: getArciumFeePoolAccAddress(),
+        // clockAccount: getArciumClockAccAddress(),
       })
       .signers([owner]) // 'authority' должен подписать
       .rpc({ skipPreflight: true, commitment: "confirmed" });
@@ -333,8 +333,16 @@ describe("ConfidentialVoting", () => {
         preflightCommitment: "confirmed",
       });
 
-    if (uploadRawCircuit) {
-      // ... (логика загрузки)
+ if (uploadRawCircuit) {
+      const rawCircuit = await fs.readFile("build/init_vote_stats.arcis");
+
+      await uploadCircuit(
+        provider as anchor.AnchorProvider,
+        "init_vote_stats",
+        program.programId,
+        rawCircuit,
+        true
+      );
     } else if (!offchainSource) {
       const finalizeTx = await buildFinalizeCompDefTx(
         provider as anchor.AnchorProvider,
@@ -346,6 +354,9 @@ describe("ConfidentialVoting", () => {
       finalizeTx.recentBlockhash = latestBlockhash.blockhash;
       finalizeTx.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
       finalizeTx.sign(owner);
+      if (!provider.sendAndConfirm) {
+        throw new Error("Provider sendAndConfirm method is undefined");
+      }
       await provider.sendAndConfirm(finalizeTx);
     }
     return sig;
@@ -381,7 +392,15 @@ describe("ConfidentialVoting", () => {
       });
 
     if (uploadRawCircuit) {
-      // ... (логика загрузки)
+      const rawCircuit = await fs.readFile("build/vote.arcis");
+
+      await uploadCircuit(
+        provider as anchor.AnchorProvider,
+        "vote",
+        program.programId,
+        rawCircuit,
+        true
+      );
     } else if (!offchainSource) {
       const finalizeTx = await buildFinalizeCompDefTx(
         provider as anchor.AnchorProvider,
@@ -392,7 +411,12 @@ describe("ConfidentialVoting", () => {
       const latestBlockhash = await provider.connection.getLatestBlockhash();
       finalizeTx.recentBlockhash = latestBlockhash.blockhash;
       finalizeTx.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+
       finalizeTx.sign(owner);
+
+      if (!provider.sendAndConfirm) {
+        throw new Error("Provider sendAndConfirm method is undefined");
+      }
       await provider.sendAndConfirm(finalizeTx);
     }
     return sig;
@@ -428,7 +452,15 @@ describe("ConfidentialVoting", () => {
       });
 
     if (uploadRawCircuit) {
-      // ... (логика загрузки)
+      const rawCircuit = await fs.readFile("build/reveal_result.arcis");
+
+      await uploadCircuit(
+        provider as anchor.AnchorProvider,
+        "reveal_result",
+        program.programId,
+        rawCircuit,
+        true
+      );
     } else if (!offchainSource) {
       const finalizeTx = await buildFinalizeCompDefTx(
         provider as anchor.AnchorProvider,
@@ -439,7 +471,12 @@ describe("ConfidentialVoting", () => {
       const latestBlockhash = await provider.connection.getLatestBlockhash();
       finalizeTx.recentBlockhash = latestBlockhash.blockhash;
       finalizeTx.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+
       finalizeTx.sign(owner);
+
+      if (!provider.sendAndConfirm) {
+        throw new Error("Provider sendAndConfirm method is undefined");
+      }
       await provider.sendAndConfirm(finalizeTx);
     }
     return sig;

@@ -809,7 +809,6 @@ dependencies = [
  "arcium-macros",
  "num-derive 0.3.3",
  "num-traits",
- "solana-program",
  "thiserror 1.0.69",
 ]
 

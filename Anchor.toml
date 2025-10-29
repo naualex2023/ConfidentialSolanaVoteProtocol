@@ -6,7 +6,7 @@ resolution = true
 skip-lint = true
 
 [programs.localnet]
-voting = "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"
+csvp-protocol = "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"
 
 [registry]
 url = "https://api.apr.dev"
@@ -22,3 +22,99 @@ test = "npx tsx tests/voting.ts"
 [[test.genesis]]
 address = "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
 program = "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/artifacts/arcium_program_0.3.0.so"
+
+[[test.validator.account]]
+address = "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+filename = "artifacts/arcium_clock.json"
+
+[[test.validator.account]]
+address = "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+filename = "artifacts/arcium_fee_pool.json"
+
+[[test.validator.account]]
+address = "BoVUVSJAhob2cvM5z4JZTdS6VWRSznh3bbzQD1TFjvDP"
+filename = "artifacts/arx_mint.json"
+
+[[test.validator.account]]
+address = "7ZoV8Ps6NcLo5RERnGndmaBXDwxHvhUxzNBDDFyMZuKY"
+filename = "artifacts/wallet_acc_7ZoV_ZuKY.json"
+
+[[test.validator.account]]
+address = "6X8U7w7Vn6ndFfhmEkGxkpFY5qsNfp6YgVKtbv5uBdGL"
+filename = "artifacts/arx_ata_7ZoV_ZuKY.json"
+
+[[test.validator.account]]
+address = "HMicGajC9xQUGz7W1THdcWuR3H1FJEF5V7M4fVijxHbv"
+filename = "artifacts/wallet_acc_HMic_xHbv.json"
+
+[[test.validator.account]]
+address = "HxbVRKDBifbiqrUBg6hcHg6qzmYFp3BEkZSXxDdtvBoo"
+filename = "artifacts/wallet_acc_callback_HxbV_vBoo.json"
+
+[[test.validator.account]]
+address = "GcW8mxUqCJsCEphzN4zLaFSfMb2PYWnrNpFgs6EAyQX2"
+filename = "artifacts/arx_ata_HMic_xHbv.json"
+
+[[test.validator.account]]
+address = "8DTaMpwhTky9ozaV6WapXJ8VFXJyb3KjarPJqDxRRuL7"
+filename = "artifacts/operator_acc_HMic_xHbv.json"
+
+[[test.validator.account]]
+address = "ELoRR19zrps1G3UYKcAxr7LKbw3kbqkVUXVY9dETMWN7"
+filename = "artifacts/arx_node_HMic_xHbv.json"
+
+[[test.validator.account]]
+address = "AXboFX7E7LWhZXzG2yzpGegYbfuaVpUmoWuptApfBVsW"
+filename = "artifacts/wallet_acc_AXbo_BVsW.json"
+
+[[test.validator.account]]
+address = "9bbRwT3aMxTCMhhprt3WBeubVhpm5R9tybCmPwd2xxPP"
+filename = "artifacts/wallet_acc_callback_9bbR_xxPP.json"
+
+[[test.validator.account]]
+address = "EC3PmsKQEnB6RHaz3RzkwoaVYGAoKcY6srtsy98yR6Qc"
+filename = "artifacts/arx_ata_AXbo_BVsW.json"
+
+[[test.validator.account]]
+address = "BR6sxWEwc7REqi7oQLjn859m7hitn5PkA9qnQWViPMsd"
+filename = "artifacts/operator_acc_AXbo_BVsW.json"
+
+[[test.validator.account]]
+address = "XdfSwb8ZajhN7CerfBSJVhyfx5fyLtv34QVKSRgMFA9"
+filename = "artifacts/arx_node_AXbo_BVsW.json"
+
+[[test.validator.account]]
+address = "GgSqqAyH7AVY3Umcv8NvncrjFaNJuQLmxzxFxPoPW2Yd"
+filename = "artifacts/cluster_acc_0.json"
+
+[[test.validator.account]]
+address = "Gn6Lhb2Vqic3iuuUkAZjjY7C3bEbNPn3v6VJKqEZ9CMS"
+filename = "artifacts/init_vote_stats_raw_circuit_0.json"
+
+[[test.validator.account]]
+address = "4oEdovXuXF4yfgK71GkRgr54sZDyWuEJoQWXWG1cgYix"
+filename = "artifacts/reveal_result_raw_circuit_0.json"
+
+[[test.validator.account]]
+address = "78azSeNoLuZuKyBsdAPoSupMxvsPeGWJNmMNuPZ4qUdJ"
+filename = "artifacts/vote_raw_circuit_0.json"
+
+[[test.validator.account]]
+address = "A4tTFGqmGyeeBSfhJiAkdJFanZXb9Qsr113KD35ecxmC"
+filename = "artifacts/mxe_keygen_comp_def.json"
+
+[[test.validator.account]]
+address = "8Pj1SxxBYKGCjj5Q3dCBNUE58CJKSPfEg5ViPqb8YqLM"
+filename = "artifacts/mxe_keygen_comp.json"
+
+[[test.validator.account]]
+address = "EwTEfgSkxne3SGJdb1cuYc6ZTm9FdjhNGTBRUY1MasFL"
+filename = "artifacts/mxe_acc.json"
+
+[[test.validator.account]]
+address = "87AsDiuSMb8CMyGohvYkQGGBbwpjkSnDkH8pwLCjEgkZ"
+filename = "artifacts/mempool_acc.json"
+
+[[test.validator.account]]
+address = "By1z3Jc8V7WspWvDhTUmrcWM64BsCHkS7evkvXnjUgc9"
+filename = "artifacts/executing_pool_acc.json"

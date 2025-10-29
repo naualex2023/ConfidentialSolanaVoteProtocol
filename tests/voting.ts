@@ -120,10 +120,10 @@ describe("CsvpProtocol", () => {
     
     const initSig = await program.methods
       .initializeElection(
-        ELECTION_ID, 
+        anchor.BN(ELECTION_ID), 
         "Выборы Президента Галактики",
-        startTime,
-        endTime,
+        anchor.BN(startTime),
+        anchor.BN(endTime),
         //initCompOffset // Этот аргумент нужен из-за `#[instruction]` на структуре
       )
       .accountsPartial({

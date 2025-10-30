@@ -177,7 +177,7 @@ pub mod csvp_protocol {
     pub fn cast_vote(
         ctx: Context<CastVote>,
         computation_offset: u64,
-        //voter_chunk_index: u32,
+        voter_chunk_index: u32,
         // Аргументы для `Enc<Shared, UserVote>`
         vote_ciphertext: [u8; 32], // Зашифрованный `UserVote { candidate_index }`
         vote_encryption_pubkey: [u8; 32],

@@ -110,7 +110,7 @@ describe("CsvpProtocol", () => {
     // --- 3. СОЗДАНИЕ ВЫБОРОВ (initialize_election) ---
     console.log(`\n🆕 Создание выборов (ID: ${ELECTION_ID.toString()})...`);
     
-    const initCompOffset = getRandomBigNumber();
+    //const initCompOffset = getRandomBigNumber();
     const mxeAccountPda = getMXEAccAddress(program.programId);
     
     // Время (start_time, end_time)
@@ -143,7 +143,7 @@ describe("CsvpProtocol", () => {
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(program.programId),
         executingPool: getExecutingPoolAccAddress(program.programId),
-        computationAccount: getComputationAccAddress(program.programId, initCompOffset),
+        computationAccount: getComputationAccAddress(program.programId, electionComputationOffset),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("init_vote_stats")).readUInt32LE()
@@ -160,7 +160,7 @@ describe("CsvpProtocol", () => {
     
     const finalizeInitSig = await awaitComputationFinalization(
       provider as anchor.AnchorProvider,
-      initCompOffset,
+      electionComputationOffset,
       program.programId,
       "confirmed"
     );

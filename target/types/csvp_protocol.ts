@@ -988,13 +988,58 @@ export type CsvpProtocol = {
   "errors": [
     {
       "code": 6000,
-      "name": "invalidFinalizeTx",
-      "msg": "Invalid finalize transaction"
+      "name": "voterNotRegistered",
+      "msg": "Voter is not registered in the Voter Chunk."
     },
     {
       "code": 6001,
-      "name": "invalidAccount",
-      "msg": "Invalid account"
+      "name": "alreadyVoted",
+      "msg": "The voter has already cast a vote (Nullifier already exists)."
+    },
+    {
+      "code": 6002,
+      "name": "notAuthorized",
+      "msg": "Not authorized to perform this action."
+    },
+    {
+      "code": 6003,
+      "name": "chunkFull",
+      "msg": "Chunk Full, cannot register more voters in this chunk."
+    },
+    {
+      "code": 6004,
+      "name": "invalidElectionPeriod",
+      "msg": "Invalid Election Period."
+    },
+    {
+      "code": 6005,
+      "name": "electionNotDraft",
+      "msg": "Election Not Draft."
+    },
+    {
+      "code": 6006,
+      "name": "invalidCandidateIndex",
+      "msg": "Invalid Candidate Index. Must be less than MAX_CANDIDATES."
+    },
+    {
+      "code": 6007,
+      "name": "abortedComputation",
+      "msg": "abortedComputation"
+    },
+    {
+      "code": 6008,
+      "name": "invalidTallySize",
+      "msg": "Invalid Tally Size."
+    },
+    {
+      "code": 6009,
+      "name": "clusterNotSet",
+      "msg": "clusterNotSet"
+    },
+    {
+      "code": 6010,
+      "name": "invalidAuthority",
+      "msg": "Invalid authority"
     }
   ],
   "types": [

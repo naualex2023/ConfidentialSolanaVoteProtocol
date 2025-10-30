@@ -982,13 +982,58 @@
   "errors": [
     {
       "code": 6000,
-      "name": "InvalidFinalizeTx",
-      "msg": "Invalid finalize transaction"
+      "name": "VoterNotRegistered",
+      "msg": "Voter is not registered in the Voter Chunk."
     },
     {
       "code": 6001,
-      "name": "InvalidAccount",
-      "msg": "Invalid account"
+      "name": "AlreadyVoted",
+      "msg": "The voter has already cast a vote (Nullifier already exists)."
+    },
+    {
+      "code": 6002,
+      "name": "NotAuthorized",
+      "msg": "Not authorized to perform this action."
+    },
+    {
+      "code": 6003,
+      "name": "ChunkFull",
+      "msg": "Chunk Full, cannot register more voters in this chunk."
+    },
+    {
+      "code": 6004,
+      "name": "InvalidElectionPeriod",
+      "msg": "Invalid Election Period."
+    },
+    {
+      "code": 6005,
+      "name": "ElectionNotDraft",
+      "msg": "Election Not Draft."
+    },
+    {
+      "code": 6006,
+      "name": "InvalidCandidateIndex",
+      "msg": "Invalid Candidate Index. Must be less than MAX_CANDIDATES."
+    },
+    {
+      "code": 6007,
+      "name": "AbortedComputation",
+      "msg": "AbortedComputation"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidTallySize",
+      "msg": "Invalid Tally Size."
+    },
+    {
+      "code": 6009,
+      "name": "ClusterNotSet",
+      "msg": "ClusterNotSet"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidAuthority",
+      "msg": "Invalid authority"
     }
   ],
   "types": [

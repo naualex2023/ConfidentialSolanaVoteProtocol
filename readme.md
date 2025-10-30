@@ -65,7 +65,7 @@ for everyone—from small DAOs to nation-states
 
 | Innovation | Advantage |
 |------------|-----------|
-| **FHE-protected biometric hashes** | Identification without revealing identity |
+| **MPC-protected biometric hashes** | Identification without revealing identity |
 | **Confidential smart contracts** | Rights verification without data exposure |
 | **MPC result tallying** | Fair counting without trusted parties |
 | **Dual-token economy** | Sustainable economic model |

@@ -1,23 +1,33 @@
-﻿import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { Arcium, Cluster } from '@arcium/sdk';
-import {
-  awaitComputationFinalization,
-  getArciumEnv,
-  getCompDefAccOffset,
-  getArciumAccountBaseSeed,
-  getArciumProgAddress,
-  uploadCircuit,
-  buildFinalizeCompDefTx,
-  RescueCipher,
-  deserializeLE,
-  getMXEAccAddress,
-  getMempoolAccAddress,
-  getCompDefAccAddress,
-  getExecutingPoolAccAddress,
-  x25519,
-  getComputationAccAddress,
-  getMXEPublicKey,
-} from "@arcium-hq/client";
+﻿import * as borsh from 'borsh';
+import { BN } from '@coral-xyz/anchor';
+import { RescueCipher, x25519 } from "@arcium-hq/client";
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+// import {
+//   awaitComputationFinalization,
+//   getArciumEnv,
+//   getCompDefAccOffset,
+//   getArciumAccountBaseSeed,
+//   getArciumProgAddress,
+//   uploadCircuit,
+//   buildFinalizeCompDefTx,
+//   RescueCipher,
+//   deserializeLE,
+//   getMXEAccAddress,
+//   getMempoolAccAddress,
+//   getCompDefAccAddress,
+//   getExecutingPoolAccAddress,
+//   x25519,
+//   getComputationAccAddress,
+//   getMXEPublicKey,
+// } from "@arcium-hq/client";
+const UserVoteSchema = new Map([
+    [Object, {
+        kind: 'struct',
+        fields: [
+            ['candidate_index', 'u64'] // Индекс кандидата (0 до N-1)
+        ]
+    }]
+]);
 
 export interface Vote {
     candidateId: number;
@@ -62,245 +72,36 @@ export class ArciumVoteClient {
      * Шифрование голоса используя реальный Arcium SDK
      * На основе: https://github.com/arcium-hq/examples/blob/main/voting/src/components/Voting.tsx
      */
-    async encryptVote(vote: Vote): Promise<EncryptedBallot> {
-        try {
-            // Сериализуем голос в Uint8Array
-            const voteData = this.serializeVote(vote);
+  /**
+ * Шифрует выбор кандидата для MPC
+ * @param candidateIndex - Индекс кандидата (0 до MAX_CANDIDATES - 1)
+ * @param nonce - Криптографический nonce из Election Account
+ * @param mxePub - Публичный ключ MXE
+ * @returns 32-байтовый шифротекст (Enc<Shared, UserVote>)
+ */
+export async function encryptVote(
+    candidateIndex: number, 
+    nonce: string, 
+    mxePub: Uint8Array
+): Promise<Uint8Array> {
+    // 1. Создание общего секрета
+    const clientEphemeral = x25519.generateKeyPair();
+    const sharedSecret = x25519.getSharedSecret(clientEphemeral.secretKey, mxePub);
 
-            // Шифруем используя Arcium SDK
-            const encryptionResult = await this.arcium.encrypt(voteData, {
-                cluster: this.cluster,
-            });
+    // 2. Сериализация голоса (UserVote)
+    // BN нужен для корректной сериализации 'u64'
+    const voteStruct = { candidate_index: new BN(candidateIndex) };
+    const userVoteBorsh = Buffer.from(borsh.serialize(UserVoteSchema, voteStruct));
+    
+    // 3. Шифрование (используя nonce для инициализации RescueCipher)
+    const nonceBuffer = Buffer.from(nonce, 'hex'); // nonce должен быть 128-битным (16 байт)
+    const cipher = new RescueCipher(sharedSecret, nonceBuffer);
+    
+    // MPC ожидает 32-байтовый шифротекст.
+    const encryptedVote = cipher.encrypt(userVoteBorsh).slice(0, 32); 
+    
+    return encryptedVote;
+}
 
-            if (!encryptionResult.ciphertext || !encryptionResult.proof) {
-                throw new Error('Arcium encryption failed: missing ciphertext or proof');
-            }
 
-            return {
-                data: encryptionResult.ciphertext,
-                proof: encryptionResult.proof,
-            };
-        } catch (error) {
-            console.error('Error encrypting vote with Arcium:', error);
-            throw new Error(`Failed to encrypt vote: ${error.message}`);
-        }
-    }
-
-    /**
-     * Подсчет результатов используя Arcium MPC
-     * На основе официального примера tallying
-     */
-    async tallyElection(encryptedBallots: EncryptedBallot[]): Promise<TallyResult> {
-        try {
-            console.log(`Starting MPC tally for ${encryptedBallots.length} ballots on cluster:`, this.cluster);
-
-            // Подготавливаем данные для MPC подсчета
-            const tallyInputs = encryptedBallots.map(ballot => ({
-                ciphertext: ballot.data,
-                proof: ballot.proof,
-            }));
-
-            // Вызываем MPC tally через Arcium SDK
-            const tallyResult = await this.arcium.tally(tallyInputs, {
-                cluster: this.cluster,
-                circuit: 'vote_tally', // Используем схему для подсчета голосов
-            });
-
-            if (!tallyResult.results || !tallyResult.proof) {
-                throw new Error('Arcium tally failed: missing results or proof');
-            }
-
-            // Парсим результаты
-            const results = this.parseTallyResults(tallyResult.results);
-
-            return {
-                results,
-                proof: tallyResult.proof,
-                totalVotes: encryptedBallots.length,
-            };
-        } catch (error) {
-            console.error('Error tallying election with Arcium:', error);
-            throw new Error(`Failed to tally election: ${error.message}`);
-        }
-    }
-
-    /**
-     * Верификация результатов подсчета
-     */
-    async verifyTally(
-        encryptedBallots: EncryptedBallot[],
-        tallyResult: TallyResult
-    ): Promise<boolean> {
-        try {
-            const tallyInputs = encryptedBallots.map(ballot => ({
-                ciphertext: ballot.data,
-                proof: ballot.proof,
-            }));
-
-            const verificationResult = await this.arcium.verifyTally(
-                tallyInputs,
-                Array.from(tallyResult.results.entries()),
-                tallyResult.proof,
-                {
-                    cluster: this.cluster,
-                    circuit: 'vote_tally',
-                }
-            );
-
-            return verificationResult.isValid;
-        } catch (error) {
-            console.error('Error verifying tally with Arcium:', error);
-            return false;
-        }
-    }
-
-    /**
-     * Получение публичного ключа кластера для шифрования
-     */
-    async getClusterPublicKey(): Promise<Uint8Array> {
-        try {
-            const clusterInfo = await this.arcium.getCluster(this.cluster);
-            return clusterInfo.publicKey;
-        } catch (error) {
-            console.error('Error getting cluster public key:', error);
-            throw new Error(`Failed to get cluster public key: ${error.message}`);
-        }
-    }
-
-    /**
-     * Проверка доступности кластера Arcium
-     */
-    async checkClusterHealth(): Promise<boolean> {
-        try {
-            const health = await this.arcium.getClusterHealth(this.cluster);
-            return health.status === 'healthy';
-        } catch (error) {
-            console.error('Error checking cluster health:', error);
-            return false;
-        }
-    }
-
-    /**
-     * Получение информации о кластере
-     */
-    async getClusterInfo() {
-        return await this.arcium.getCluster(this.cluster);
-    }
-
-    // Приватные вспомогательные методы
-
-    private serializeVote(vote: Vote): Uint8Array {
-        const voteData = {
-            c: vote.candidateId,        // candidateId
-            e: vote.electionId,         // electionId  
-            v: vote.voterId,           // voterId
-            t: vote.timestamp,         // timestamp
-        };
-
-        const jsonString = JSON.stringify(voteData);
-        return new TextEncoder().encode(jsonString);
-    }
-
-    private parseTallyResults(results: any): Map<number, number> {
-        const resultMap = new Map<number, number>();
-
-        try {
-            // В зависимости от формата результатов Arcium
-            if (Array.isArray(results)) {
-                results.forEach((count, candidateId) => {
-                    resultMap.set(candidateId, Number(count));
-                });
-            } else if (typeof results === 'object') {
-                Object.entries(results).forEach(([candidateId, count]) => {
-                    resultMap.set(Number(candidateId), Number(count));
-                });
-            }
-        } catch (error) {
-            console.error('Error parsing tally results:', error);
-        }
-
-        return resultMap;
-    }
-
-    /**
-     * Получение всех зашифрованных бюллетеней из блокчейна Solana
-     */
-    async getEncryptedBallotsFromChain(
-        electionPda: PublicKey,
-        programId: PublicKey
-    ): Promise<EncryptedBallot[]> {
-        const ballots: EncryptedBallot[] = [];
-        let chunkIndex = 0;
-
-        try {
-            while (true) {
-                const [chunkPda] = await PublicKey.findProgramAddress(
-                    [
-                        Buffer.from('ballot_chunk'),
-                        electionPda.toBuffer(),
-                        Buffer.from(chunkIndex.toString())
-                    ],
-                    programId
-                );
-
-                const accountInfo = await this.connection.getAccountInfo(chunkPda);
-                if (!accountInfo) break;
-
-                // Десериализуем данные чанка
-                const chunkData = this.deserializeBallotChunk(accountInfo.data);
-
-                // Добавляем бюллетени из этого чанка
-                ballots.push(...chunkData.ballots);
-
-                // Проверяем есть ли следующий чанк
-                if (!chunkData.nextChunk) break;
-                chunkIndex++;
-            }
-        } catch (error) {
-            console.error('Error fetching ballots from chain:', error);
-        }
-
-        return ballots;
-    }
-
-    private deserializeBallotChunk(data: Uint8Array): { ballots: EncryptedBallot[], nextChunk: boolean } {
-        // Упрощенная десериализация - в реальности использовать borsh
-        try {
-            // Предполагаем, что данные содержат массив бюллетеней
-            // Каждый бюллетень: [encrypted_data, proof]
-            const ballots: EncryptedBallot[] = [];
-
-            // Это упрощенная реализация - в production нужна полная десериализация borsh
-            let offset = 0;
-
-            // Читаем количество бюллетеней (первые 4 байта)
-            const ballotCount = new DataView(data.buffer).getUint32(offset, true);
-            offset += 4;
-
-            for (let i = 0; i < ballotCount; i++) {
-                // Читаем размер encrypted_data
-                const dataSize = new DataView(data.buffer).getUint32(offset, true);
-                offset += 4;
-
-                // Читаем encrypted_data
-                const encryptedData = data.slice(offset, offset + dataSize);
-                offset += dataSize;
-
-                // Читаем размер proof
-                const proofSize = new DataView(data.buffer).getUint32(offset, true);
-                offset += 4;
-
-                // Читаем proof
-                const proof = data.slice(offset, offset + proofSize);
-                offset += proofSize;
-
-                ballots.push({ data: encryptedData, proof });
-            }
-
-            return { ballots, nextChunk: offset < data.length };
-        } catch (error) {
-            console.error('Error deserializing ballot chunk:', error);
-            return { ballots: [], nextChunk: false };
-        }
-    }
 }

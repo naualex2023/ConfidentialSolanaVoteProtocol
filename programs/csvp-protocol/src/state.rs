@@ -1,11 +1,23 @@
-﻿use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{
-    program_pack::{IsInitialized, Sealed},
-    pubkey::Pubkey,
-    clock::UnixTimestamp,
-};
+﻿use anchor_lang::prelude::*;
+//use ::borsh::{BorshDeserialize, BorshSerialize};
+//use solana_program::clock::UnixTimestamp;
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone, PartialEq)]
+// Константы
+pub const MAX_CANDIDATES: usize = 5; // Фиксированное число кандидатов
+pub const MAX_ITEMS_PER_CHUNK: usize = 500;
+pub const ELECTION_SEED: &[u8] = b"election";
+// pub const VOTER_CHUNK_SEED: &[u8] = b"voter_chunk";
+pub const VOTER_REGISTRY_SEED: &[u8] = b"voter_registry"; // <-- НОВОЕ ИМЯ
+pub const NULLIFIER_SEED: &[u8] = b"nullifier";
+pub const ELECTION_SIGN_PDA_SEED: &[u8] = b"signer_account";
+
+
+// ------------------------------------------------------------------
+// Структуры Аккаунтов
+// ------------------------------------------------------------------
+
+#[derive( Debug, Clone, PartialEq, AnchorSerialize, AnchorDeserialize)]
+#[repr(u8)]
 pub enum ElectionState {
     Draft,
     Active,
@@ -14,103 +26,61 @@ pub enum ElectionState {
     Cancelled,
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+/// Главный аккаунт выборов (Election)
+#[account]
+#[derive(InitSpace)]
 pub struct Election {
-    pub discriminator: u8,
-    pub is_initialized: bool,
     pub creator: Pubkey,
     pub election_id: u64,
+    #[max_len(50)]
     pub title: String,
-    pub description: String,
-    pub start_time: UnixTimestamp,
-    pub end_time: UnixTimestamp,
-    pub state: ElectionState,
-    pub arcium_cluster_id: String,
-    pub public_key: [u8; 32],
+    pub start_time: u64,
+    pub end_time: u64,
+    pub state: u64,
     pub total_votes: u32,
-    pub bump: u8,
+    pub bump: u8, // <-- Необходим для сохранения bump-сида
+    // Поля Arcium/MPC
+    pub nonce: u128,
+    /// Encrypted vote tallies: [32-byte ciphertext; MAX_CANDIDATES]
+    pub encrypted_tally: [[u8; 32]; MAX_CANDIDATES], 
+    /// Final decrypted result: [u64; MAX_CANDIDATES]
+    pub final_result: [u64; MAX_CANDIDATES], 
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
-pub struct VoterChunk {
-    pub discriminator: u8,
-    pub is_initialized: bool,
+/// Аккаунт для реестра голосующих (VoterChunk)
+pub const HASH_LEN: usize = 32;
+
+#[account]
+#[derive(InitSpace)]
+pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕТЕ
     pub election: Pubkey,
     pub chunk_index: u32,
-    pub next_chunk: Option<Pubkey>,
-    pub voter_hashes: Vec<[u8; 32]>,
+    
+    // НОВОЕ ПОЛЕ: Счетчик добавленных хэшей
+    pub count: u32, 
+
+    // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: ФИКСИРОВАННЫЙ МАССИВ
+    // Это резервирует место сразу и не требует realloc при добавлении
+    pub voter_hashes: [Pubkey; MAX_ITEMS_PER_CHUNK], 
+    
     pub bump: u8,
 }
-
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
-pub struct ReceiptChunk {
-    pub discriminator: u8,
-    pub is_initialized: bool,
-    pub election: Pubkey,
-    pub chunk_index: u32,
-    pub next_chunk: Option<Pubkey>,
-    pub receipt_ids: Vec<[u8; 32]>,
-    pub nullifiers: Vec<[u8; 32]>,
-    pub bump: u8,
+// ...
+impl VoterRegistry {
+    // Обновляем расчет:
+    pub const HEADER_SPACE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 4 /* count */ + 1 /* bump */;
+    pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * HASH_LEN;
+    pub const MAX_SPACE: usize = Self::HEADER_SPACE + Self::HASHES_SPACE;
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
-pub struct BallotChunk {
-    pub discriminator: u8,
-    pub is_initialized: bool,
-    pub election: Pubkey,
-    pub chunk_index: u32,
-    pub next_chunk: Option<Pubkey>,
-    pub ballots: Vec<EncryptedBallot>,
-    pub bump: u8,
+/// Аккаунт для предотвращения двойного голосования (NullifierAccount)
+#[account]
+#[derive(InitSpace)] // <<---- ЭТО КРИТИЧНО!
+pub struct NullifierAccount {
+    pub election_pda: Pubkey,
+    pub nullifier_hash: [u8; 32],
+    pub bump: u8, // <<---- ДОБАВЛЕНО
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
-pub struct EncryptedBallot {
-    pub encrypted_data: Vec<u8>,
-    pub receipt_id: [u8; 32],
-    pub timestamp: UnixTimestamp,
-    pub arcium_proof: Vec<u8>,
-}
-
-// Константы
-pub const MAX_ITEMS_PER_CHUNK: usize = 500;
-pub const ELECTION_SEED: &[u8] = b"election";
-pub const VOTER_CHUNK_SEED: &[u8] = b"voter_chunk";
-pub const RECEIPT_CHUNK_SEED: &[u8] = b"receipt_chunk";
-pub const BALLOT_CHUNK_SEED: &[u8] = b"ballot_chunk";
-
-// Дискриминаторы
-pub const ELECTION_DISCRIMINATOR: u8 = 0;
-pub const VOTER_CHUNK_DISCRIMINATOR: u8 = 1;
-pub const RECEIPT_CHUNK_DISCRIMINATOR: u8 = 2;
-pub const BALLOT_CHUNK_DISCRIMINATOR: u8 = 3;
-
-impl Sealed for Election {}
-impl Sealed for VoterChunk {}
-impl Sealed for ReceiptChunk {}
-impl Sealed for BallotChunk {}
-
-impl IsInitialized for Election {
-    fn is_initialized(&self) -> bool {
-        self.is_initialized
-    }
-}
-
-impl IsInitialized for VoterChunk {
-    fn is_initialized(&self) -> bool {
-        self.is_initialized
-    }
-}
-
-impl IsInitialized for ReceiptChunk {
-    fn is_initialized(&self) -> bool {
-        self.is_initialized
-    }
-}
-
-impl IsInitialized for BallotChunk {
-    fn is_initialized(&self) -> bool {
-        self.is_initialized
-    }
-}
+// Константа INIT_SPACE будет сгенерирована:
+// 8 (дискриминатор) + 32 (Pubkey) + 32 ([u8; 32]) + 1 (u8 bump) = 73 байта

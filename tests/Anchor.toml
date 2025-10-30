@@ -1,0 +1,22 @@
+[toolchain]
+package_manager = "yarn"
+
+[features]
+resolution = true
+skip-lint = true
+
+[programs.localnet]
+csvp_protocol = "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "npx tsx tests/voting.ts"
+
+address = "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+program = "/media/alex/UbuntuExt/source/repos/ConfidentialSolanaVoteProtocol/artifacts/arcium_program_0.3.0.so"

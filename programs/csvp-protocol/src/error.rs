@@ -1,32 +1,27 @@
-﻿use thiserror::Error;
-use solana_program::program_error::ProgramError;
+﻿use anchor_lang::prelude::*;
 
-#[derive(Error, Debug, Copy, Clone)]
+#[error_code]
 pub enum VoteError {
-    #[error("Invalid Instruction")]
-    InvalidInstruction,
-    
-    #[error("Already Voted")]
-    AlreadyVoted,
-    
-    #[error("Not Authorized")]
-    NotAuthorized,
-    
-    #[error("Election Not Active")]
-    ElectionNotActive,
-    
-    #[error("Invalid Election Period")]
-    InvalidElectionPeriod,
-    
-    #[error("Voter Not Registered")]
+    #[msg("Voter is not registered in the Voter Chunk.")]
     VoterNotRegistered,
-    
-    #[error("Chunk Full")]
+    #[msg("The voter has already cast a vote (Nullifier already exists).")]
+    AlreadyVoted,
+    #[msg("Not authorized to perform this action.")]
+    NotAuthorized,
+    #[msg("Chunk Full, cannot register more voters in this chunk.")]
     ChunkFull,
-}
-
-impl From<VoteError> for ProgramError {
-    fn from(e: VoteError) -> Self {
-        ProgramError::Custom(e as u32)
-    }
+    #[msg("Invalid Election Period.")]
+    InvalidElectionPeriod,
+    #[msg("Election Not Draft.")]
+    ElectionNotDraft,
+    #[msg("Invalid Candidate Index. Must be less than MAX_CANDIDATES.")]
+    InvalidCandidateIndex,
+    #[msg("AbortedComputation")]
+    AbortedComputation,            
+    #[msg("Invalid Tally Size.")]
+    InvalidTallySize,
+    #[msg("ClusterNotSet")]
+    ClusterNotSet,
+    #[msg("Invalid authority")]
+    InvalidAuthority,
 }

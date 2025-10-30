@@ -8,7 +8,9 @@
     TransactionInstruction
 } from '@solana/web3.js';
 import { ArciumVoteClient, Vote, EncryptedBallot, TallyResult } from './arciumClient';
-import { Cluster } from '@arcium/sdk';
+import * as anchor from "@coral-xyz/anchor";
+import { BN } from 'bn.js';
+import { encryptVote } from './arciumClient';
 import {
   awaitComputationFinalization,
   getArciumEnv,
@@ -28,7 +30,9 @@ import {
   getMXEPublicKey,
 } from "@arcium-hq/client";
 import * as borsh from 'borsh';
-
+const VOTER_CHUNK_SEED = Buffer.from("voter_chunk");
+const NULLIFIER_SEED = Buffer.from("nullifier");
+const ARCIUM_PROGRAM_ID = new PublicKey("A9T5F1h2pW82DkXk8W6YtD4H4W9C5B2T3E7G6H4K2J"); // Пример
 // Borsh схемы для сериализации инструкций
 class InitializeElectionSchema {
     instruction = 0;
@@ -83,7 +87,75 @@ export class CSVPVoteClient {
         this.programId = programId;
         this.arciumClient = new ArciumVoteClient(arciumCluster, connection, wallet);
     }
+/**
+ * Вычисляет Nullifier Hash (для seeds)
+ */
+async function computeNullifierHash(voterHash: Uint8Array, electionPda: PublicKey): Promise<Buffer> {
+    const data = Buffer.concat([Buffer.from(voterHash), electionPda.toBuffer()]);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Buffer.from(hashBuffer).slice(0, 32); 
+}
 
+/**
+ * Отправляет голос, проверяет регистрацию и создает Nullifier Account.
+ */
+async function castVoteTx(
+    program: anchor.Program<any>, // Замените на вашу IDL
+    voter: Keypair,
+    electionPda: PublicKey,
+    candidateIndex: number,
+    electionNonce: string, // nonce: u128 (в hex-строке)
+    voterHash: Uint8Array, 
+    voterChunkIndex: number, 
+): Promise<string> {
+    const provider = program.provider as anchor.AnchorProvider;
+    
+    // 1. Вычисление Nullifier Hash и шифрование
+    const mxePub = await getMXEPublicKey(...); // Получите MXE PubKey
+    const encryptedVote = await encryptVote(candidateIndex, electionNonce, mxePub);
+    const nullifierHashBuffer = await computeNullifierHash(voterHash, electionPda);
+    
+    // 2. Поиск PDA для аккаунтов
+    const [nullifierPda] = PublicKey.findProgramAddressSync(
+        [NULLIFIER_SEED, electionPda.toBuffer(), nullifierHashBuffer],
+        program.programId
+    );
+    const [voterChunkPda] = PublicKey.findProgramAddressSync(
+        [VOTER_CHUNK_SEED, electionPda.toBuffer(), new BN(voterChunkIndex).toArrayLike(Buffer, 'le', 4)],
+        program.programId
+    );
+    
+    // 3. PDA для Arcium (должны быть уникальными для каждой транзакции)
+    const [compPda, compBump] = getComputationAccAddress(program.programId, new BN(Date.now())); 
+    const [callbackPda, callbackBump] = getCallbackAccAddress(program.programId, compPda); 
+    const mxeAcc = getMXEAccAddress(program.programId); 
+    const [voteCompDefAcc] = getCompDefAccAddress(program.programId, COMP_DEF_OFFSET_VOTE); 
+
+
+    // 4. Отправка транзакции CastVote
+    const txSig = await program.methods
+        .castVote(
+            Array.from(encryptedVote) as [number; 32],
+            Array.from(nullifierHashBuffer) as [number; 32],
+            Array.from(voterHash) as [number; 32],
+        )
+        .accounts({
+            voter: voter.publicKey,
+            electionAccount: electionPda,
+            voterChunk: voterChunkPda,
+            nullifierAccount: nullifierPda,
+            mxeAccount: mxeAcc,
+            voteCompDefAccount: voteCompDefAcc,
+            computationAccount: compPda,
+            voteCallback: callbackPda,
+            arciumProgram: ARCIUM_PROGRAM_ID, 
+            systemProgram: SystemProgram.programId,
+        })
+        .signers([voter])
+        .rpc();
+
+    return txSig;
+}
     /**
      * Инициализация выборов с реальным Arcium кластером
      */

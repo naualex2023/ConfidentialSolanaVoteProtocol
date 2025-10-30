@@ -118,12 +118,18 @@ describe("CsvpProtocol", () => {
     const startTime = now.sub(new anchor.BN(60)); // Начались минуту назад
     const endTime = now.add(new anchor.BN(3600)); // Заканчиваются через час
     
+    const electionNonce = randomBytes(16);
+
+    const electionComputationOffset = getRandomBigNumber();
+
     const initSig = await program.methods
       .initVoteStats(
+        electionComputationOffset,
         anchor.BN(ELECTION_ID), 
         'Выборы Президента Галактики',
         anchor.BN(startTime),
         anchor.BN(endTime),
+        new anchor.BN(deserializeLE(electionNonce).toString())
         //initCompOffset // Этот аргумент нужен из-за `#[instruction]` на структуре
       )
       .accountsPartial({
@@ -192,7 +198,7 @@ describe("CsvpProtocol", () => {
     
     const voteSig = await program.methods
       .castVote(
-        VOTER_CHUNK_INDEX,
+        voteCompOffset,        
         Array.from(ciphertext[0]), // vote_ciphertext
         Array.from(publicKey), // vote_encryption_pubkey
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce
@@ -252,7 +258,8 @@ describe("CsvpProtocol", () => {
     
     const revealSig = await program.methods
       .revealResult(
-      //  revealCompOffset // computation_offset
+      revealCompOffset, // computation_offset
+      ELECTION_ID.toNumber(), // id
       )
       .accountsPartial({
         // Аккаунты из Rust-структуры `RevealResult`

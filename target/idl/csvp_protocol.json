@@ -174,8 +174,8 @@
       ],
       "args": [
         {
-          "name": "voter_chunk_index",
-          "type": "u32"
+          "name": "computation_offset",
+          "type": "u64"
         },
         {
           "name": "vote_ciphertext",
@@ -415,6 +415,10 @@
       ],
       "args": [
         {
+          "name": "computation_offset",
+          "type": "u64"
+        },
+        {
           "name": "election_id",
           "type": "u64"
         },
@@ -429,6 +433,10 @@
         {
           "name": "end_time",
           "type": "u64"
+        },
+        {
+          "name": "nonce",
+          "type": "u128"
         }
       ]
     },
@@ -706,7 +714,16 @@
           "writable": true
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "computation_offset",
+          "type": "u64"
+        },
+        {
+          "name": "id",
+          "type": "u32"
+        }
+      ]
     },
     {
       "name": "reveal_result_callback",
@@ -965,58 +982,13 @@
   "errors": [
     {
       "code": 6000,
-      "name": "VoterNotRegistered",
-      "msg": "Voter is not registered in the Voter Chunk."
+      "name": "InvalidFinalizeTx",
+      "msg": "Invalid finalize transaction"
     },
     {
       "code": 6001,
-      "name": "AlreadyVoted",
-      "msg": "The voter has already cast a vote (Nullifier already exists)."
-    },
-    {
-      "code": 6002,
-      "name": "NotAuthorized",
-      "msg": "Not authorized to perform this action."
-    },
-    {
-      "code": 6003,
-      "name": "ChunkFull",
-      "msg": "Chunk Full, cannot register more voters in this chunk."
-    },
-    {
-      "code": 6004,
-      "name": "InvalidElectionPeriod",
-      "msg": "Invalid Election Period."
-    },
-    {
-      "code": 6005,
-      "name": "ElectionNotDraft",
-      "msg": "Election Not Draft."
-    },
-    {
-      "code": 6006,
-      "name": "InvalidCandidateIndex",
-      "msg": "Invalid Candidate Index. Must be less than MAX_CANDIDATES."
-    },
-    {
-      "code": 6007,
-      "name": "AbortedComputation",
-      "msg": "AbortedComputation"
-    },
-    {
-      "code": 6008,
-      "name": "InvalidTallySize",
-      "msg": "Invalid Tally Size."
-    },
-    {
-      "code": 6009,
-      "name": "ClusterNotSet",
-      "msg": "ClusterNotSet"
-    },
-    {
-      "code": 6010,
-      "name": "InvalidAuthority",
-      "msg": "Invalid authority"
+      "name": "InvalidAccount",
+      "msg": "Invalid account"
     }
   ],
   "types": [

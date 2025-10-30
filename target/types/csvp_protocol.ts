@@ -180,8 +180,8 @@ export type CsvpProtocol = {
       ],
       "args": [
         {
-          "name": "voterChunkIndex",
-          "type": "u32"
+          "name": "computationOffset",
+          "type": "u64"
         },
         {
           "name": "voteCiphertext",
@@ -421,6 +421,10 @@ export type CsvpProtocol = {
       ],
       "args": [
         {
+          "name": "computationOffset",
+          "type": "u64"
+        },
+        {
           "name": "electionId",
           "type": "u64"
         },
@@ -435,6 +439,10 @@ export type CsvpProtocol = {
         {
           "name": "endTime",
           "type": "u64"
+        },
+        {
+          "name": "nonce",
+          "type": "u128"
         }
       ]
     },
@@ -712,7 +720,16 @@ export type CsvpProtocol = {
           "writable": true
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "computationOffset",
+          "type": "u64"
+        },
+        {
+          "name": "id",
+          "type": "u32"
+        }
+      ]
     },
     {
       "name": "revealResultCallback",
@@ -971,58 +988,13 @@ export type CsvpProtocol = {
   "errors": [
     {
       "code": 6000,
-      "name": "voterNotRegistered",
-      "msg": "Voter is not registered in the Voter Chunk."
+      "name": "invalidFinalizeTx",
+      "msg": "Invalid finalize transaction"
     },
     {
       "code": 6001,
-      "name": "alreadyVoted",
-      "msg": "The voter has already cast a vote (Nullifier already exists)."
-    },
-    {
-      "code": 6002,
-      "name": "notAuthorized",
-      "msg": "Not authorized to perform this action."
-    },
-    {
-      "code": 6003,
-      "name": "chunkFull",
-      "msg": "Chunk Full, cannot register more voters in this chunk."
-    },
-    {
-      "code": 6004,
-      "name": "invalidElectionPeriod",
-      "msg": "Invalid Election Period."
-    },
-    {
-      "code": 6005,
-      "name": "electionNotDraft",
-      "msg": "Election Not Draft."
-    },
-    {
-      "code": 6006,
-      "name": "invalidCandidateIndex",
-      "msg": "Invalid Candidate Index. Must be less than MAX_CANDIDATES."
-    },
-    {
-      "code": 6007,
-      "name": "abortedComputation",
-      "msg": "abortedComputation"
-    },
-    {
-      "code": 6008,
-      "name": "invalidTallySize",
-      "msg": "Invalid Tally Size."
-    },
-    {
-      "code": 6009,
-      "name": "clusterNotSet",
-      "msg": "clusterNotSet"
-    },
-    {
-      "code": 6010,
-      "name": "invalidAuthority",
-      "msg": "Invalid authority"
+      "name": "invalidAccount",
+      "msg": "Invalid account"
     }
   ],
   "types": [

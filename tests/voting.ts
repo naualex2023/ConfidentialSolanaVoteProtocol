@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { CsvpProtocol } from "../target/types/csvp_protocol"; // <-- Убедитесь, что имя типа верное
+import { CsvpProtocol } from "../target/types/csvp_protocol"; // <-- Ensure the type name is correct
 import { randomBytes } from "crypto";
 import {
   awaitComputationFinalization,
@@ -60,36 +60,37 @@ describe("CsvpProtocol", () => {
 
   const arciumEnv = getArciumEnv();
 
-  it("проводит полное конфиденциальное голосование!", async () => {
+  it("runs a complete confidential voting process!", async () => {
     
-    // --- 1. НАСТРОЙКА ---
+    // --- 1. SETUP ---
     const owner = await getKeypairFromFile(`${os.homedir()}/.config/solana/id.json`);
-    const voter = owner; // Будем использовать owner как голосующего
+    const voter = owner; // Using the owner as the voter for simplicity
     
-    console.log("Владелец (Authority/Voter):", owner.publicKey.toBase58());
+    console.log("Owner (Authority/Voter):", owner.publicKey.toBase58());
 
     const { privateKey, publicKey, sharedSecret } = await makeClientSideKeys(provider as anchor.AnchorProvider, program.programId);
     
     const cipher = new RescueCipher(sharedSecret);
     
-    // --- Параметры нашего теста ---
+    // --- Test Parameters ---
     const ELECTION_ID = new anchor.BN(123); // u64
     const VOTER_CHUNK_INDEX = 0; // u32
-    const CHOICE_INDEX = 2; // Голосуем за 3-го кандидата (индекс 2)
+    const CHOICE_INDEX = 2; // Voting for the 3rd candidate (index 2)
     
-    // Генерируем фейковые хеши для регистрации и нуллификатора
-    // В реальном приложении они бы генерировались криптографически
+    // Generate fake hashes for registration and nullifier
+    // In a real application, these would be cryptographically generated
     const voterHash = Array.from(randomBytes(32));
     const nullifierHash = Array.from(randomBytes(32));
-    //1. Генерируем 32-байтовый хэш (сырые байты)
-        const rawVoterHashBytes = randomBytes(32);
-        
-        // 2. Преобразуем 32-байтовый хэш в объект PublicKey.
-        // Это необходимо, так как Rust-инструкция ожидает Pubkey.
-        // Anchor SDK автоматически сериализует этот объект.
-        const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
     
-    // --- Вычисляем все необходимые PDA ---
+    // 1. Generate 32-byte hash (raw bytes)
+    const rawVoterHashBytes = randomBytes(32);
+        
+    // 2. Convert the 32-byte hash into a PublicKey object.
+    // This is required because the Rust instruction expects a Pubkey.
+    // The Anchor SDK automatically serializes this object.
+    const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
+    
+    // --- Calculate all necessary PDAs ---
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
     const [signPda, _signBump] = findSignPda(program.programId, electionPda);
     const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, electionPda, VOTER_CHUNK_INDEX);
@@ -100,8 +101,7 @@ describe("CsvpProtocol", () => {
     console.log("Voter Chunk PDA:", voterChunkPda.toBase58());
     console.log("Nullifier PDA:", nullifierPda.toBase58());
 
-    // --- 2. ИНИЦИАЛИЗАЦИЯ СХЕМ MPC ---
-    // (Этот код выглядит корректно и взят из вашего теста)
+    // --- 2. INITIALIZE MPC SCHEMAS ---
     console.log("Initializing vote stats computation definition");
     const initVoteStatsSig = await initVoteStatsCompDef(program, owner, false, false);
     console.log("... Vote stats comp def initialized:", initVoteStatsSig);
@@ -115,16 +115,15 @@ describe("CsvpProtocol", () => {
     console.log("... Reveal result comp def initialized:", initRRSig);
     
     
-    // --- 3. СОЗДАНИЕ ВЫБОРОВ (initialize_election) ---
-    console.log(`\n🆕 Создание выборов (ID: ${ELECTION_ID.toString()})...`);
+    // --- 3. CREATE ELECTION (initialize_election) ---
+    console.log(`\n🆕 Creating election (ID: ${ELECTION_ID.toString()})...`);
     
-    //const initCompOffset = getRandomBigNumber();
     const mxeAccountPda = getMXEAccAddress(program.programId);
     
-    // Время (start_time, end_time)
+    // Time (start_time, end_time)
     const now = new anchor.BN(Math.floor(Date.now() / 1000));
-    const startTime = now.sub(new anchor.BN(60)); // Начались минуту назад
-    const endTime = now.add(new anchor.BN(3600)); // Заканчиваются через час
+    const startTime = now.sub(new anchor.BN(60)); // Started one minute ago
+    const endTime = now.add(new anchor.BN(3600)); // Ends in one hour
     
     const electionNonce = randomBytes(16);
 
@@ -135,20 +134,13 @@ describe("CsvpProtocol", () => {
       .initElection(
         electionComputationOffset,
         anchor.BN(ELECTION_ID), 
-        'Выборы Президента Галактики',
+        'Galactic President Election',
         anchor.BN(startTime),
         anchor.BN(endTime),
         new anchor.BN(deserializeLE(electionNonce).toString())
-        //initCompOffset // Этот аргумент нужен из-за `#[instruction]` на структуре
       )
       .accountsPartial({
-        // Аккаунты из Rust-структуры `InitializeElection`
-        // authority: owner.publicKey,
-        // electionAccount: electionPda,
-        // signPdaAccount: signPda,
-        // systemProgram: SystemProgram.programId,
-        // arciumProgram: getArciumProgAddress(),
-        // Arcium аккаунты
+        // Arcium accounts
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(program.programId),
         executingPool: getExecutingPoolAccAddress(program.programId),
@@ -158,14 +150,10 @@ describe("CsvpProtocol", () => {
           Buffer.from(getCompDefAccOffset("init_vote_stats")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
-        // poolAccount: getArciumFeePoolAccAddress(),
-        // clockAccount: getArciumClockAccAddress(),
-        // poolAccount: getFeePoolAccAddress(), // 👈 --- 2. РАСКОММЕНТИРУЙТЕ ЭТО
-        // clockAccount: getClockAccAddress(),
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
-    console.log("... Транзакция создания выборов отправлена:", initSig);
+    console.log("... Election creation transaction sent:", initSig);
     
     const finalizeInitSig = await awaitComputationFinalization(
       provider as anchor.AnchorProvider,
@@ -173,35 +161,16 @@ describe("CsvpProtocol", () => {
       program.programId,
       "confirmed"
     );
-    console.log("... Выборы финализированы (MPC init_vote_stats выполнен):", finalizeInitSig);
+    console.log("... Election finalized (MPC init_vote_stats executed):", finalizeInitSig);
     
     
-    // --- 4. РЕГИСТРАЦИЯ ИЗБИРАТЕЛЯ (register_voters) ---
-    console.log(`\n📝 Регистрация избирателя в чанке ${VOTER_CHUNK_INDEX}...`);
+    // --- 4. REGISTER VOTER (register_voters) ---
+    console.log(`\n📝 Registering voter in chunk ${VOTER_CHUNK_INDEX}...`);
     
-    // const registerSig = await program.methods
-    //   .registerVoters(
-    //     VOTER_CHUNK_INDEX,
-    //     [voterHash] // Передаем хеш нашего избирателя
-    //   )
-    //   .accountsPartial({
-    //     authority: owner.publicKey,
-    //     election: electionPda,
-    //     voterRegistry: voterChunkPda,
-    //     systemProgram: SystemProgram.programId,
-    //   })
-    //   .rpc({ skipPreflight: true, commitment: "confirmed" });
-    // ИСПРАВЛЕНИЕ: Используем Buffer напрямую
-//const voterHash = randomBytes(32); 
-
-// Проверка типа (теперь она должна проходить, если randomBytes возвращает Buffer)
-// if (!(voterHash instanceof Uint8Array) || voterHash.length !== 32) {
-//     throw new Error("Voter hash must be a 32-byte Uint8Array or Buffer.");
-// }
-        const registerSig = await program.methods
+    const registerSig = await program.methods
       .registerVoter(
         Number(VOTER_CHUNK_INDEX),
-        voterHashKey // Передаем хеш нашего избирателя
+        voterHashKey // Pass the voter hash (as Pubkey)
       )
       .accountsPartial({
         authority: owner.publicKey,
@@ -211,15 +180,15 @@ describe("CsvpProtocol", () => {
       }).signers([owner])
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
-    console.log("... Избиратель зарегистрирован:", registerSig);
+    console.log("... Voter registered:", registerSig);
     
 
-    // --- 5. ГОЛОСОВАНИЕ (cast_vote) ---
-    console.log(`\n🗳️  Голосование за кандидата с индексом ${CHOICE_INDEX}...`);
+    // --- 5. CAST VOTE (cast_vote) ---
+    console.log(`\n🗳️  Casting vote for candidate index ${CHOICE_INDEX}...`);
     
     const voteCompOffset = getRandomBigNumber();
     
-    // Шифруем наш голос (индекс кандидата)
+    // Encrypt our vote (candidate index)
     const plaintext = [BigInt(CHOICE_INDEX)]; // [u64]
     const voteNonce = randomBytes(16);
     const ciphertext = cipher.encrypt(plaintext, voteNonce); // [u8; 32]
@@ -233,10 +202,9 @@ describe("CsvpProtocol", () => {
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce
         nullifierHash, // nullifier_hash
         voterHashKey, // voter_hash
-       // voteCompOffset // computation_offset
       )
       .accountsPartial({
-        // Аккаунты из Rust-структуры `CastVote`
+        // Accounts from the Rust `CastVote` struct
         voter: voter.publicKey,
         electionAccount: electionPda,
         voterRegistry: voterChunkPda,
@@ -244,25 +212,23 @@ describe("CsvpProtocol", () => {
         signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,
         arciumProgram: getArciumProgAddress(),
-        // Arcium аккаунты
+        // Arcium accounts
         mxeAccount: mxeAccountPda,
         mempoolAccount: getMempoolAccAddress(program.programId),
         executingPool: getExecutingPoolAccAddress(program.programId),
         computationAccount: getComputationAccAddress(program.programId, voteCompOffset),
-        compDefAccount: getCompDefAccAddress( // <-- ВАЖНО: используем 'vote' offset
+        compDefAccount: getCompDefAccAddress( // <-- IMPORTANT: use 'vote' offset
           program.programId,
           Buffer.from(getCompDefAccOffset("vote")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
-        // poolAccount: getFeePoolAccAddress(),
-        // clockAccount: getClockAccAddress(),
       })
-      .signers([voter]) // 'voter' должен подписать
+      .signers([voter]) // 'voter' must sign
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
-    console.log("... Транзакция голосования отправлена:", voteSig);
+    console.log("... Voting transaction sent:", voteSig);
 
-    const voteEventPromise = awaitEvent("voteEvent"); // <-- Исправлен регистр
+    const voteEventPromise = awaitEvent("voteEvent");
     
     const finalizeVoteSig = await awaitComputationFinalization(
       provider as anchor.AnchorProvider,
@@ -270,18 +236,18 @@ describe("CsvpProtocol", () => {
       program.programId,
       "confirmed"
     );
-    console.log("... Голосование финализировано (MPC vote выполнен):", finalizeVoteSig);
+    console.log("... Vote finalized (MPC vote executed):", finalizeVoteSig);
 
     const voteEvent = await voteEventPromise;
     console.log(
-      `... Событие 'VoteEvent' получено! Временная метка:`,
+      `... 'VoteEvent' received! Timestamp:`,
       voteEvent.timestamp.toString()
     );
     
-    // --- 6. РАСКРЫТИЕ РЕЗУЛЬТАТОВ (reveal_result) ---
-    console.log(`\n🏆 Раскрытие результатов...`);
+    // --- 6. REVEAL RESULTS (reveal_result) ---
+    console.log(`\n🏆 Revealing results...`);
 
-    // (В реальном приложении мы бы дождались `endTime`)
+    // (In a real app, we would wait for 'endTime')
     
     const revealCompOffset = getRandomBigNumber();
     
@@ -291,29 +257,27 @@ describe("CsvpProtocol", () => {
       ELECTION_ID.toNumber(), // id
       )
       .accountsPartial({
-        // Аккаунты из Rust-структуры `RevealResult`
+        // Accounts from the Rust `RevealResult` struct
         authority: owner.publicKey,
         electionAccount: electionPda,
         signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,
         arciumProgram: getArciumProgAddress(),
-        // Arcium аккаунты
+        // Arcium accounts
         mxeAccount: mxeAccountPda,
         mempoolAccount: getMempoolAccAddress(program.programId),
         executingPool: getExecutingPoolAccAddress(program.programId),
         computationAccount: getComputationAccAddress(program.programId, revealCompOffset),
-        compDefAccount: getCompDefAccAddress( // <-- ВАЖНО: используем 'reveal_result' offset
+        compDefAccount: getCompDefAccAddress( // <-- IMPORTANT: use 'reveal_result' offset
           program.programId,
           Buffer.from(getCompDefAccOffset("reveal_result")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
-        // poolAccount: getFeePoolAccAddress(),
-        // clockAccount: getClockAccAddress(),
       })
-      .signers([owner]) // 'authority' должен подписать
+      .signers([owner]) // 'authority' must sign
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
-    console.log("... Транзакция раскрытия отправлена:", revealSig);
+    console.log("... Reveal transaction sent:", revealSig);
     
     const finalizeRevealSig = await awaitComputationFinalization(
       provider as anchor.AnchorProvider,
@@ -321,26 +285,26 @@ describe("CsvpProtocol", () => {
       program.programId,
       "confirmed"
     );
-    console.log("... Раскрытие финализировано (MPC reveal_result выполнен):", finalizeRevealSig);
+    console.log("... Reveal finalized (MPC reveal_result executed):", finalizeRevealSig);
     
-    // --- 7. ПРОВЕРКА РЕЗУЛЬТАТОВ ---
-    // Вместо события, мы загружаем аккаунт и проверяем массив `finalResult`
+    // --- 7. VERIFY RESULTS ---
+    // Instead of an event, we load the account and check the `finalResult` array
     
-    console.log("... Загрузка обновленного аккаунта выборов...");
+    console.log("... Fetching updated election account...");
     const pollAccount = await program.account.election.fetch(electionPda);
     
     const results = pollAccount.finalResult.map(n => n.toString());
-    console.log("... Финальные результаты (массив [u64; 5]):", results);
+    console.log("... Final results (array of [u64; 5]):", results);
 
-    // Проверяем, что наш голос (индекс 2) был учтен
-    assert.equal(pollAccount.finalResult[CHOICE_INDEX].toNumber(), 1, "Голос за кандидата 2 должен быть 1");
-    assert.equal(pollAccount.finalResult[0].toNumber(), 0, "Голос за кандидата 0 должен быть 0");
+    // Verify that our vote (index 2) was counted
+    assert.equal(pollAccount.finalResult[CHOICE_INDEX].toNumber(), 1, "Vote for candidate 2 should be 1");
+    assert.equal(pollAccount.finalResult[0].toNumber(), 0, "Vote for candidate 0 should be 0");
     
-    console.log("\n✅ Тест успешно пройден!");
+    console.log("\n✅ Test passed successfully!");
 
   });
 
-  // --- Функции инициализации CompDef (без изменений) ---
+  // --- CompDef Initialization Functions (No changes needed) ---
 
   async function initVoteStatsCompDef(
     program: Program<CsvpProtocol>,

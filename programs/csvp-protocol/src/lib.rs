@@ -95,7 +95,7 @@ pub mod csvp_protocol {
     // ----------------------
 
     /// Создает выборы и запускает MPC для инициализации encrypted_tally нулями.
-    pub fn initialize_election(
+    pub fn init_vote_stats(
         ctx: Context<InitializeElection>,
         election_id: u64,
         title: String,

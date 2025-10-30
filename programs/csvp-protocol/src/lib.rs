@@ -28,6 +28,8 @@ declare_id!("GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"); // Ваш Program I
 
 #[arcium_program]
 pub mod csvp_protocol {
+    //use std::env::args;
+
     use super::*;
 
     // ------------------------------------
@@ -97,10 +99,12 @@ pub mod csvp_protocol {
     /// Создает выборы и запускает MPC для инициализации encrypted_tally нулями.
     pub fn init_vote_stats(
         ctx: Context<InitializeElection>,
+        computation_offset: u64,
         election_id: u64,
         title: String,
         start_time: u64,
         end_time: u64,
+        nonce: u128,
     ) -> Result<()> {
         msg!("Initializing new election...");
         let election = &mut ctx.accounts.election_account;
@@ -112,8 +116,11 @@ pub mod csvp_protocol {
         election.end_time = end_time;
         election.state = 0;//ElectionState::Draft; // Начинаем с Draft
         election.total_votes = 0;
+        election.nonce = nonce;
         election.bump = ctx.bumps.election_account;
         // `nonce` и `encrypted_tally` будут установлены коллбэком
+
+        let args = vec![Argument::PlaintextU128(nonce)];
 
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
@@ -121,8 +128,8 @@ pub mod csvp_protocol {
         // Эта схема не принимает аргументов (mxe: Mxe - это владелец, а не arg)
         queue_computation(
             ctx.accounts, // Используем ArciumQueueComputationAccounts
-            0, // computation_offset (0 для нового)
-            vec![], // Нет входных аргументов
+            computation_offset, // computation_offset (0 для нового)
+            args, // Нет входных аргументов
             None, // Нет arcium_proof
             vec![InitVoteStatsCallback::callback_ix(&[CallbackAccount {
                 pubkey: ctx.accounts.election_account.key(),
@@ -169,7 +176,8 @@ pub mod csvp_protocol {
     /// Принимает голос: проверяет регистрацию, Nullifier и запускает MPC `vote`.
     pub fn cast_vote(
         ctx: Context<CastVote>,
-        voter_chunk_index: u32,
+        computation_offset: u64,
+        //voter_chunk_index: u32,
         // Аргументы для `Enc<Shared, UserVote>`
         vote_ciphertext: [u8; 32], // Зашифрованный `UserVote { candidate_index }`
         vote_encryption_pubkey: [u8; 32],
@@ -226,7 +234,7 @@ pub mod csvp_protocol {
         // 5. ЗАПУСК MPC для агрегации голоса
         queue_computation(
             ctx.accounts,
-            0, // computation_offset
+            computation_offset, // computation_offset
             args,
             None, // arcium_proof
             vec![VoteCallback::callback_ix(&[CallbackAccount {
@@ -272,7 +280,15 @@ pub mod csvp_protocol {
     // ----------------------
 
     /// Запускает MPC `reveal_result` (только создатель).
-    pub fn reveal_result(ctx: Context<RevealResult>) -> Result<()> {
+    pub fn reveal_result(ctx: Context<RevealResult>,
+        computation_offset: u64,
+        id: u32,) -> Result<()> {
+        // require!(
+        //     ctx.accounts.payer.key() == ctx.accounts.election_account.authority,
+        //     VoteError::InvalidAuthority
+        // );
+
+        // msg!("Revealing voting result for election with id {}", id);
         let election = &mut ctx.accounts.election_account;
         
         // 1. ПРОВЕРКА (уже сделана в `has_one = authority`)
@@ -298,7 +314,7 @@ pub mod csvp_protocol {
         // 4. ЗАПУСК MPC
         queue_computation(
             ctx.accounts,
-            0, // computation_offset
+            computation_offset, // computation_offset
             args,
             None, // arcium_proof
             vec![RevealResultCallback::callback_ix(&[CallbackAccount {
@@ -655,7 +671,7 @@ pub struct VoteCallback<'info> {
 
 #[queue_computation_accounts("reveal_result", authority)]
 #[derive(Accounts)]
-#[instruction(computation_offset: u64)]
+#[instruction(computation_offset: u64,id: u32)]
 pub struct RevealResult<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,

@@ -18,8 +18,8 @@ import {
   getCompDefAccAddress,
   getExecutingPoolAccAddress,
   getComputationAccAddress,
-  getFeePoolAccAddress,
-  getClockAccAddress,
+  //getFeePoolAccAddress,
+  //getClockAccAddress,
   getClusterAccAddress,
 } from "@arcium-hq/client";
 import * as fs from "fs/promises";
@@ -145,8 +145,8 @@ describe("CsvpProtocol", () => {
         clusterAccount: arciumEnv.arciumClusterPubkey,
         // poolAccount: getArciumFeePoolAccAddress(),
         // clockAccount: getArciumClockAccAddress(),
-        poolAccount: getFeePoolAccAddress(), // 👈 --- 2. РАСКОММЕНТИРУЙТЕ ЭТО
-        clockAccount: getClockAccAddress(),
+        // poolAccount: getFeePoolAccAddress(), // 👈 --- 2. РАСКОММЕНТИРУЙТЕ ЭТО
+        // clockAccount: getClockAccAddress(),
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
@@ -219,8 +219,8 @@ describe("CsvpProtocol", () => {
           Buffer.from(getCompDefAccOffset("vote")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
-        poolAccount: getFeePoolAccAddress(),
-        clockAccount: getClockAccAddress(),
+        // poolAccount: getFeePoolAccAddress(),
+        // clockAccount: getClockAccAddress(),
       })
       .signers([voter]) // 'voter' должен подписать
       .rpc({ skipPreflight: true, commitment: "confirmed" });
@@ -271,8 +271,8 @@ describe("CsvpProtocol", () => {
           Buffer.from(getCompDefAccOffset("reveal_result")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
-        poolAccount: getFeePoolAccAddress(),
-        clockAccount: getClockAccAddress(),
+        // poolAccount: getFeePoolAccAddress(),
+        // clockAccount: getClockAccAddress(),
       })
       .signers([owner]) // 'authority' должен подписать
       .rpc({ skipPreflight: true, commitment: "confirmed" });

@@ -443,7 +443,7 @@ pub struct InitializeElection<'info> {
         init_if_needed, // 👈 Обязательно init
         payer = authority,
         space = 9, 
-        seeds = [&SIGN_PDA_SEED],
+        seeds = [&ELECTION_SIGN_PDA_SEED],
         bump, // 👈 Обязательно bump
         address = derive_sign_pda!(),
     )]
@@ -564,7 +564,7 @@ pub struct CastVote<'info> {
     #[account(
         mut, 
         // Ищем PDA, используя те же сиды, что и при инициализации
-        seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+        seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
         // Указываем, что бамп должен совпадать с полем в аккаунте
         bump = sign_pda_account.bump, 
     )]
@@ -686,11 +686,12 @@ pub struct RevealResult<'info> {
     pub authority: Signer<'info>,
         //pub sign_pda_account: Account<'info, SignerAccount>,
         #[account(
-        init, // 👈 Обязательно init
+        init_if_needed, // 👈 Обязательно init
         payer = authority,
-        space = 8 + Election::INIT_SPACE, 
-        seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
-        bump // 👈 Обязательно bump
+        space = 9, 
+        seeds = [&ELECTION_SIGN_PDA_SEED],
+        bump, // 👈 Обязательно bump
+        address = derive_sign_pda!(),
     )]
     pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(

@@ -300,109 +300,19 @@ export type CsvpProtocol = {
       "args": []
     },
     {
-      "name": "initVoteStatsCallback",
-      "docs": [
-        "Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей."
-      ],
-      "discriminator": [
-        222,
-        186,
-        167,
-        245,
-        79,
-        226,
-        44,
-        71
-      ],
-      "accounts": [
-        {
-          "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
-        },
-        {
-          "name": "compDefAccount"
-        },
-        {
-          "name": "instructionsSysvar",
-          "address": "Sysvar1nstructions1111111111111111111111111"
-        },
-        {
-          "name": "electionAccount",
-          "writable": true
-        }
-      ],
-      "args": [
-        {
-          "name": "output",
-          "type": {
-            "defined": {
-              "name": "computationOutputs",
-              "generics": [
-                {
-                  "kind": "type",
-                  "type": {
-                    "defined": {
-                      "name": "initVoteStatsOutput"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "initVoteStatsCompDef",
-      "discriminator": [
-        7,
-        191,
-        118,
-        167,
-        173,
-        92,
-        25,
-        179
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "mxeAccount",
-          "writable": true
-        },
-        {
-          "name": "compDefAccount",
-          "writable": true
-        },
-        {
-          "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initializeElection",
+      "name": "initVoteStats",
       "docs": [
         "Создает выборы и запускает MPC для инициализации encrypted_tally нулями."
       ],
       "discriminator": [
-        59,
-        166,
-        191,
-        126,
-        195,
-        0,
-        153,
-        168
+        108,
+        193,
+        62,
+        156,
+        244,
+        233,
+        77,
+        203
       ],
       "accounts": [
         {
@@ -527,6 +437,96 @@ export type CsvpProtocol = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "initVoteStatsCallback",
+      "docs": [
+        "Коллбэк после `init_vote_stats`: записывает зашифрованный массив нулей."
+      ],
+      "discriminator": [
+        222,
+        186,
+        167,
+        245,
+        79,
+        226,
+        44,
+        71
+      ],
+      "accounts": [
+        {
+          "name": "arciumProgram",
+          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+        },
+        {
+          "name": "compDefAccount"
+        },
+        {
+          "name": "instructionsSysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "electionAccount",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "output",
+          "type": {
+            "defined": {
+              "name": "computationOutputs",
+              "generics": [
+                {
+                  "kind": "type",
+                  "type": {
+                    "defined": {
+                      "name": "initVoteStatsOutput"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initVoteStatsCompDef",
+      "discriminator": [
+        7,
+        191,
+        118,
+        167,
+        173,
+        92,
+        25,
+        179
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mxeAccount",
+          "writable": true
+        },
+        {
+          "name": "compDefAccount",
+          "writable": true
+        },
+        {
+          "name": "arciumProgram",
+          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "registerVoters",

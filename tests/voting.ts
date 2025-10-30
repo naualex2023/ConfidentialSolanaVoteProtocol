@@ -119,7 +119,7 @@ describe("CsvpProtocol", () => {
     const endTime = now.add(new anchor.BN(3600)); // Заканчиваются через час
     
     const initSig = await program.methods
-      .initializeElection(
+      .initVoteStats(
         anchor.BN(ELECTION_ID), 
         'Выборы Президента Галактики',
         anchor.BN(startTime),
@@ -167,7 +167,7 @@ describe("CsvpProtocol", () => {
         VOTER_CHUNK_INDEX,
         [voterHash] // Передаем хеш нашего избирателя
       )
-      .accounts({
+      .accountsPartial({
         authority: owner.publicKey,
         election: electionPda,
         voterRegistry: voterChunkPda,

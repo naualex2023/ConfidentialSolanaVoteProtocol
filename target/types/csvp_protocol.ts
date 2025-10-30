@@ -230,93 +230,19 @@ export type CsvpProtocol = {
       ]
     },
     {
-      "name": "initRevealResultCompDef",
-      "discriminator": [
-        37,
-        58,
-        75,
-        132,
-        146,
-        44,
-        185,
-        221
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "mxeAccount",
-          "writable": true
-        },
-        {
-          "name": "compDefAccount",
-          "writable": true
-        },
-        {
-          "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initVoteCompDef",
-      "discriminator": [
-        227,
-        119,
-        186,
-        182,
-        31,
-        37,
-        236,
-        155
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "mxeAccount",
-          "writable": true
-        },
-        {
-          "name": "compDefAccount",
-          "writable": true
-        },
-        {
-          "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initVoteStats",
+      "name": "initElection",
       "docs": [
         "Создает выборы и запускает MPC для инициализации encrypted_tally нулями."
       ],
       "discriminator": [
-        108,
-        193,
-        62,
-        156,
-        244,
-        233,
+        216,
+        198,
+        149,
         77,
-        203
+        71,
+        46,
+        62,
+        150
       ],
       "accounts": [
         {
@@ -445,6 +371,80 @@ export type CsvpProtocol = {
           "type": "u128"
         }
       ]
+    },
+    {
+      "name": "initRevealResultCompDef",
+      "discriminator": [
+        37,
+        58,
+        75,
+        132,
+        146,
+        44,
+        185,
+        221
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mxeAccount",
+          "writable": true
+        },
+        {
+          "name": "compDefAccount",
+          "writable": true
+        },
+        {
+          "name": "arciumProgram",
+          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initVoteCompDef",
+      "discriminator": [
+        227,
+        119,
+        186,
+        182,
+        31,
+        37,
+        236,
+        155
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mxeAccount",
+          "writable": true
+        },
+        {
+          "name": "compDefAccount",
+          "writable": true
+        },
+        {
+          "name": "arciumProgram",
+          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "initVoteStatsCallback",

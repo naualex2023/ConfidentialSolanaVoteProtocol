@@ -7,7 +7,7 @@ import { randomBytes } from "crypto";
 
 // --- Константы из state.rs ---
 export const ELECTION_SEED = Buffer.from("election");
-export const SIGN_PDA_SEED = Buffer.from("sign_pda"); // Убедитесь, что это совпадает с lib.rs
+export const SIGN_PDA_SEED = Buffer.from("signer_account"); // Убедитесь, что это совпадает с lib.rs
 export const VOTER_REGISTRY_SEED = Buffer.from("voter_registry");
 export const NULLIFIER_SEED = Buffer.from("nullifier");
 

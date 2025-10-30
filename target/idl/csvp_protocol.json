@@ -224,93 +224,19 @@
       ]
     },
     {
-      "name": "init_reveal_result_comp_def",
-      "discriminator": [
-        37,
-        58,
-        75,
-        132,
-        146,
-        44,
-        185,
-        221
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "mxe_account",
-          "writable": true
-        },
-        {
-          "name": "comp_def_account",
-          "writable": true
-        },
-        {
-          "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "init_vote_comp_def",
-      "discriminator": [
-        227,
-        119,
-        186,
-        182,
-        31,
-        37,
-        236,
-        155
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "mxe_account",
-          "writable": true
-        },
-        {
-          "name": "comp_def_account",
-          "writable": true
-        },
-        {
-          "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "init_vote_stats",
+      "name": "init_election",
       "docs": [
         "Создает выборы и запускает MPC для инициализации encrypted_tally нулями."
       ],
       "discriminator": [
-        108,
-        193,
-        62,
-        156,
-        244,
-        233,
+        216,
+        198,
+        149,
         77,
-        203
+        71,
+        46,
+        62,
+        150
       ],
       "accounts": [
         {
@@ -439,6 +365,80 @@
           "type": "u128"
         }
       ]
+    },
+    {
+      "name": "init_reveal_result_comp_def",
+      "discriminator": [
+        37,
+        58,
+        75,
+        132,
+        146,
+        44,
+        185,
+        221
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mxe_account",
+          "writable": true
+        },
+        {
+          "name": "comp_def_account",
+          "writable": true
+        },
+        {
+          "name": "arcium_program",
+          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_vote_comp_def",
+      "discriminator": [
+        227,
+        119,
+        186,
+        182,
+        31,
+        37,
+        236,
+        155
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mxe_account",
+          "writable": true
+        },
+        {
+          "name": "comp_def_account",
+          "writable": true
+        },
+        {
+          "name": "arcium_program",
+          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "init_vote_stats_callback",

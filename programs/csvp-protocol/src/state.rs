@@ -9,6 +9,7 @@ pub const ELECTION_SEED: &[u8] = b"election";
 // pub const VOTER_CHUNK_SEED: &[u8] = b"voter_chunk";
 pub const VOTER_REGISTRY_SEED: &[u8] = b"voter_registry"; // <-- НОВОЕ ИМЯ
 pub const NULLIFIER_SEED: &[u8] = b"nullifier";
+pub const SIGN_PDA_SEED: &[u8] = b"signer_account";
 
 
 // ------------------------------------------------------------------

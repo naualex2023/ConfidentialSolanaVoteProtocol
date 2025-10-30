@@ -434,11 +434,20 @@ pub struct RegisterVoters<'info> {
 
 #[queue_computation_accounts("init_vote_stats", authority)]
 #[derive(Accounts)]
-#[instruction(election_id: u64,computation_offset: u64)]
+#[instruction(computation_offset: u64,election_id: u64)]
 //#[instruction(computation_offset: u64, id: u32)]
 pub struct InitializeElection<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
+       #[account(
+        init_if_needed, // 👈 Обязательно init
+        payer = authority,
+        space = 9, 
+        seeds = [&SIGN_PDA_SEED],
+        bump, // 👈 Обязательно bump
+        address = derive_sign_pda!(),
+    )]
+    pub sign_pda_account: Account<'info, SignerAccount>,
     // pub sign_pda_account: Account<'info, SignerAccount>,
     // #[account(
     //     address = derive_mxe_pda!()
@@ -449,14 +458,14 @@ pub struct InitializeElection<'info> {
     )]
     pub mxe_account: Box<Account<'info, MXEAccount>>,
     // 🔥 КОРРЕКТНАЯ ДЕКЛАРАЦИЯ SIGN PDA:
-    #[account(
-        init, // 👈 Обязательно init
-        payer = authority,
-        space = 8 + Election::INIT_SPACE, 
-        seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
-        bump // 👈 Обязательно bump
-    )]
-    pub sign_pda_account: Account<'info, SignerAccount>,
+    // #[account(
+    //     init, // 👈 Обязательно init
+    //     payer = authority,
+    //     space = 8 + Election::INIT_SPACE, 
+    //     seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+    //     bump // 👈 Обязательно bump
+    // )]
+    // pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
         mut,
         address = derive_mempool_pda!()

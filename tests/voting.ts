@@ -134,11 +134,11 @@ describe("CsvpProtocol", () => {
       )
       .accountsPartial({
         // Аккаунты из Rust-структуры `InitializeElection`
-        authority: owner.publicKey,
-        electionAccount: electionPda,
-        signPdaAccount: signPda,
-        systemProgram: SystemProgram.programId,
-        arciumProgram: getArciumProgAddress(),
+        // authority: owner.publicKey,
+        // electionAccount: electionPda,
+        // signPdaAccount: signPda,
+        // systemProgram: SystemProgram.programId,
+        // arciumProgram: getArciumProgAddress(),
         // Arcium аккаунты
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(program.programId),

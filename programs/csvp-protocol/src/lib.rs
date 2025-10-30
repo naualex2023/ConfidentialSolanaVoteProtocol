@@ -56,42 +56,66 @@ pub mod csvp_protocol {
     // ----------------------
 
     /// Регистрирует группу голосующих в чанке.
+
     pub fn register_voters(
         ctx: Context<RegisterVoters>,
-        chunk_index: u32,
+        _chunk_index: u32, // index уже находится в PDA, сохраняем для ясности
         voter_hashes: Vec<[u8; 32]>,
     ) -> Result<()> {
-        let chunk = &mut ctx.accounts.voter_registry;
+        // Меняем имя переменной с 'chunk' на 'registry' для ясности
+        msg!("Registering {} voters in chunk {}", voter_hashes.len(), _chunk_index);
+        let registry = &mut ctx.accounts.voter_registry; 
         let election = &ctx.accounts.election;
 
-        // 1. Проверка: Только создатель выборов может добавлять избирателей
+        // --- 1. Проверки безопасности ---
+        msg!("Performing security checks...");
+        // 1.1. Только создатель выборов может добавлять избирателей
         require_keys_eq!(
             election.creator,
             ctx.accounts.authority.key(),
             VoteError::NotAuthorized
         );
-
-        // 2. Проверка: Чанк не переполнен
+        msg!("Authority is authorized.");
+        // 1.2. Выборы еще не начались
         require!(
-            chunk.voter_hashes.len() + voter_hashes.len() <= MAX_ITEMS_PER_CHUNK,
-            VoteError::ChunkFull
-        );
-        
-        // 3. Проверка: Выборы еще не начались
-        require!(
-            election.state == 0,//ElectionState::Draft,
+            election.state == 0, // 0 - Draft
             VoteError::ElectionNotDraft
         );
+        msg!("Election is in Draft state.");
+        // --- 2. Проверка на переполнение чанка (до добавления) ---
+        let total_new_hashes = voter_hashes.len();
+        let current_count = registry.count as usize;
 
-        // 4. Инициализация и заполнение данных
-        chunk.election = election.key();
-        chunk.chunk_index = chunk_index;
-        chunk.voter_hashes.extend(voter_hashes);
-        chunk.bump = ctx.bumps.voter_registry;
+        require!(
+            current_count.checked_add(total_new_hashes).is_some() && 
+            current_count + total_new_hashes <= MAX_ITEMS_PER_CHUNK,
+            VoteError::ChunkFull
+        );
+        msg!("Chunk has enough space for new voters.");
+        // --- 3. Инициализация и заполнение данных (БЕЗ REALLOC) ---
+
+        // Устанавливаем эти поля только при первой инициализации аккаунта
+        registry.election = election.key(); 
+        registry.chunk_index = _chunk_index; 
+        msg!("Filling voter hashes into the registry...");
+        // ЗАМЕНА: Используем цикл с прямой записью в массив вместо .extend()
+        for (i, hash) in voter_hashes.into_iter().enumerate() {
+            let index_to_write = current_count
+                .checked_add(i)
+                .ok_or(VoteError::ChunkFull)?; // Проверка переполнения
+            msg!("Writing hash at index {}", index_to_write);
+            // ПРЯМАЯ ЗАПИСЬ В ФИКСИРОВАННЫЙ МАССИВ. Это устраняет realloc.
+            registry.voter_hashes[index_to_write] = hash;
+            
+            // Инкрементируем счетчик
+            registry.count = registry.count.checked_add(1).ok_or(VoteError::ChunkFull)?;
+        }
+        
+        // 4. Сохранение bump (только при init_if_needed)
+        registry.bump = ctx.bumps.voter_registry;
 
         Ok(())
     }
-
     // ----------------------
     // 3. Инициализация выборов (Arcium)
     // ----------------------

@@ -1851,9 +1851,6 @@ export type CsvpProtocol = {
     },
     {
       "name": "voterRegistry",
-      "docs": [
-        "Аккаунт для реестра голосующих (VoterChunk)"
-      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -1866,14 +1863,21 @@ export type CsvpProtocol = {
             "type": "u32"
           },
           {
+            "name": "count",
+            "type": "u32"
+          },
+          {
             "name": "voterHashes",
             "type": {
-              "vec": {
-                "array": [
-                  "u8",
-                  32
-                ]
-              }
+              "array": [
+                {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                },
+                500
+              ]
             }
           },
           {

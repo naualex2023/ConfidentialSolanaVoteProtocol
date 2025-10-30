@@ -48,25 +48,29 @@ pub struct Election {
 }
 
 /// Аккаунт для реестра голосующих (VoterChunk)
-// pub struct VoterChunk { ... }
-// Замените VoterChunk на VoterRegistry
+pub const HASH_LEN: usize = 32;
+
 #[account]
-pub struct VoterRegistry { // <-- НОВОЕ ИМЯ
+#[derive(InitSpace)]
+pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕТЕ
     pub election: Pubkey,
     pub chunk_index: u32,
-    #[cfg_attr(feature = "anchor", max_len(MAX_ITEMS_PER_CHUNK))] 
-    pub voter_hashes: Vec<[u8; 32]>, // Хеши зарегистрированных избирателей
-    pub bump: u8, // Добавьте bump для полноты
-}
+    
+    // НОВОЕ ПОЛЕ: Счетчик добавленных хэшей
+    pub count: u32, 
 
+    // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: ФИКСИРОВАННЫЙ МАССИВ
+    // Это резервирует место сразу и не требует realloc при добавлении
+    pub voter_hashes: [[u8; HASH_LEN]; MAX_ITEMS_PER_CHUNK], 
+    
+    pub bump: u8,
+}
+// ...
 impl VoterRegistry {
-    // Включая 8 байт для discriminator Anchor
-    pub const HEADER_SIZE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 1 /* bump */;
-    
-    // 4 байта для длины Vec + (32 байта * MAX_ITEMS_PER_CHUNK)
-    pub const VEC_SIZE: usize = 4 + 32 * MAX_ITEMS_PER_CHUNK;
-    
-    pub const MAX_SPACE: usize = Self::HEADER_SIZE + Self::VEC_SIZE;
+    // Обновляем расчет:
+    pub const HEADER_SPACE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 4 /* count */ + 1 /* bump */;
+    pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * HASH_LEN;
+    pub const MAX_SPACE: usize = Self::HEADER_SPACE + Self::HASHES_SPACE;
 }
 
 /// Аккаунт для предотвращения двойного голосования (NullifierAccount)

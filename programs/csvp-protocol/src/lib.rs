@@ -443,7 +443,7 @@ pub struct InitializeElection<'info> {
         init_if_needed, // 👈 Обязательно init
         payer = authority,
         space = 9, 
-        seeds = [&ELECTION_SIGN_PDA_SEED],
+        seeds = [&SIGN_PDA_SEED],
         bump, // 👈 Обязательно bump
         address = derive_sign_pda!(),
     )]

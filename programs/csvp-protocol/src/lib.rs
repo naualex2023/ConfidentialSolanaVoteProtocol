@@ -153,7 +153,7 @@ pub mod csvp_protocol {
     ) -> Result<()> {
         let o = match output {
             ComputationOutputs::Success(InitVoteStatsOutput { field_0 }) => field_0,
-            _ => return err!(VoteError::AbortedComputation),
+            _ => return Err(ErrorCode::AbortedComputation.into()),
         };
 
         msg!("Arcium callback received: Setting initial encrypted tally and nonce.");
@@ -511,7 +511,8 @@ pub struct InitializeElection<'info> {
     #[account(
         init,
         payer = authority,
-        space = 8 + Election::INIT_SPACE, // Убедитесь, что INIT_SPACE в state.rs верный
+        //space = 8 + Election::INIT_SPACE, // Убедитесь, что INIT_SPACE в state.rs верный
+        space=500, // Временно, замените на правильное значение
         seeds = [ELECTION_SEED, authority.key().as_ref(), election_id.to_le_bytes().as_ref()],
         bump
     )]

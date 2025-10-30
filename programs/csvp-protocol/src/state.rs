@@ -61,7 +61,7 @@ pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕ
 
     // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: ФИКСИРОВАННЫЙ МАССИВ
     // Это резервирует место сразу и не требует realloc при добавлении
-    pub voter_hashes: [[u8; HASH_LEN]; MAX_ITEMS_PER_CHUNK], 
+    pub voter_hashes: [Pubkey; MAX_ITEMS_PER_CHUNK], 
     
     pub bump: u8,
 }

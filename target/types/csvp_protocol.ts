@@ -221,12 +221,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "voterHash",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
+          "type": "pubkey"
         }
       ]
     },
@@ -538,6 +533,84 @@ export type CsvpProtocol = {
       "args": []
     },
     {
+      "name": "registerVoter",
+      "docs": [
+        "Инструкция для регистрации одного избирателя.",
+        "ПРИМЕЧАНИЕ: Хэш избирателя передается как Pubkey (32 байта, Base58),",
+        "что позволяет Anchor автоматически его декодировать."
+      ],
+      "discriminator": [
+        229,
+        124,
+        185,
+        99,
+        118,
+        51,
+        226,
+        6
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "election",
+          "writable": true
+        },
+        {
+          "name": "voterRegistry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "election"
+              },
+              {
+                "kind": "arg",
+                "path": "chunkIndex"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "chunkIndex",
+          "type": "u32"
+        },
+        {
+          "name": "voterHash",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "registerVoters",
       "docs": [
         "Регистрирует группу голосующих в чанке."
@@ -610,12 +683,7 @@ export type CsvpProtocol = {
         {
           "name": "voterHashes",
           "type": {
-            "vec": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
+            "vec": "pubkey"
           }
         }
       ]
@@ -1870,12 +1938,7 @@ export type CsvpProtocol = {
             "name": "voterHashes",
             "type": {
               "array": [
-                {
-                  "array": [
-                    "u8",
-                    32
-                  ]
-                },
+                "pubkey",
                 500
               ]
             }

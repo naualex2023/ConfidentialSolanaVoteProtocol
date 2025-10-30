@@ -81,6 +81,13 @@ describe("CsvpProtocol", () => {
     // В реальном приложении они бы генерировались криптографически
     const voterHash = Array.from(randomBytes(32));
     const nullifierHash = Array.from(randomBytes(32));
+    //1. Генерируем 32-байтовый хэш (сырые байты)
+        const rawVoterHashBytes = randomBytes(32);
+        
+        // 2. Преобразуем 32-байтовый хэш в объект PublicKey.
+        // Это необходимо, так как Rust-инструкция ожидает Pubkey.
+        // Anchor SDK автоматически сериализует этот объект.
+        const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
     
     // --- Вычисляем все необходимые PDA ---
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
@@ -172,17 +179,36 @@ describe("CsvpProtocol", () => {
     // --- 4. РЕГИСТРАЦИЯ ИЗБИРАТЕЛЯ (register_voters) ---
     console.log(`\n📝 Регистрация избирателя в чанке ${VOTER_CHUNK_INDEX}...`);
     
-    const registerSig = await program.methods
-      .registerVoters(
-        VOTER_CHUNK_INDEX,
-        [voterHash] // Передаем хеш нашего избирателя
+    // const registerSig = await program.methods
+    //   .registerVoters(
+    //     VOTER_CHUNK_INDEX,
+    //     [voterHash] // Передаем хеш нашего избирателя
+    //   )
+    //   .accountsPartial({
+    //     authority: owner.publicKey,
+    //     election: electionPda,
+    //     voterRegistry: voterChunkPda,
+    //     systemProgram: SystemProgram.programId,
+    //   })
+    //   .rpc({ skipPreflight: true, commitment: "confirmed" });
+    // ИСПРАВЛЕНИЕ: Используем Buffer напрямую
+//const voterHash = randomBytes(32); 
+
+// Проверка типа (теперь она должна проходить, если randomBytes возвращает Buffer)
+// if (!(voterHash instanceof Uint8Array) || voterHash.length !== 32) {
+//     throw new Error("Voter hash must be a 32-byte Uint8Array or Buffer.");
+// }
+        const registerSig = await program.methods
+      .registerVoter(
+        Number(VOTER_CHUNK_INDEX),
+        voterHashKey // Передаем хеш нашего избирателя
       )
       .accountsPartial({
         authority: owner.publicKey,
         election: electionPda,
         voterRegistry: voterChunkPda,
         systemProgram: SystemProgram.programId,
-      })
+      }).signers([owner])
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
     console.log("... Избиратель зарегистрирован:", registerSig);
@@ -206,7 +232,7 @@ describe("CsvpProtocol", () => {
         Array.from(publicKey), // vote_encryption_pubkey
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce
         nullifierHash, // nullifier_hash
-        voterHash, // voter_hash
+        voterHashKey, // voter_hash
        // voteCompOffset // computation_offset
       )
       .accountsPartial({

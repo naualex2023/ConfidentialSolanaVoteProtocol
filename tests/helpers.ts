@@ -39,7 +39,7 @@ export const findSignPda = (
   return PublicKey.findProgramAddressSync(
     [
       SIGN_PDA_SEED,
-      electionPda.toBuffer(),
+      //electionPda.toBuffer(),
     ],
     programId
   );

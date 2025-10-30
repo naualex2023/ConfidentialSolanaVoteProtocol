@@ -91,6 +91,7 @@ describe("CsvpProtocol", () => {
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
     console.log("Voter Chunk PDA:", voterChunkPda.toBase58());
+    console.log("Sign PDA:", signPda.toBase58());
 
     // --- 2. ИНИЦИАЛИЗАЦИЯ СХЕМ MPC ---
     // (Этот код выглядит корректно и взят из вашего теста)

@@ -42,13 +42,14 @@ export type CsvpProtocol = {
               {
                 "kind": "const",
                 "value": [
-                  83,
+                  115,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  65,
+                  95,
+                  97,
                   99,
                   99,
                   111,
@@ -258,13 +259,14 @@ export type CsvpProtocol = {
               {
                 "kind": "const",
                 "value": [
-                  83,
+                  115,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  65,
+                  95,
+                  97,
                   99,
                   99,
                   111,
@@ -648,13 +650,14 @@ export type CsvpProtocol = {
               {
                 "kind": "const",
                 "value": [
-                  83,
+                  115,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  65,
+                  95,
+                  97,
                   99,
                   99,
                   111,
@@ -662,10 +665,6 @@ export type CsvpProtocol = {
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "electionAccount"
               }
             ]
           }

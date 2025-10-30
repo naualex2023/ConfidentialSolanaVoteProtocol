@@ -122,6 +122,7 @@ describe("CsvpProtocol", () => {
     const electionNonce = randomBytes(16);
 
     const electionComputationOffset = getRandomBigNumber();
+    console.log("... Arcium cluster:", arciumEnv.arciumClusterPubkey.toString());
 
     const initSig = await program.methods
       .initElection(

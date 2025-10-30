@@ -119,7 +119,11 @@ pub mod csvp_protocol {
         election.nonce = nonce;
         election.bump = ctx.bumps.election_account;
         // `nonce` и `encrypted_tally` будут установлены коллбэком
-
+           // --- ОБЯЗАТЕЛЬНАЯ ИНИЦИАЛИЗАЦИЯ ВСЕХ ПОЛЕЙ ---
+        // Инициализируем массивы нулями. Это необходимо для успешной сериализации.
+        election.encrypted_tally = [[0; 32]; MAX_CANDIDATES];
+        election.final_result = [0; MAX_CANDIDATES];
+        // ----------------------------------------------
         let args = vec![Argument::PlaintextU128(nonce)];
 
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;

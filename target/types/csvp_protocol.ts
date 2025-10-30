@@ -259,14 +259,13 @@ export type CsvpProtocol = {
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  83,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  95,
-                  97,
+                  65,
                   99,
                   99,
                   111,

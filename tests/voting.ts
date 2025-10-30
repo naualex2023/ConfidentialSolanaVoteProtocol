@@ -198,7 +198,8 @@ describe("CsvpProtocol", () => {
     
     const voteSig = await program.methods
       .castVote(
-        voteCompOffset,        
+        voteCompOffset,  
+        0, // voter_chunk_index      
         Array.from(ciphertext[0]), // vote_ciphertext
         Array.from(publicKey), // vote_encryption_pubkey
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce

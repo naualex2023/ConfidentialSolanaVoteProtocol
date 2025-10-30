@@ -178,6 +178,10 @@
           "type": "u64"
         },
         {
+          "name": "voter_chunk_index",
+          "type": "u32"
+        },
+        {
           "name": "vote_ciphertext",
           "type": {
             "array": [

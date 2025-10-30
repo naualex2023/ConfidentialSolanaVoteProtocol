@@ -184,6 +184,10 @@ export type CsvpProtocol = {
           "type": "u64"
         },
         {
+          "name": "voterChunkIndex",
+          "type": "u32"
+        },
+        {
           "name": "voteCiphertext",
           "type": {
             "array": [

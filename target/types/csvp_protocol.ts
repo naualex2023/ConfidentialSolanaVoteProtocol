@@ -325,9 +325,6 @@ export type CsvpProtocol = {
           "signer": true
         },
         {
-          "name": "mxeAccount"
-        },
-        {
           "name": "signPdaAccount",
           "writable": true,
           "pda": {
@@ -349,13 +346,12 @@ export type CsvpProtocol = {
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "electionAccount"
               }
             ]
           }
+        },
+        {
+          "name": "mxeAccount"
         },
         {
           "name": "mempoolAccount",

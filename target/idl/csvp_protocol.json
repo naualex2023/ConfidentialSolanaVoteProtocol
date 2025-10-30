@@ -319,9 +319,6 @@
           "signer": true
         },
         {
-          "name": "mxe_account"
-        },
-        {
           "name": "sign_pda_account",
           "writable": true,
           "pda": {
@@ -343,13 +340,12 @@
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "election_account"
               }
             ]
           }
+        },
+        {
+          "name": "mxe_account"
         },
         {
           "name": "mempool_account",

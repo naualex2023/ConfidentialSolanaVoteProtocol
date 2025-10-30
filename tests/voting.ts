@@ -123,7 +123,7 @@ describe("CsvpProtocol", () => {
     const electionComputationOffset = getRandomBigNumber();
 
     const initSig = await program.methods
-      .initVoteStats(
+      .initElection(
         electionComputationOffset,
         anchor.BN(ELECTION_ID), 
         'Выборы Президента Галактики',

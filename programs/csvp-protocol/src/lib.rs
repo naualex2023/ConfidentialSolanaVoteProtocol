@@ -369,52 +369,6 @@ pub struct InitRevealResultCompDef<'info> {
 }
 
 
-// --- Контекст: Регистрация избирателей ---
-
-#[derive(Accounts)]
-#[instruction(chunk_index: u32, voter_hashes: Vec<Pubkey>)]
-pub struct RegisterVoters<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    
-    // Проверяем, что authority = election.creator в самой функции
-    #[account(mut)]
-    pub election: Account<'info, Election>,
-    
-    #[account(
-        init_if_needed,
-        payer = authority,
-        //space = 8 + VoterRegistry::MAX_SPACE, 
-        space=16100, // Временно, замените на правильное значение
-        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub voter_registry: Box<Account<'info, VoterRegistry>>,
-    
-    pub system_program: Program<'info, System>,
-}
-#[derive(Accounts)]
-#[instruction(chunk_index: u32, voter_hash: Pubkey)]
-pub struct RegisterVoter<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    
-    // Проверяем, что authority = election.creator в самой функции
-    #[account(mut)]
-    pub election: Account<'info, Election>,
-    
-    #[account(
-        init_if_needed,
-        payer = authority,
-        //space = 8 + VoterRegistry::MAX_SPACE, 
-        space=16100, // Временно, замените на правильное значение
-        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub voter_registry: Box<Account<'info, VoterRegistry>>,
-    
-    pub system_program: Program<'info, System>,
-}
 // --- Контекст: Инициализация Выборов (Arcium) ---
 
 #[queue_computation_accounts("init_vote_stats", authority)]

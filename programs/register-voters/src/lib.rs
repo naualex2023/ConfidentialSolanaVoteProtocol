@@ -1,5 +1,63 @@
+// Stops Rust Analyzer complaining about missing configs
+// See https://solana.stackexchange.com/questions/17777
+#![allow(unexpected_cfgs)]
+// Fix warning: use of deprecated method `anchor_lang::prelude::AccountInfo::<'a>::realloc`: Use AccountInfo::resize() instead
+// See https://solana.stackexchange.com/questions/22979
+#![allow(deprecated)]
+
 use anchor_lang::prelude::*;
 
+// Предполагается, что эти модули существуют в вашем проекте
+pub mod state {
+    use anchor_lang::prelude::*;
+
+    // Подберите значение в соответствии с реализацией на уровне проекта.
+    pub const MAX_ITEMS_PER_CHUNK: usize = 1024;
+    pub const VOTER_REGISTRY_SEED: &[u8] = b"voter_registry"; 
+    // Простые типы, которые требуются в этом файле.
+    // При переносе реальной реализации из отдельного файла замените этот модуль.
+#[account]
+#[derive(InitSpace)]
+pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕТЕ
+    pub election: Pubkey,
+    pub chunk_index: u32,
+    
+    // НОВОЕ ПОЛЕ: Счетчик добавленных хэшей
+    pub count: u32, 
+
+    // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: ФИКСИРОВАННЫЙ МАССИВ
+    // Это резервирует место сразу и не требует realloc при добавлении
+    pub voter_hashes: [Pubkey; MAX_ITEMS_PER_CHUNK], 
+    
+    pub bump: u8,
+}
+// ...
+impl VoterRegistry {
+    // Обновляем расчет:
+    pub const HEADER_SPACE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 4 /* count */ + 1 /* bump */;
+    pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * HASH_LEN;
+    pub const MAX_SPACE: usize = Self::HEADER_SPACE + Self::HASHES_SPACE;
+}
+}
+pub mod error {
+    use anchor_lang::prelude::*;
+
+    /// Custom program errors for the voting program.
+    #[error_code]
+    pub enum VoteError {
+        #[msg("Not authorized")]
+        NotAuthorized,
+
+        #[msg("Election is not in Draft state")]
+        ElectionNotDraft,
+
+        #[msg("Chunk is full")]
+        ChunkFull,
+    }
+}
+
+use crate::state::*; // Содержит Election, VoterChunk, NullifierAccount, константы и т.д.
+use crate::error::VoteError; // Содержит ваши кастомные ошибки
 // ... (структуры и импорты)
 
 // 2. СТАНДАРТНЫЙ МОДУЛЬ (для register_voter)
@@ -138,6 +196,70 @@ pub mod registration { // <-- НОВЫЙ МОДУЛЬ
         Ok(())
     }
 }
-// ...
-// #[derive(Accounts)] pub struct RegisterVoters { ... } // (Нужно вынести сюда, или импортировать)
-// ...
+// #[derive(Accounts)]
+// pub struct RegisterVoters<'info> {
+//     #[account(
+//         init_if_needed,
+//         payer = authority,
+//         space = 8 + std::mem::size_of::<state::VoterRegistry>(),
+//         seeds = [
+//             VOTER_REGISTRY_SEED,
+//             election.key().as_ref(),
+//             _chunk_index.to_le_bytes().as_ref()
+//         ],
+//         bump
+//     )]
+//     pub voter_registry: Account<'info, state::VoterRegistry>,
+    
+//     #[account()]
+//     pub election: Account<'info, state::Election>,
+    
+//     #[account(mut)]
+//     pub authority: Signer<'info>,
+    
+//     pub system_program: Program<'info, System>,
+// }
+#[derive(Accounts)]
+#[instruction(chunk_index: u32, voter_hashes: Vec<Pubkey>)]
+pub struct RegisterVoters<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    
+    // Проверяем, что authority = election.creator в самой функции
+    #[account(mut)]
+    pub election: Account<'info, Election>,
+    
+    #[account(
+        init_if_needed,
+        payer = authority,
+        //space = 8 + VoterRegistry::MAX_SPACE, 
+        space=16100, // Временно, замените на правильное значение
+        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
+        bump
+    )]
+    pub voter_registry: Box<Account<'info, VoterRegistry>>,
+    
+    pub system_program: Program<'info, System>,
+}
+#[derive(Accounts)]
+#[instruction(chunk_index: u32, voter_hash: Pubkey)]
+pub struct RegisterVoter<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    
+    // Проверяем, что authority = election.creator в самой функции
+    #[account(mut)]
+    pub election: Account<'info, Election>,
+    
+    #[account(
+        init_if_needed,
+        payer = authority,
+        //space = 8 + VoterRegistry::MAX_SPACE, 
+        space=16100, // Временно, замените на правильное значение
+        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
+        bump
+    )]
+    pub voter_registry: Box<Account<'info, VoterRegistry>>,
+    
+    pub system_program: Program<'info, System>,
+}

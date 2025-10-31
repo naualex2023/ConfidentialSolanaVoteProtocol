@@ -6,16 +6,40 @@
 #![allow(deprecated)]
 
 use anchor_lang::prelude::*;
+use anchor_lang::system_program::ID;
 
 // Предполагается, что эти модули существуют в вашем проекте
 pub mod state {
     use anchor_lang::prelude::*;
 
     // Подберите значение в соответствии с реализацией на уровне проекта.
-    pub const MAX_ITEMS_PER_CHUNK: usize = 1024;
+    pub const MAX_CANDIDATES: usize = 5; // Фиксированное число кандидатов
+    pub const MAX_ITEMS_PER_CHUNK: usize = 500;
+    pub const ELECTION_SEED: &[u8] = b"election";
+    pub const NULLIFIER_SEED: &[u8] = b"nullifier";
+    pub const ELECTION_SIGN_PDA_SEED: &[u8] = b"signer_account";
     pub const VOTER_REGISTRY_SEED: &[u8] = b"voter_registry"; 
     // Простые типы, которые требуются в этом файле.
     // При переносе реальной реализации из отдельного файла замените этот модуль.
+#[account]
+#[derive(InitSpace)]
+pub struct Election {
+    pub creator: Pubkey,
+    pub election_id: u64,
+    #[max_len(50)]
+    pub title: String,
+    pub start_time: u64,
+    pub end_time: u64,
+    pub state: u64,
+    pub total_votes: u32,
+    pub bump: u8, // <-- Необходим для сохранения bump-сида
+    // Поля Arcium/MPC
+    pub nonce: u128,
+    /// Encrypted vote tallies: [32-byte ciphertext; MAX_CANDIDATES]
+    pub encrypted_tally: [[u8; 32]; MAX_CANDIDATES], 
+    /// Final decrypted result: [u64; MAX_CANDIDATES]
+    pub final_result: [u64; MAX_CANDIDATES], 
+}
 #[account]
 #[derive(InitSpace)]
 pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕТЕ
@@ -35,7 +59,7 @@ pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕ
 impl VoterRegistry {
     // Обновляем расчет:
     pub const HEADER_SPACE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 4 /* count */ + 1 /* bump */;
-    pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * HASH_LEN;
+    pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * 32;
     pub const MAX_SPACE: usize = Self::HEADER_SPACE + Self::HASHES_SPACE;
 }
 }

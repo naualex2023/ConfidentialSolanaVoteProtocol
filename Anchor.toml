@@ -7,6 +7,7 @@ skip-lint = true
 
 [programs.localnet]
 csvp_protocol = "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"
+register_voters = "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu" 
 
 [registry]
 url = "https://api.apr.dev"

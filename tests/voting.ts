@@ -2,6 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { CsvpProtocol } from "../target/types/csvp_protocol"; // <-- Ensure the type name is correct
+import { Registration } from "../target/types/registration"; 
 import { randomBytes } from "crypto";
 import {
   awaitComputationFinalization,
@@ -43,6 +44,7 @@ describe("CsvpProtocol", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
   const program = anchor.workspace.CsvpProtocol as Program<CsvpProtocol>;
+  const Registrationprogram = anchor.workspace.Registration as Program<Registration>;
   const provider = anchor.getProvider();
 
   type Event = anchor.IdlEvents<(typeof program)["idl"]>;
@@ -79,10 +81,9 @@ describe("CsvpProtocol", () => {
     
     // Generate fake hashes for registration and nullifier
     // In a real application, these would be cryptographically generated
-    const voterHash = Array.from(randomBytes(32));
+    //const voterHash = Array.from(randomBytes(32));
     const nullifierHash = Array.from(randomBytes(32));
     
-    // 1. Generate 32-byte hash (raw bytes)
     const rawVoterHashBytes = randomBytes(32);
         
     // 2. Convert the 32-byte hash into a PublicKey object.
@@ -91,14 +92,27 @@ describe("CsvpProtocol", () => {
     const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
     
     // --- Calculate all necessary PDAs ---
+    // const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
+    // const [signPda, _signBump] = findSignPda(program.programId, electionPda);
+    //const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, VOTER_CHUNK_INDEX);
+    // Новый PDA зависит от хэша
+  const [voterProofPda, _voterBump] = PublicKey.findProgramAddressSync(
+  [
+    Buffer.from("voters_registry"),
+    voterHashKey.toBuffer() // Используем хэш как сид
+  ],
+  program.programId
+);
+    
+    // --- Calculate all necessary PDAs ---
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
     const [signPda, _signBump] = findSignPda(program.programId, electionPda);
-    const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, electionPda, VOTER_CHUNK_INDEX);
+    //const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, electionPda, VOTER_CHUNK_INDEX);
     const [nullifierPda, _nullifierBump] = findNullifierPda(program.programId, electionPda, Buffer.from(nullifierHash));
 
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
-    console.log("Voter Chunk PDA:", voterChunkPda.toBase58());
+    console.log("Voter proof PDA:", voterProofPda.toBase58());
     console.log("Nullifier PDA:", nullifierPda.toBase58());
 
     // --- 2. INITIALIZE MPC SCHEMAS ---
@@ -165,23 +179,35 @@ describe("CsvpProtocol", () => {
     
     
     // --- 4. REGISTER VOTER (register_voters) ---
-    console.log(`\n📝 Registering voter in chunk ${VOTER_CHUNK_INDEX}...`);
+    console.log(`\n📝 Registering voter ...`);
     
-    const registerSig = await program.methods
-      .registerVoter(
-        Number(VOTER_CHUNK_INDEX),
-        voterHashKey // Pass the voter hash (as Pubkey)
-      )
-      .accountsPartial({
-        authority: owner.publicKey,
-        election: electionPda,
-        voterRegistry: voterChunkPda,
-        systemProgram: SystemProgram.programId,
-      }).signers([owner])
-      .rpc({ skipPreflight: true, commitment: "confirmed" });
-
+    // const registerSig = await program.methods
+    //   .registerVoter(
+    //     Number(VOTER_CHUNK_INDEX),
+    //     voterHashKey // Pass the voter hash (as Pubkey)
+    //   )
+    //   .accountsPartial({
+    //     authority: owner.publicKey,
+    //     election: electionPda,
+    //     voterRegistry: voterChunkPda,
+    //     systemProgram: SystemProgram.programId,
+    //   }).signers([owner])
+    //   .rpc({ skipPreflight: true, commitment: "confirmed" });
+   const registerSig = await Registrationprogram.methods
+  .registerVoter(
+    0, // chunk_index (теперь игнорируется, но нужен для сигнатуры)
+    voterHashKey 
+  )
+  .accountsPartial({
+    authority: owner.publicKey,
+    // ✅ Передаем новый PDA
+    voterProof: voterProofPda, 
+    systemProgram: SystemProgram.programId,
+  }).signers([owner])
+  .rpc({ skipPreflight: true, commitment: "confirmed" });
     console.log("... Voter registered:", registerSig);
-    
+    const registryAccount = await Registrationprogram.account.voterProof.fetch(voterProofPda);
+    console.log("... VoterProof account data:", registryAccount);
 
     // --- 5. CAST VOTE (cast_vote) ---
     console.log(`\n🗳️  Casting vote for candidate index ${CHOICE_INDEX}...`);
@@ -207,7 +233,7 @@ describe("CsvpProtocol", () => {
         // Accounts from the Rust `CastVote` struct
         voter: voter.publicKey,
         electionAccount: electionPda,
-        voterRegistry: voterChunkPda,
+        voterRegistry: voterProofPda,
         nullifierAccount: nullifierPda,
         signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,

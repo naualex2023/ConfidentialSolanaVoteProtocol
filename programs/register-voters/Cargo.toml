@@ -1,5 +1,5 @@
 [package]
-name = "register_voters"
+name = "registration"
 version = "0.2.0"
 description = "Register voters for Confidential Solana Vote Protocol"
 edition = "2021"

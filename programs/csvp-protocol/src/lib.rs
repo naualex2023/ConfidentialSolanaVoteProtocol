@@ -759,7 +759,7 @@ pub struct CastVote<'info> {
         init, // init = атомарная проверка на существование
         payer = voter,
         space = 8 + NullifierAccount::INIT_SPACE,
-        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.as_ref()],
+        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.to_bytes().as_ref()],
         bump,
     )]
     pub nullifier_account: Account<'info, NullifierAccount>,

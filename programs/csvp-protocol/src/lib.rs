@@ -638,13 +638,13 @@ pub struct InitVoteStatsCallback<'info> {
 
 #[queue_computation_accounts("vote", voter)]
 #[derive(Accounts)]
-#[instruction(
+#[instruction(computation_offset: u64,
     voter_chunk_index: u32,
     vote_ciphertext: [u8; 32],
     vote_encryption_pubkey: [u8; 32],
     vote_nonce: u128,
     nullifier_hash: Pubkey, 
-    voter_hash: Pubkey,computation_offset: u64
+    voter_hash: Pubkey,
 )]
 pub struct CastVote<'info> {
     #[account(mut)]

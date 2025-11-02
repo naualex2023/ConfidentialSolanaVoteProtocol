@@ -288,7 +288,7 @@ console.log("Program recorded Nullifier PDA:", programNullifierPda.toBase58());
         voter: voter.publicKey,
         electionAccount: electionPda,
         voterProofAccount: voterProofPDA,
-        nullifierAccount: nullifierPda,
+        //nullifierAccount: nullifierPda,
         //signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,
         arciumProgram: getArciumProgAddress(),

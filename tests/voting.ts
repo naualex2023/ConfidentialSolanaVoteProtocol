@@ -233,7 +233,7 @@ describe("CsvpProtocol", () => {
         // Accounts from the Rust `CastVote` struct
         voter: voter.publicKey,
         electionAccount: electionPda,
-        voterRegistry: voterProofPda,
+        voterProofAccount: voterProofPda,
         nullifierAccount: nullifierPda,
         signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,

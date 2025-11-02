@@ -8,6 +8,9 @@
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;
+// Импортируем RegistrationProgramId и VoterProof
+use registration::{RegistrationProgramId, VoterProof}; 
+use registration; // Оставляем для доступа к registration::ID и registration::state::VOTER_REGISTRY_SEED
 // use crate::__cpi_client_accounts_reveal_result_callback::RevealResultCallback;
 // use crate::__cpi_client_accounts_vote_callback::VoteCallback;
 // use crate::__cpi_client_accounts_init_vote_stats_callback::InitVoteStatsCallback;
@@ -164,10 +167,10 @@ pub mod csvp_protocol {
 
         // 2. ПРОВЕРКА РЕГИСТРАЦИИ (Voter Chunk)
         // `voter_chunk` уже верифицирован (seeds, has_one) в `#[derive(Accounts)]`
-        require!(
-            ctx.accounts.voter_registry.voter_hashes.contains(&voter_hash),
-            VoteError::VoterNotRegistered
-        );
+        // require!(
+        //     ctx.accounts.voter_proof_account.voter_hashes.contains(&voter_hash),
+        //     VoteError::VoterNotRegistered
+        // );
 
         // 3. ПРОВЕРКА ДВОЙНОГО ГОЛОСОВАНИЯ (Nullifier Account)
         // `init` в `#[derive(Accounts)]` атомарно создает PDA.
@@ -571,20 +574,28 @@ pub struct CastVote<'info> {
     // )]
     // pub election_account: Account<'info, Election>,
     #[account(
-        address = voter_registry.election,
+        //address = voter_registry.election,
     )]
     pub election: UncheckedAccount<'info>,
-    // Аккаунт VoterChunk (для проверки регистрации)
     #[account(
+        // 1. Указываем, что аккаунт не должен быть mut, т.к. мы его только читаем
+        // 2. Указываем PDA-сиды, чтобы Anchor проверил, что аккаунт 
+        //    принадлежит программе Registration и что его адрес вычислен правильно.
         seeds = [
-            VOTER_REGISTRY_SEED, 
-            election_account.key().as_ref(), 
-            voter_chunk_index.to_le_bytes().as_ref()
+            b"voters_registry", // Используем сид из программы Registration
+            voter_hash.as_ref() // Главный сид — хэш избирателя
         ],
-        bump = voter_registry.bump,
-        has_one = election, // Проверяем, что чанк принадлежит этим выборам
+        bump,
+        // Опционально: Проверить, что владелец аккаунта VoterProof — 
+        // это Program ID вашей программы Registration
+        owner = registration::ID // ID вашей программы регистрации
     )]
-    pub voter_registry: Box<Account<'info, VoterRegistry>>, 
+    // Мы ожидаем, что этот аккаунт уже существует и содержит Pubkey избирателя.
+    //pub voter_proof_account: Account<'info, registration::state::VoterProof>, 
+    pub voter_proof_account: Account<'info, VoterProof>,
+
+    // Добавляем ID программы Registration для проверки владельца (owner = registration::ID)
+    pub registration_program: Program<'info, RegistrationProgramId>,
     
     // Nullifier (init) - предотвращение двойного голосования
     #[account(

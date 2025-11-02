@@ -103,13 +103,10 @@
           "writable": true
         },
         {
-          "name": "election",
-          "relations": [
-            "voter_registry"
-          ]
+          "name": "election"
         },
         {
-          "name": "voter_registry",
+          "name": "voter_proof_account",
           "pda": {
             "seeds": [
               {
@@ -133,15 +130,15 @@
                 ]
               },
               {
-                "kind": "account",
-                "path": "election_account"
-              },
-              {
                 "kind": "arg",
-                "path": "voter_chunk_index"
+                "path": "voter_hash"
               }
             ]
           }
+        },
+        {
+          "name": "registration_program",
+          "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"
         },
         {
           "name": "nullifier_account",
@@ -849,16 +846,16 @@
       ]
     },
     {
-      "name": "VoterRegistry",
+      "name": "VoterProof",
       "discriminator": [
-        146,
-        143,
-        24,
-        89,
-        70,
-        216,
-        173,
-        189
+        186,
+        224,
+        160,
+        101,
+        106,
+        116,
+        117,
+        177
       ]
     }
   ],
@@ -1757,34 +1754,13 @@
       }
     },
     {
-      "name": "VoterRegistry",
+      "name": "VoterProof",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "election",
+            "name": "voter_hash",
             "type": "pubkey"
-          },
-          {
-            "name": "chunk_index",
-            "type": "u32"
-          },
-          {
-            "name": "count",
-            "type": "u32"
-          },
-          {
-            "name": "voter_hashes",
-            "type": {
-              "array": [
-                "pubkey",
-                500
-              ]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }

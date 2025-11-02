@@ -6,7 +6,7 @@ use anchor_lang::prelude::*;
 use crate::state::*;
 
 declare_id!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
-
+//pub use self::registration as RegistrationProgram;
 #[program]
 pub mod registration {
     use super::*;
@@ -53,6 +53,22 @@ pub mod state {
     }
 }
 
+// ✅ ШАГ 1: Создаем публичную пустую структуру с уникальным именем.
+// Это и есть тип 'T' для Program<'info, T> в другом крейте.
+pub struct RegistrationProgramId; 
+
+// ✅ ШАГ 2: Реализуем для нее трейт Id, используя ID программы, 
+// объявленный в начале этого файла (declare_id!).
+impl anchor_lang::Id for RegistrationProgramId {
+    fn id() -> Pubkey {
+        crate::ID
+        // Если crate::ID не работает, используйте просто ID, если он в scope:
+        // ID 
+    }
+}
+
+// ✅ ШАГ 3: Убедитесь, что VoterProof публично экспортирован
+pub use crate::state::VoterProof;
 // =========================================================================
 // ACCOUNTS
 // =========================================================================

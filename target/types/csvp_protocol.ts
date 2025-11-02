@@ -109,13 +109,10 @@ export type CsvpProtocol = {
           "writable": true
         },
         {
-          "name": "election",
-          "relations": [
-            "voterRegistry"
-          ]
+          "name": "election"
         },
         {
-          "name": "voterRegistry",
+          "name": "voterProofAccount",
           "pda": {
             "seeds": [
               {
@@ -139,15 +136,15 @@ export type CsvpProtocol = {
                 ]
               },
               {
-                "kind": "account",
-                "path": "electionAccount"
-              },
-              {
                 "kind": "arg",
-                "path": "voterChunkIndex"
+                "path": "voterHash"
               }
             ]
           }
+        },
+        {
+          "name": "registrationProgram",
+          "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"
         },
         {
           "name": "nullifierAccount",
@@ -855,16 +852,16 @@ export type CsvpProtocol = {
       ]
     },
     {
-      "name": "voterRegistry",
+      "name": "voterProof",
       "discriminator": [
-        146,
-        143,
-        24,
-        89,
-        70,
-        216,
-        173,
-        189
+        186,
+        224,
+        160,
+        101,
+        106,
+        116,
+        117,
+        177
       ]
     }
   ],
@@ -1763,34 +1760,13 @@ export type CsvpProtocol = {
       }
     },
     {
-      "name": "voterRegistry",
+      "name": "voterProof",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "election",
+            "name": "voterHash",
             "type": "pubkey"
-          },
-          {
-            "name": "chunkIndex",
-            "type": "u32"
-          },
-          {
-            "name": "count",
-            "type": "u32"
-          },
-          {
-            "name": "voterHashes",
-            "type": {
-              "array": [
-                "pubkey",
-                500
-              ]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }

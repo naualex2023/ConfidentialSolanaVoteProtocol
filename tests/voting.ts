@@ -140,7 +140,7 @@ const [voterProofPDA] = findVoterProofPda(
     // Time (start_time, end_time)
     const now = new anchor.BN(Math.floor(Date.now() / 1000));
     const startTime = now.sub(new anchor.BN(60)); // Started one minute ago
-    const endTime = now.add(new anchor.BN(3600)); // Ends in one hour
+    const endTime = now.add(new anchor.BN(60)); // Ends in one minute
     
     const electionNonce = randomBytes(16);
 
@@ -354,9 +354,9 @@ console.log("Recorded voter_hash is: ", recordedVoterHash);
         // Accounts from the Rust `RevealResult` struct
         authority: owner.publicKey,
         electionAccount: electionPda,
-        signPdaAccount: signPda,
-        systemProgram: SystemProgram.programId,
-        arciumProgram: getArciumProgAddress(),
+        //signPdaAccount: signPda,
+        // systemProgram: SystemProgram.programId,
+        // arciumProgram: getArciumProgAddress(),
         // Arcium accounts
         mxeAccount: mxeAccountPda,
         mempoolAccount: getMempoolAccAddress(program.programId),

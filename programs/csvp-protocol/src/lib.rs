@@ -470,6 +470,10 @@ pub struct DebugPdaCheck<'info> {
         election.final_result = public_results.try_into().map_err(|_| ErrorCode::ConstraintRaw)?;
         election.state = 3;//ElectionState::Completed;
 
+        emit!(RevealResultEvent {
+            output: election.final_result,
+        });
+
         Ok(())
     }
 }
@@ -801,13 +805,14 @@ pub struct RevealResult<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
         //pub sign_pda_account: Account<'info, SignerAccount>,
-        #[account(
-        init_if_needed, // 👈 Обязательно init
+    // Add this new required account
+    #[account(
+        init_if_needed,
+        space = 9,
         payer = authority,
-        space = 9, 
-        seeds = [&ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
-        bump, // 👈 Обязательно bump
-        //address = derive_sign_pda!(),
+        seeds = [&SIGN_PDA_SEED],
+        bump,
+        address = derive_sign_pda!(),
     )]
     pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
@@ -833,7 +838,7 @@ pub struct RevealResult<'info> {
     /// CHECK: computation_account, checked by the arcium program.
     pub computation_account: UncheckedAccount<'info>,
     #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_INIT_VOTE_STATS)
+        address = derive_comp_def_pda!(COMP_DEF_OFFSET_REVEAL)
     )]
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
@@ -917,5 +922,5 @@ pub struct VoteEvent {
 
 #[event]
 pub struct RevealResultEvent {
-    pub output: bool,
+    pub output: [u64; MAX_CANDIDATES],
 }

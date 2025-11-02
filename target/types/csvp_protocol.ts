@@ -631,14 +631,13 @@ export type CsvpProtocol = {
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  83,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  95,
-                  97,
+                  65,
                   99,
                   99,
                   111,
@@ -646,10 +645,6 @@ export type CsvpProtocol = {
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "electionAccount"
               }
             ]
           }
@@ -1770,7 +1765,12 @@ export type CsvpProtocol = {
         "fields": [
           {
             "name": "output",
-            "type": "bool"
+            "type": {
+              "array": [
+                "u64",
+                5
+              ]
+            }
           }
         ]
       }

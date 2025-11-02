@@ -80,6 +80,7 @@ describe("CsvpProtocol", () => {
     const ELECTION_ID = new anchor.BN(123); // u64
     const VOTER_CHUNK_INDEX = 0; // u32
     const CHOICE_INDEX = 2; // Voting for the 3rd candidate (index 2)
+    const TALLY_CHECK_PERIOD_MS = 5000; // 5 секунд
     
     // Generate fake hashes for registration and nullifier
     // In a real application, these would be cryptographically generated
@@ -140,7 +141,7 @@ const [voterProofPDA] = findVoterProofPda(
     // Time (start_time, end_time)
     const now = new anchor.BN(Math.floor(Date.now() / 1000));
     const startTime = now.sub(new anchor.BN(60)); // Started one minute ago
-    const endTime = now.add(new anchor.BN(3600)); // Ends in one hour
+    const endTime = now.add(new anchor.BN(10)); // Ends in 10 seconds
     
     const electionNonce = randomBytes(16);
 
@@ -344,7 +345,21 @@ console.log("Recorded voter_hash is: ", recordedVoterHash);
     // (In a real app, we would wait for 'endTime')
     
     const revealCompOffset = getRandomBigNumber();
-    
+    let success = false;
+
+    let attempts = 0;
+
+    // Цикл ожидания: повторяем, пока не будет успеха или таймаута
+    while (!success) {
+        attempts++;
+        console.log(`--- Попытка #${attempts}  ---`);
+        
+        // Пауза перед следующей попыткой
+        if (attempts > 1) {
+            await new Promise(resolve => setTimeout(resolve, TALLY_CHECK_PERIOD_MS));
+        }
+
+    try {
     const revealSig = await program.methods
       .revealResult(
       revealCompOffset, // computation_offset
@@ -354,9 +369,9 @@ console.log("Recorded voter_hash is: ", recordedVoterHash);
         // Accounts from the Rust `RevealResult` struct
         authority: owner.publicKey,
         electionAccount: electionPda,
-        signPdaAccount: signPda,
-        systemProgram: SystemProgram.programId,
-        arciumProgram: getArciumProgAddress(),
+        //signPdaAccount: signPda,
+        // systemProgram: SystemProgram.programId,
+        // arciumProgram: getArciumProgAddress(),
         // Arcium accounts
         mxeAccount: mxeAccountPda,
         mempoolAccount: getMempoolAccAddress(program.programId),
@@ -370,9 +385,24 @@ console.log("Recorded voter_hash is: ", recordedVoterHash);
       })
       .signers([owner]) // 'authority' must sign
       .rpc({ skipPreflight: true, commitment: "confirmed" });
-
-    console.log("... Reveal transaction sent:", revealSig);
+      console.log("... Reveal transaction sent:", revealSig);
+      success = true;
+        } catch (e) {
+          console.log(`❌ FAILURE (EXPECTED): Time has not yet run out. We continue to wait.✅`);
+        // Ошибка 0x1771 - Constraint (например, end_time < now)
+        // if (e.logs && e.logs.some(log => log.includes("SendTransactionError"))) {
+        //     console.log(`❌ FAILURE (EXPECTED): Time has not yet run out. We continue to wait.`);
+        // } else {
+        //     console.error("❌ Unknown error:", e);
+        //     throw e; // Выбрасываем другие ошибки
+        // }
+        success = false;
+    }
     
+    if (attempts>50) {
+             throw new Error("Tally cycle timed out after too many attempts.");
+        }
+      }
     const finalizeRevealSig = await awaitComputationFinalization(
       provider as anchor.AnchorProvider,
       revealCompOffset,

@@ -141,7 +141,7 @@ const [voterProofPDA] = findVoterProofPda(
     // Time (start_time, end_time)
     const now = new anchor.BN(Math.floor(Date.now() / 1000));
     const startTime = now.sub(new anchor.BN(60)); // Started one minute ago
-    const endTime = now.add(new anchor.BN(30)); // Ends in half minute
+    const endTime = now.add(new anchor.BN(10)); // Ends in 10 seconds
     
     const electionNonce = randomBytes(16);
 

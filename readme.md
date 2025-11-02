@@ -2,11 +2,12 @@
 ## Complete Project Presentation
 
 ---How to run
+
 arcium clean
 arcium build
 
 rm -rf node_modules
-rm -f yarn.lock 
+rm -f yarn.lock
 yarn install
 
 arcium test

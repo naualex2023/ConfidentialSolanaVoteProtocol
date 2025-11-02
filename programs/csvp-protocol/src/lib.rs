@@ -573,10 +573,10 @@ pub struct CastVote<'info> {
     //     has_one = creator
     // )]
     // pub election_account: Account<'info, Election>,
-    #[account(
-        //address = voter_registry.election,
-    )]
-    pub election: UncheckedAccount<'info>,
+    // #[account(
+    //     //address = voter_registry.election,
+    // )]
+    // pub election: UncheckedAccount<'info>,
     #[account(
         // 1. Указываем, что аккаунт не должен быть mut, т.к. мы его только читаем
         // 2. Указываем PDA-сиды, чтобы Anchor проверил, что аккаунт 

@@ -33,7 +33,7 @@ import {
   makeClientSideKeys,
   findElectionPda,
   findSignPda,
-  findVoterChunkPda,
+  findVoterProofPda,
   findNullifierPda,
 } from "./helpers";
 
@@ -96,12 +96,8 @@ describe("CsvpProtocol", () => {
     // const [signPda, _signBump] = findSignPda(program.programId, electionPda);
     //const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, VOTER_CHUNK_INDEX);
     // Новый PDA зависит от хэша
-  const [voterProofPda, _voterBump] = PublicKey.findProgramAddressSync(
-  [
-    Buffer.from("voters_registry"),
-    voterHashKey.toBuffer() // Используем хэш как сид
-  ],
-  program.programId
+const [voterProofPDA] = findVoterProofPda(
+  voterHashKey // Ваш 32-байтовый Pubkey, переданный как аргумент инструкции
 );
     
     // --- Calculate all necessary PDAs ---
@@ -112,7 +108,7 @@ describe("CsvpProtocol", () => {
 
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
-    console.log("Voter proof PDA:", voterProofPda.toBase58());
+    console.log("Voter proof PDA:", voterProofPDA.toBase58());
     console.log("Nullifier PDA:", nullifierPda.toBase58());
 
     // --- 2. INITIALIZE MPC SCHEMAS ---
@@ -201,12 +197,12 @@ describe("CsvpProtocol", () => {
   .accountsPartial({
     authority: owner.publicKey,
     // ✅ Передаем новый PDA
-    voterProof: voterProofPda, 
+    voterProof: voterProofPDA, 
     systemProgram: SystemProgram.programId,
   }).signers([owner])
   .rpc({ skipPreflight: true, commitment: "confirmed" });
     console.log("... Voter registered:", registerSig);
-    const registryAccount = await Registrationprogram.account.voterProof.fetch(voterProofPda);
+    const registryAccount = await Registrationprogram.account.voterProof.fetch(voterProofPDA);
     console.log("... VoterProof account data:", registryAccount);
 
     // --- 5. CAST VOTE (cast_vote) ---
@@ -233,7 +229,7 @@ describe("CsvpProtocol", () => {
         // Accounts from the Rust `CastVote` struct
         voter: voter.publicKey,
         electionAccount: electionPda,
-        voterProofAccount: voterProofPda,
+        voterProofAccount: voterProofPDA,
         nullifierAccount: nullifierPda,
         signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,

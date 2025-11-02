@@ -205,8 +205,7 @@ const [voterProofPDA] = findVoterProofPda(
     console.log("... Voter registered:", registerSig);
     const registryAccount = await Registrationprogram.account.voterProof.fetch(voterProofPDA);
     console.log("... VoterProof account data:", registryAccount);
-it("Initializes Signer PDA (if needed)", async () => {
-  
+
   // Проверяем, существует ли аккаунт, чтобы избежать ошибки "already initialized"
   const accountInfo = await provider.connection.getAccountInfo(signPda);
   
@@ -221,14 +220,14 @@ it("Initializes Signer PDA (if needed)", async () => {
         systemProgram: SystemProgram.programId,
       })
       .signers([owner])
-      .rpc();
+      .rpc({ skipPreflight: true, commitment: "confirmed" });
       
     await provider.connection.confirmTransaction(tx, "confirmed");
     console.log("Signer PDA initialized:", tx);
   } else {
     console.log("Signer PDA already exists.");
   }
-});
+
     // --- 5. CAST VOTE (cast_vote) ---
     console.log(`\n🗳️  Casting vote for candidate index ${CHOICE_INDEX}...`);
     

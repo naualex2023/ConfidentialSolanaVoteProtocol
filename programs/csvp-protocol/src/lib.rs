@@ -103,6 +103,70 @@ pub mod csvp_protocol {
                 is_writable: true,
             }])],
         )?;
+// 1. Получаем бамп
+// let sign_pda_key = ctx.accounts.sign_pda_account.key();
+
+// // Константа ELECTION_SIGN_PDA_SEED должна быть определена:
+// // const ELECTION_SIGN_PDA_SEED: &[u8] = b"signer_account"; 
+// let signer_seeds_prefix: &[&[u8]] = &[
+//     ELECTION_SIGN_PDA_SEED,
+//     ctx.accounts.election_account.key().as_ref(), // Ключ созданного аккаунта
+// ];
+
+// let (_, sign_pda_bump) = Pubkey::find_program_address(
+//     signer_seeds_prefix,
+//     ctx.program_id,
+// );
+
+// // 2. Формируем полный массив сидов для invoke_signed (включая бамп)
+// let signer_seeds: &[&[&[u8]]] = &[
+//     &[
+//         ELECTION_SIGN_PDA_SEED,
+//         ctx.accounts.election_account.key().as_ref(),
+//         &[sign_pda_bump], // !!! БАМП
+//     ],
+// ];
+// let comp_def_offset = COMP_DEF_OFFSET_INIT_VOTE_STATS;
+// let args: &[u8] = &[];
+
+// // 3. Создаем инструкцию Arcium
+// let ix = arcium_client::instruction::queue_computation(
+//     *ctx.accounts.arcium_program.key,
+//     *ctx.accounts.cluster_account.key,
+//     *ctx.accounts.mxe_account.key,
+//     *ctx.accounts.mempool_account.key,
+//     *ctx.accounts.comp_def_account.key,
+//     *ctx.accounts.executing_pool_account.key,
+//     *ctx.accounts.computation_account.key,
+    
+//     comp_def_offset,
+//     args.to_vec(),
+//     None, // arcium_proof
+//     vec![InitVoteStatsCallback::callback_ix(&[CallbackAccount {
+//         pubkey: ctx.accounts.election_account.key(),
+//         is_writable: true,
+//     }])],
+// );
+
+// // 4. Формируем список AccountInfo для CPI
+// let account_infos = vec![
+//     ctx.accounts.arcium_program.to_account_info(),
+//     ctx.accounts.cluster_account.to_account_info(),
+//     ctx.accounts.mxe_account.to_account_info(),
+//     ctx.accounts.mempool_account.to_account_info(),
+//     ctx.accounts.comp_def_account.to_account_info(),
+//     ctx.accounts.executing_pool_account.to_account_info(),
+//     ctx.accounts.computation_account.to_account_info(),
+//     ctx.accounts.sign_pda_account.to_account_info(), // PDA (который должен подписать)
+// ];
+
+// // 5. Вызываем с invoke_signed!
+// // (ctx.accounts.arcium_program.key должен быть ID программы Arcium)
+// anchor_lang::solana_program::program::invoke_signed(
+//     &ix,
+//     &account_infos,
+//     signer_seeds, // <--- КЛЮЧЕВОЙ АРГУМЕНТ ДЛЯ PDA
+// )?;
 
         msg!("Election account created. Awaiting Arcium callback to set initial tally.");
         Ok(())
@@ -135,7 +199,32 @@ pub mod csvp_protocol {
 
         Ok(())
     }
+pub fn init_signer_pda(ctx: Context<InitSignerPda>) -> Result<()> {
+    // Аккаунт уже инициализирован макросом #[account(init, ...)]
+    // Внутри функции ничего делать не нужно, кроме Ok(())
+    msg!("Signer PDA initialized.");
+    Ok(())
+}
 
+// =================================================================
+
+#[derive(Accounts)]
+pub struct InitSignerPda<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>, // Тот, кто платит за инициализацию
+    
+    // Используем те же сиды, что и в Arcium (глобальный сид b"signer_account")
+    #[account(
+        init,
+        payer = authority,
+        space = 8 + 1, // 8 (дискриминатор) + размер SignerAccount (если он пуст, то 1 байт для буфера)
+        seeds = [b"signer_account"], // Ваш сид из IDL
+        bump
+    )]
+    pub sign_pda_account: Account<'info, SignerAccount>,
+    
+    pub system_program: Program<'info, System>,
+}
     // ----------------------
     // 4. Голосование (Arcium)
     // ----------------------
@@ -386,7 +475,8 @@ pub struct InitializeElection<'info> {
         init_if_needed, // 👈 Обязательно init
         payer = authority,
         space = 9, 
-        seeds = [&SIGN_PDA_SEED],
+        //seeds = [&ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
+        seeds =[&SIGN_PDA_SEED],
         bump, // 👈 Обязательно bump
         address = derive_sign_pda!(),
     )]
@@ -405,7 +495,7 @@ pub struct InitializeElection<'info> {
     //     init, // 👈 Обязательно init
     //     payer = authority,
     //     space = 8 + Election::INIT_SPACE, 
-    //     seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+    //     seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
     //     bump // 👈 Обязательно bump
     // )]
     // pub sign_pda_account: Account<'info, SignerAccount>,
@@ -641,9 +731,9 @@ pub struct RevealResult<'info> {
         init_if_needed, // 👈 Обязательно init
         payer = authority,
         space = 9, 
-        seeds = [&ELECTION_SIGN_PDA_SEED],
+        seeds = [&ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
         bump, // 👈 Обязательно bump
-        address = derive_sign_pda!(),
+        //address = derive_sign_pda!(),
     )]
     pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(

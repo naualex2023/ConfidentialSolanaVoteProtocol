@@ -103,9 +103,6 @@
           "writable": true
         },
         {
-          "name": "election"
-        },
-        {
           "name": "voter_proof_account",
           "pda": {
             "seeds": [
@@ -568,6 +565,10 @@
                   110,
                   116
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "election_account"
               }
             ]
           }

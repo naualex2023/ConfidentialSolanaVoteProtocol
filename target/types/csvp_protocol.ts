@@ -109,9 +109,6 @@ export type CsvpProtocol = {
           "writable": true
         },
         {
-          "name": "election"
-        },
-        {
           "name": "voterProofAccount",
           "pda": {
             "seeds": [
@@ -574,6 +571,10 @@ export type CsvpProtocol = {
                   110,
                   116
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "electionAccount"
               }
             ]
           }

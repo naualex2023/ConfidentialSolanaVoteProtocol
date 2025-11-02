@@ -160,6 +160,7 @@ const [voterProofPDA] = findVoterProofPda(
           Buffer.from(getCompDefAccOffset("init_vote_stats")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
+        //signPdaAccount: signPda,
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
@@ -204,7 +205,30 @@ const [voterProofPDA] = findVoterProofPda(
     console.log("... Voter registered:", registerSig);
     const registryAccount = await Registrationprogram.account.voterProof.fetch(voterProofPDA);
     console.log("... VoterProof account data:", registryAccount);
-
+it("Initializes Signer PDA (if needed)", async () => {
+  
+  // Проверяем, существует ли аккаунт, чтобы избежать ошибки "already initialized"
+  const accountInfo = await provider.connection.getAccountInfo(signPda);
+  
+  if (!accountInfo) {
+    console.log("Initializing Signer PDA...");
+    
+    const tx = await program.methods
+      .initSignerPda()
+      .accounts({
+        authority: owner.publicKey, // Предполагаем, что owner - это плательщик
+        signPdaAccount: signPda,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([owner])
+      .rpc();
+      
+    await provider.connection.confirmTransaction(tx, "confirmed");
+    console.log("Signer PDA initialized:", tx);
+  } else {
+    console.log("Signer PDA already exists.");
+  }
+});
     // --- 5. CAST VOTE (cast_vote) ---
     console.log(`\n🗳️  Casting vote for candidate index ${CHOICE_INDEX}...`);
     

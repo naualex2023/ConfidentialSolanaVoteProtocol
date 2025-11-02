@@ -809,6 +809,7 @@ dependencies = [
  "arcium-macros",
  "num-derive 0.3.3",
  "num-traits",
+ "registration",
  "thiserror 1.0.69",
 ]
 
@@ -1594,6 +1595,16 @@ name = "regex-syntax"
 version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58"
+
+[[package]]
+name = "registration"
+version = "0.2.0"
+dependencies = [
+ "anchor-lang",
+ "num-derive 0.3.3",
+ "num-traits",
+ "thiserror 1.0.69",
+]
 
 [[package]]
 name = "rustc-hash"

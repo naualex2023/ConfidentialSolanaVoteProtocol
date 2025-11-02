@@ -8,6 +8,9 @@
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;
+// Импортируем RegistrationProgramId и VoterProof
+use registration::{RegistrationProgramId, VoterProof}; 
+use registration; // Оставляем для доступа к registration::ID и registration::state::VOTER_REGISTRY_SEED
 // use crate::__cpi_client_accounts_reveal_result_callback::RevealResultCallback;
 // use crate::__cpi_client_accounts_vote_callback::VoteCallback;
 // use crate::__cpi_client_accounts_init_vote_stats_callback::InitVoteStatsCallback;
@@ -23,6 +26,7 @@ use crate::error::VoteError; // Содержит ваши кастомные о�
 const COMP_DEF_OFFSET_INIT_VOTE_STATS: u32 = comp_def_offset("init_vote_stats");
 const COMP_DEF_OFFSET_VOTE: u32 = comp_def_offset("vote");
 const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
+pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::solana_program::pubkey!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
 
 declare_id!("GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"); // Ваш Program ID
 
@@ -51,137 +55,7 @@ pub mod csvp_protocol {
         Ok(())
     }
 
-    // ----------------------
-    // 2. Управление реестром
-    // ----------------------
-
-    /// Регистрирует группу голосующих в чанке.
-
-    pub fn register_voters(
-        ctx: Context<RegisterVoters>,
-        _chunk_index: u32, // index уже находится в PDA, сохраняем для ясности
-        voter_hashes: Vec<Pubkey>,
-    ) -> Result<()> {
-        // Меняем имя переменной с 'chunk' на 'registry' для ясности
-        msg!("Registering {} voters in chunk {}", voter_hashes.len(), _chunk_index);
-        let registry = &mut ctx.accounts.voter_registry; 
-        let election = &ctx.accounts.election;
-
-        // --- 1. Проверки безопасности ---
-        msg!("Performing security checks...");
-        // 1.1. Только создатель выборов может добавлять избирателей
-        require_keys_eq!(
-            election.creator,
-            ctx.accounts.authority.key(),
-            VoteError::NotAuthorized
-        );
-        msg!("Authority is authorized.");
-        // 1.2. Выборы еще не начались
-        require!(
-            election.state == 0, // 0 - Draft
-            VoteError::ElectionNotDraft
-        );
-        msg!("Election is in Draft state.");
-        // --- 2. Проверка на переполнение чанка (до добавления) ---
-        let total_new_hashes = voter_hashes.len();
-        let current_count = registry.count as usize;
-
-        require!(
-            current_count.checked_add(total_new_hashes).is_some() && 
-            current_count + total_new_hashes <= MAX_ITEMS_PER_CHUNK,
-            VoteError::ChunkFull
-        );
-        msg!("Chunk has enough space for new voters.");
-        // --- 3. Инициализация и заполнение данных (БЕЗ REALLOC) ---
-
-        // Устанавливаем эти поля только при первой инициализации аккаунта
-        registry.election = election.key(); 
-        registry.chunk_index = _chunk_index; 
-        msg!("Filling voter hashes into the registry...");
-        // ЗАМЕНА: Используем цикл с прямой записью в массив вместо .extend()
-        for (i, hash) in voter_hashes.into_iter().enumerate() {
-            let index_to_write = current_count
-                .checked_add(i)
-                .ok_or(VoteError::ChunkFull)?; // Проверка переполнения
-            msg!("Writing hash at index {}", index_to_write);
-            // ПРЯМАЯ ЗАПИСЬ В ФИКСИРОВАННЫЙ МАССИВ. Это устраняет realloc.
-            registry.voter_hashes[index_to_write] = hash;
-            
-            // Инкрементируем счетчик
-            registry.count = registry.count.checked_add(1).ok_or(VoteError::ChunkFull)?;
-        }
-        
-        // 4. Сохранение bump (только при init_if_needed)
-        registry.bump = ctx.bumps.voter_registry;
-
-        Ok(())
-    }
-
-      /// Инструкция для регистрации одного избирателя.
-    /// ПРИМЕЧАНИЕ: Хэш избирателя передается как Pubkey (32 байта, Base58), 
-    /// что позволяет Anchor автоматически его декодировать.
-    pub fn register_voter(
-        ctx: Context<RegisterVoters>,
-        _chunk_index: u32, // index уже находится в PDA, сохраняем для ясности
-        voter_hash: Pubkey, // ИЗМЕНЕНИЕ: Теперь принимаем Pubkey
-    ) -> Result<()> {
-        let registry = &mut ctx.accounts.voter_registry; 
-        let election = &ctx.accounts.election;
-
-        // --- 1. Проверки безопасности ---
-        msg!("Performing security checks...");
-        
-        // 1.1. Только создатель выборов может добавлять избирателей
-        require_keys_eq!(
-            election.creator,
-            ctx.accounts.authority.key(),
-            VoteError::NotAuthorized
-        );
-        
-        // 1.2. Выборы еще не начались
-        require!(
-            election.state == 0, // 0 - Draft
-            VoteError::ElectionNotDraft
-        );
-        msg!("Checks passed. Current count: {}", registry.count);
-
-
-        // 1.3. Проверка на переполнение чанка 
-        let current_count = registry.count as usize;
-        require!(
-            current_count < MAX_ITEMS_PER_CHUNK,
-            VoteError::ChunkFull
-        );
-        
-        // --- 2. Декодирование Base58 в [u8; 32] ---
-        // ЭТОТ ШАГ УДАЛЕН, ТАК КАК Pubkey УЖЕ ДЕКОДИРОВАЛ ДАННЫЕ.
-        // Мы используем voter_hash напрямую, так как он уже является 32-байтовым объектом.
-        
-        // --- 3. Запись данных (БЕЗ REALLOC) ---
-
-        // Устанавливаем эти поля только при первой инициализации аккаунта
-        if registry.count == 0 {
-            registry.election = election.key(); 
-            registry.chunk_index = _chunk_index; 
-        }
-
-        // Прямая запись в фиксированный массив по текущему счетчику
-        let index_to_write = current_count;
-        
-        // ПРИМЕЧАНИЕ: Здесь мы предполагаем, что в state.rs вы изменили 
-        // VoterRegistry::voter_hashes на массив Pubkey.
-        registry.voter_hashes[index_to_write] = voter_hash; 
-        
-        // Инкрементируем счетчик
-        registry.count = registry.count.checked_add(1).ok_or(VoteError::ChunkFull)?;
-
-        // Сохранение bump
-        registry.bump = ctx.bumps.voter_registry;
-        msg!("Voter hash recorded at index {}. New count: {}", index_to_write, registry.count);
-
-        Ok(())
-    }
-    // ----------------------
+     // ----------------------
     // 3. Инициализация выборов (Arcium)
     // ----------------------
 
@@ -293,10 +167,10 @@ pub mod csvp_protocol {
 
         // 2. ПРОВЕРКА РЕГИСТРАЦИИ (Voter Chunk)
         // `voter_chunk` уже верифицирован (seeds, has_one) в `#[derive(Accounts)]`
-        require!(
-            ctx.accounts.voter_registry.voter_hashes.contains(&voter_hash),
-            VoteError::VoterNotRegistered
-        );
+        // require!(
+        //     ctx.accounts.voter_proof_account.voter_hashes.contains(&voter_hash),
+        //     VoteError::VoterNotRegistered
+        // );
 
         // 3. ПРОВЕРКА ДВОЙНОГО ГОЛОСОВАНИЯ (Nullifier Account)
         // `init` в `#[derive(Accounts)]` атомарно создает PDA.
@@ -499,52 +373,6 @@ pub struct InitRevealResultCompDef<'info> {
 }
 
 
-// --- Контекст: Регистрация избирателей ---
-
-#[derive(Accounts)]
-#[instruction(chunk_index: u32, voter_hashes: Vec<Pubkey>)]
-pub struct RegisterVoters<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    
-    // Проверяем, что authority = election.creator в самой функции
-    #[account(mut)]
-    pub election: Account<'info, Election>,
-    
-    #[account(
-        init_if_needed,
-        payer = authority,
-        //space = 8 + VoterRegistry::MAX_SPACE, 
-        space=16100, // Временно, замените на правильное значение
-        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub voter_registry: Box<Account<'info, VoterRegistry>>,
-    
-    pub system_program: Program<'info, System>,
-}
-#[derive(Accounts)]
-#[instruction(chunk_index: u32, voter_hash: Pubkey)]
-pub struct RegisterVoter<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    
-    // Проверяем, что authority = election.creator в самой функции
-    #[account(mut)]
-    pub election: Account<'info, Election>,
-    
-    #[account(
-        init_if_needed,
-        payer = authority,
-        //space = 8 + VoterRegistry::MAX_SPACE, 
-        space=16100, // Временно, замените на правильное значение
-        seeds = [VOTER_REGISTRY_SEED, election.key().as_ref(), chunk_index.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub voter_registry: Box<Account<'info, VoterRegistry>>,
-    
-    pub system_program: Program<'info, System>,
-}
 // --- Контекст: Инициализация Выборов (Arcium) ---
 
 #[queue_computation_accounts("init_vote_stats", authority)]
@@ -746,20 +574,28 @@ pub struct CastVote<'info> {
     // )]
     // pub election_account: Account<'info, Election>,
     #[account(
-        address = voter_registry.election,
+        //address = voter_registry.election,
     )]
     pub election: UncheckedAccount<'info>,
-    // Аккаунт VoterChunk (для проверки регистрации)
     #[account(
+        // 1. Указываем, что аккаунт не должен быть mut, т.к. мы его только читаем
+        // 2. Указываем PDA-сиды, чтобы Anchor проверил, что аккаунт 
+        //    принадлежит программе Registration и что его адрес вычислен правильно.
         seeds = [
-            VOTER_REGISTRY_SEED, 
-            election_account.key().as_ref(), 
-            voter_chunk_index.to_le_bytes().as_ref()
+            b"voters_registry", // Используем сид из программы Registration
+            voter_hash.as_ref() // Главный сид — хэш избирателя
         ],
-        bump = voter_registry.bump,
-        has_one = election, // Проверяем, что чанк принадлежит этим выборам
+        bump,
+        // Опционально: Проверить, что владелец аккаунта VoterProof — 
+        // это Program ID вашей программы Registration
+        owner = registration::ID // ID вашей программы регистрации
     )]
-    pub voter_registry: Box<Account<'info, VoterRegistry>>, 
+    // Мы ожидаем, что этот аккаунт уже существует и содержит Pubkey избирателя.
+    //pub voter_proof_account: Account<'info, registration::state::VoterProof>, 
+    pub voter_proof_account: Account<'info, VoterProof>,
+
+    // Добавляем ID программы Registration для проверки владельца (owner = registration::ID)
+    pub registration_program: Program<'info, RegistrationProgramId>,
     
     // Nullifier (init) - предотвращение двойного голосования
     #[account(

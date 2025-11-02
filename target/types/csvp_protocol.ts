@@ -109,13 +109,10 @@ export type CsvpProtocol = {
           "writable": true
         },
         {
-          "name": "election",
-          "relations": [
-            "voterRegistry"
-          ]
+          "name": "election"
         },
         {
-          "name": "voterRegistry",
+          "name": "voterProofAccount",
           "pda": {
             "seeds": [
               {
@@ -126,6 +123,7 @@ export type CsvpProtocol = {
                   116,
                   101,
                   114,
+                  115,
                   95,
                   114,
                   101,
@@ -138,15 +136,15 @@ export type CsvpProtocol = {
                 ]
               },
               {
-                "kind": "account",
-                "path": "electionAccount"
-              },
-              {
                 "kind": "arg",
-                "path": "voterChunkIndex"
+                "path": "voterHash"
               }
             ]
           }
+        },
+        {
+          "name": "registrationProgram",
+          "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"
         },
         {
           "name": "nullifierAccount",
@@ -533,162 +531,6 @@ export type CsvpProtocol = {
       "args": []
     },
     {
-      "name": "registerVoter",
-      "docs": [
-        "Инструкция для регистрации одного избирателя.",
-        "ПРИМЕЧАНИЕ: Хэш избирателя передается как Pubkey (32 байта, Base58),",
-        "что позволяет Anchor автоматически его декодировать."
-      ],
-      "discriminator": [
-        229,
-        124,
-        185,
-        99,
-        118,
-        51,
-        226,
-        6
-      ],
-      "accounts": [
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "election",
-          "writable": true
-        },
-        {
-          "name": "voterRegistry",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  118,
-                  111,
-                  116,
-                  101,
-                  114,
-                  95,
-                  114,
-                  101,
-                  103,
-                  105,
-                  115,
-                  116,
-                  114,
-                  121
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "election"
-              },
-              {
-                "kind": "arg",
-                "path": "chunkIndex"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "chunkIndex",
-          "type": "u32"
-        },
-        {
-          "name": "voterHash",
-          "type": "pubkey"
-        }
-      ]
-    },
-    {
-      "name": "registerVoters",
-      "docs": [
-        "Регистрирует группу голосующих в чанке."
-      ],
-      "discriminator": [
-        131,
-        246,
-        117,
-        196,
-        108,
-        232,
-        154,
-        119
-      ],
-      "accounts": [
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "election",
-          "writable": true
-        },
-        {
-          "name": "voterRegistry",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  118,
-                  111,
-                  116,
-                  101,
-                  114,
-                  95,
-                  114,
-                  101,
-                  103,
-                  105,
-                  115,
-                  116,
-                  114,
-                  121
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "election"
-              },
-              {
-                "kind": "arg",
-                "path": "chunkIndex"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "chunkIndex",
-          "type": "u32"
-        },
-        {
-          "name": "voterHashes",
-          "type": {
-            "vec": "pubkey"
-          }
-        }
-      ]
-    },
-    {
       "name": "revealResult",
       "docs": [
         "Запускает MPC `reveal_result` (только создатель)."
@@ -1010,16 +852,16 @@ export type CsvpProtocol = {
       ]
     },
     {
-      "name": "voterRegistry",
+      "name": "voterProof",
       "discriminator": [
-        146,
-        143,
-        24,
-        89,
-        70,
-        216,
-        173,
-        189
+        186,
+        224,
+        160,
+        101,
+        106,
+        116,
+        117,
+        177
       ]
     }
   ],
@@ -1918,34 +1760,13 @@ export type CsvpProtocol = {
       }
     },
     {
-      "name": "voterRegistry",
+      "name": "voterProof",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "election",
+            "name": "voterHash",
             "type": "pubkey"
-          },
-          {
-            "name": "chunkIndex",
-            "type": "u32"
-          },
-          {
-            "name": "count",
-            "type": "u32"
-          },
-          {
-            "name": "voterHashes",
-            "type": {
-              "array": [
-                "pubkey",
-                500
-              ]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }

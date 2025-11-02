@@ -7,7 +7,7 @@ pub const MAX_CANDIDATES: usize = 5; // Фиксированное число к
 pub const MAX_ITEMS_PER_CHUNK: usize = 500;
 pub const ELECTION_SEED: &[u8] = b"election";
 // pub const VOTER_CHUNK_SEED: &[u8] = b"voter_chunk";
-pub const VOTER_REGISTRY_SEED: &[u8] = b"voter_registry"; // <-- НОВОЕ ИМЯ
+pub const VOTER_REGISTRY_SEED: &[u8] = b"voters_registry"; // <-- НОВОЕ ИМЯ
 pub const NULLIFIER_SEED: &[u8] = b"nullifier";
 pub const ELECTION_SIGN_PDA_SEED: &[u8] = b"signer_account";
 
@@ -50,28 +50,28 @@ pub struct Election {
 /// Аккаунт для реестра голосующих (VoterChunk)
 pub const HASH_LEN: usize = 32;
 
-#[account]
-#[derive(InitSpace)]
-pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕТЕ
-    pub election: Pubkey,
-    pub chunk_index: u32,
+// #[account]
+// #[derive(InitSpace)]
+// pub struct VoterRegistry { // <-- ИМЯ, КОТОРОЕ ВЫ ИСПОЛЬЗУЕТЕ
+//     pub election: Pubkey,
+//     pub chunk_index: u32,
     
-    // НОВОЕ ПОЛЕ: Счетчик добавленных хэшей
-    pub count: u32, 
+//     // НОВОЕ ПОЛЕ: Счетчик добавленных хэшей
+//     pub count: u32, 
 
-    // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: ФИКСИРОВАННЫЙ МАССИВ
-    // Это резервирует место сразу и не требует realloc при добавлении
-    pub voter_hashes: [Pubkey; MAX_ITEMS_PER_CHUNK], 
+//     // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: ФИКСИРОВАННЫЙ МАССИВ
+//     // Это резервирует место сразу и не требует realloc при добавлении
+//     pub voter_hashes: [Pubkey; MAX_ITEMS_PER_CHUNK], 
     
-    pub bump: u8,
-}
-// ...
-impl VoterRegistry {
-    // Обновляем расчет:
-    pub const HEADER_SPACE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 4 /* count */ + 1 /* bump */;
-    pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * HASH_LEN;
-    pub const MAX_SPACE: usize = Self::HEADER_SPACE + Self::HASHES_SPACE;
-}
+//     pub bump: u8,
+// }
+// // ...
+// impl VoterRegistry {
+//     // Обновляем расчет:
+//     pub const HEADER_SPACE: usize = 8 + 32 /* election */ + 4 /* chunk_index */ + 4 /* count */ + 1 /* bump */;
+//     pub const HASHES_SPACE: usize = MAX_ITEMS_PER_CHUNK * HASH_LEN;
+//     pub const MAX_SPACE: usize = Self::HEADER_SPACE + Self::HASHES_SPACE;
+// }
 
 /// Аккаунт для предотвращения двойного голосования (NullifierAccount)
 #[account]

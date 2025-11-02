@@ -45,24 +45,19 @@ export const findSignPda = (
   );
 };
 
-/**
- * Находит PDA для чанка избирателей (VoterChunk)
- */
-export const findVoterChunkPda = (
-  programId: PublicKey,
-  electionPda: PublicKey,
-  chunkIndex: number
-): [PublicKey, number] => {
-  const chunkIndexBuffer = Buffer.alloc(4); // u32, 4 байта
-  chunkIndexBuffer.writeUInt32LE(chunkIndex, 0);
+// ID ВАШЕЙ ПРОГРАММЫ РЕГИСТРАЦИИ
+const REG_PROGRAM_ID = new PublicKey("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"); 
 
+export const findVoterProofPda = (
+  voterHash: PublicKey // Должен быть Pubkey
+): [PublicKey, number] => {
+  // Сиды: [b"voters_registry", voter_hash.as_ref()]
   return PublicKey.findProgramAddressSync(
     [
-      VOTER_REGISTRY_SEED,
-      electionPda.toBuffer(),
-      chunkIndexBuffer,
+      Buffer.from("voters_registry"), // Имя сида должно совпадать с VOTER_REGISTRY_SEED
+      voterHash.toBuffer(),            // Pubkey должен быть преобразован в 32-байтовый буфер
     ],
-    programId
+    REG_PROGRAM_ID // ID программы, которая владеет аккаунтом VoterProof
   );
 };
 

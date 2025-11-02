@@ -740,12 +740,14 @@ pub struct CastVote<'info> {
         //    принадлежит программе Registration и что его адрес вычислен правильно.
         seeds = [
             b"voters_registry", // Используем сид из программы Registration
-            voter_hash.as_ref() // Главный сид — хэш избирателя
+            voter_hash.to_bytes().as_ref() // Главный сид — хэш избирателя
         ],
         bump,
         // Опционально: Проверить, что владелец аккаунта VoterProof — 
         // это Program ID вашей программы Registration
-        owner = registration::ID // ID вашей программы регистрации
+        //owner = registration::ID, // ID вашей программы регистрации
+        //owner = registration_program,
+        owner=VOTER_REGISTRATION_ID,
     )]
     // Мы ожидаем, что этот аккаунт уже существует и содержит Pubkey избирателя.
     //pub voter_proof_account: Account<'info, registration::state::VoterProof>, 

@@ -91,6 +91,7 @@ describe("CsvpProtocol", () => {
     // This is required because the Rust instruction expects a Pubkey.
     // The Anchor SDK automatically serializes this object.
     const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
+    console.log("Generated voter_hash is: ", voterHashKey.toBase58());
     const nullifierHashKey = new anchor.web3.PublicKey(rawNullifierHashBytes);
     
     // --- Calculate all necessary PDAs ---
@@ -265,6 +266,15 @@ const debugAccountData = await program.account.debugPda.fetch(debugPda);
 const programNullifierPda = debugAccountData.pdaValue;
 
 console.log("Program recorded Nullifier PDA:", programNullifierPda.toBase58());
+
+const voterProofData = await Registrationprogram.account.voterProof.fetch(
+    voterProofPDA
+);
+
+// 3. Выводим записанный хэш
+const recordedVoterHash = voterProofData.voterHash.toBase58();
+
+console.log("Recorded voter_hash is: ", recordedVoterHash);
 
     const voteCompOffset = getRandomBigNumber();
     

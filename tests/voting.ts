@@ -35,7 +35,8 @@ import {
   findSignPda,
   findVoterProofPda,
   findNullifierPda,
-  findElectionVoteSignPda
+  findElectionVoteSignPda,
+  findFalseVoterProofPda
 } from "./helpers";
 
 // @ts-ignore
@@ -102,7 +103,9 @@ describe("CsvpProtocol", () => {
 const [voterProofPDA] = findVoterProofPda(
   voterHashKey // Ваш 32-байтовый Pubkey, переданный как аргумент инструкции
 );
-    
+    const [falsevoterProofPDA] = findFalseVoterProofPda(program.programId,
+  voterHashKey // Ваш 32-байтовый Pubkey, переданный как аргумент инструкции
+);
     // --- Calculate all necessary PDAs ---
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
     const [signPda, _signBump] = findSignPda(program.programId, electionPda);
@@ -111,6 +114,7 @@ const [voterProofPDA] = findVoterProofPda(
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
     console.log("Voter proof PDA:", voterProofPDA.toBase58());
+    console.log("FALSE Voter proof PDA:", falsevoterProofPDA.toBase58());
     console.log("Election Vote Sign PDA:", electionVoteSignPda.toBase58());
     
 

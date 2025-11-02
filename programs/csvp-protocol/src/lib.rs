@@ -743,6 +743,7 @@ pub struct CastVote<'info> {
             voter_hash.to_bytes().as_ref() // Главный сид — хэш избирателя
         ],
         bump,
+        seeds::program = registration_program.key, // Указываем Program ID программы Registration
         // Опционально: Проверить, что владелец аккаунта VoterProof — 
         // это Program ID вашей программы Registration
         //owner = registration::ID, // ID вашей программы регистрации

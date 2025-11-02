@@ -216,6 +216,67 @@ export type CsvpProtocol = {
       ]
     },
     {
+      "name": "debugPdaCheck",
+      "discriminator": [
+        89,
+        206,
+        158,
+        250,
+        214,
+        106,
+        89,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "debugPdaAccount",
+          "docs": [
+            "Аккаунт, в который мы запишем вычисленный PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  98,
+                  117,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "electionAccount",
+          "docs": [
+            "Аккаунт выборов, ключ которого используется в сидах нуллификатора"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nullifierHashArgument",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "initElection",
       "docs": [
         "Создает выборы и запускает MPC для инициализации encrypted_tally нулями."
@@ -835,6 +896,19 @@ export type CsvpProtocol = {
       ]
     },
     {
+      "name": "debugPda",
+      "discriminator": [
+        7,
+        18,
+        63,
+        113,
+        7,
+        159,
+        35,
+        99
+      ]
+    },
+    {
       "name": "election",
       "discriminator": [
         68,
@@ -1301,6 +1375,21 @@ export type CsvpProtocol = {
                 }
               }
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "debugPda",
+      "docs": [
+        "Временный аккаунт для отладки PDA"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pdaValue",
+            "type": "pubkey"
           }
         ]
       }

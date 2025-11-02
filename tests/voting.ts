@@ -235,6 +235,34 @@ const [voterProofPDA] = findVoterProofPda(
     
     const [nullifierPda, _nullifierBump] = findNullifierPda(program.programId, electionPda, nullifierHashKey);
     console.log("Nullifier PDA:", nullifierPda.toBase58());
+    console.log("Nullifier hashkey:", nullifierHashKey.toBase58());
+
+// 1. Вычисляем PDA Debug-аккаунта
+const [debugPda, debugBump] = PublicKey.findProgramAddressSync(
+    [Buffer.from("debug"), voter.publicKey.toBuffer()],
+    program.programId
+);
+
+const sig = await program.methods
+    .debugPdaCheck(nullifierHashKey)// Передаем nullifier_hash как Pubkey
+    .accounts({
+        payer: voter.publicKey,
+        debugPdaAccount: debugPda,
+        electionAccount: electionPda,
+        nullifierHashAccount: nullifierHashKey, // Передаем тот же хэш как Pubkey
+        systemProgram: SystemProgram.programId,
+    })
+    .signers([voter])
+    .rpc();
+
+console.log("Debug PDA Check transaction signature:", sig);
+
+// 4. Считываем данные из Debug-аккаунта
+const debugAccountData = await program.account.debugPda.fetch(debugPda);
+
+const programNullifierPda = debugAccountData.pdaValue;
+
+console.log("Program recorded Nullifier PDA:", programNullifierPda.toBase58());
 
     const voteCompOffset = getRandomBigNumber();
     

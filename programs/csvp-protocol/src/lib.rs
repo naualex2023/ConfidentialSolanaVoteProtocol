@@ -225,6 +225,62 @@ pub struct InitSignerPda<'info> {
     
     pub system_program: Program<'info, System>,
 }
+
+/// Временный аккаунт для отладки PDA
+#[account]
+#[derive(InitSpace)]
+pub struct DebugPda {
+    pub pda_value: Pubkey, // Здесь будем хранить вычисленный PDA
+}
+// Добавляем новую функцию-инструкцию для отладки
+pub fn debug_pda_check(ctx: Context<DebugPdaCheck>, nullifier_hash_argument: Pubkey) -> Result<()> {
+    
+    // 1. Получаем PDA, который передал клиент (это адрес самого DebugPda)
+    // let debug_pda_key = ctx.accounts.debug_pda_account.key(); // Не используется, можно удалить
+
+    // 2. Вычисляем ожидаемый адрес Nullifier'а, используя сиды из CastVote
+    // СИДЫ: [NULLIFIER_SEED, election_account.key(), nullifier_hash]
+    
+    let (nullifier_pda, _bump) = Pubkey::find_program_address(
+        &[
+            NULLIFIER_SEED,
+            ctx.accounts.election_account.key().as_ref(),
+            // ИСПРАВЛЕНО: Обращение к аргументу напрямую из сигнатуры функции
+            nullifier_hash_argument.to_bytes().as_ref(), 
+        ],
+        ctx.program_id,
+    );
+    
+    // 3. Записываем вычисленный PDA нуллификатора в аккаунт DebugPda
+    ctx.accounts.debug_pda_account.pda_value = nullifier_pda;
+
+    Ok(())
+}
+
+#[derive(Accounts)]
+#[instruction(nullifier_hash_argument: Pubkey)] // Атрибут оставляем для генерации IDL
+pub struct DebugPdaCheck<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
+    /// Аккаунт, в который мы запишем вычисленный PDA
+    #[account(
+        init,
+        payer = payer,
+        space = 8 + DebugPda::INIT_SPACE, 
+        seeds = [b"debug", payer.key().as_ref()], 
+        bump
+    )]
+    pub debug_pda_account: Account<'info, DebugPda>,
+    
+    /// Аккаунт выборов, ключ которого используется в сидах нуллификатора
+    pub election_account: Account<'info, Election>,
+
+    // УДАЛЕНО: nullifier_hash_account, так как его значение теперь в сигнатуре функции.
+    // Его Pubkey используется только для вычисления сида, а не как отдельный аккаунт.
+
+    pub system_program: Program<'info, System>,
+}
     // ----------------------
     // 4. Голосование (Arcium)
     // ----------------------
@@ -242,6 +298,7 @@ pub struct InitSignerPda<'info> {
         nullifier_hash: Pubkey,
         voter_hash: Pubkey,
     ) -> Result<()> {
+        msg!("Vote cast begining...");
         let election = & ctx.accounts.election_account;
         let el_key = election.key();
         let clock = Clock::get()?;
@@ -586,8 +643,8 @@ pub struct InitVoteStatsCallback<'info> {
     vote_ciphertext: [u8; 32],
     vote_encryption_pubkey: [u8; 32],
     vote_nonce: u128,
-    nullifier_hash: [u8; 32], 
-    voter_hash: [u8; 32],computation_offset: u64
+    nullifier_hash: Pubkey, 
+    voter_hash: Pubkey,computation_offset: u64
 )]
 pub struct CastVote<'info> {
     #[account(mut)]
@@ -692,7 +749,7 @@ pub struct CastVote<'info> {
         init, // init = атомарная проверка на существование
         payer = voter,
         space = 8 + NullifierAccount::INIT_SPACE,
-        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.as_ref()],
+        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.key().as_ref()],
         bump,
     )]
     pub nullifier_account: Account<'info, NullifierAccount>,

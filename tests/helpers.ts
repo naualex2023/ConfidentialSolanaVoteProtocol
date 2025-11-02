@@ -29,6 +29,20 @@ export const findElectionPda = (
   );
 };
 
+export const findElectionVoteSignPda = (
+  programId: PublicKey,
+  election: PublicKey,
+  
+): [PublicKey, number] => {
+  return PublicKey.findProgramAddressSync(
+    [
+      ELECTION_SEED,
+      election.toBuffer(),
+      
+    ],
+    programId
+  );
+};
 /**
  * Находит PDA для аккаунта-подписанта Arcium (SignerAccount)
  */

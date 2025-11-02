@@ -35,6 +35,7 @@ import {
   findSignPda,
   findVoterProofPda,
   findNullifierPda,
+  findElectionVoteSignPda
 } from "./helpers";
 
 // @ts-ignore
@@ -104,11 +105,12 @@ const [voterProofPDA] = findVoterProofPda(
     // --- Calculate all necessary PDAs ---
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
     const [signPda, _signBump] = findSignPda(program.programId, electionPda);
-    //const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, electionPda, VOTER_CHUNK_INDEX);
+    const [electionVoteSignPda, _evsBump] = findElectionVoteSignPda(program.programId, electionPda);
     
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
     console.log("Voter proof PDA:", voterProofPDA.toBase58());
+    console.log("Election Vote Sign PDA:", electionVoteSignPda.toBase58());
     
 
     // --- 2. INITIALIZE MPC SCHEMAS ---
@@ -287,7 +289,7 @@ console.log("Program recorded Nullifier PDA:", programNullifierPda.toBase58());
         electionAccount: electionPda,
         voterProofAccount: voterProofPDA,
         nullifierAccount: nullifierPda,
-        signPdaAccount: signPda,
+        //signPdaAccount: signPda,
         systemProgram: SystemProgram.programId,
         arciumProgram: getArciumProgAddress(),
         // Arcium accounts

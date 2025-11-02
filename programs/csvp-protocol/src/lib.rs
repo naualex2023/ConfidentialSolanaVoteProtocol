@@ -322,7 +322,7 @@ pub struct DebugPdaCheck<'info> {
         // `init` в `#[derive(Accounts)]` атомарно создает PDA.
         // Если он уже существует, транзакция упадет (AccountAlreadyInitialized).
         let nullifier = &mut ctx.accounts.nullifier_account;
-        nullifier.election_pda = election.key();
+        nullifier.election_account = election.key();
         nullifier.nullifier_hash = nullifier_hash;
         nullifier.bump = ctx.bumps.nullifier_account;
 
@@ -652,15 +652,25 @@ pub struct CastVote<'info> {
         //pub sign_pda_account: Account<'info, SignerAccount>,
 // 🔥 ДОБАВИТЬ ЭТОТ АККАУНТ ДЛЯ ПОДПИСИ MPC
     // Он должен быть помечен #[account(mut)] для использования в queue_computation
+    // #[account(
+    //     mut, 
+    //     // Ищем PDA, используя те же сиды, что и при инициализации
+    //     seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
+    //     // Указываем, что бамп должен совпадать с полем в аккаунте
+    //     bump = sign_pda_account.bump, 
+    // )]
+    // // ВНИМАНИЕ: Если вы переименовали его в `mpc_signer_pda` в InitializeElection,
+    // // вы должны использовать здесь то же имя: `mpc_signer_pda`!
+    // pub sign_pda_account: Account<'info, SignerAccount>,
+        // Add this new required account
     #[account(
-        mut, 
-        // Ищем PDA, используя те же сиды, что и при инициализации
-        seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
-        // Указываем, что бамп должен совпадать с полем в аккаунте
-        bump = sign_pda_account.bump, 
+        init_if_needed,
+        space = 9,
+        payer = voter,
+        seeds = [&SIGN_PDA_SEED],
+        bump,
+        address = derive_sign_pda!(),
     )]
-    // ВНИМАНИЕ: Если вы переименовали его в `mpc_signer_pda` в InitializeElection,
-    // вы должны использовать здесь то же имя: `mpc_signer_pda`!
     pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
         address = derive_mxe_pda!()
@@ -749,7 +759,7 @@ pub struct CastVote<'info> {
         init, // init = атомарная проверка на существование
         payer = voter,
         space = 8 + NullifierAccount::INIT_SPACE,
-        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.key().as_ref()],
+        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.as_ref()],
         bump,
     )]
     pub nullifier_account: Account<'info, NullifierAccount>,

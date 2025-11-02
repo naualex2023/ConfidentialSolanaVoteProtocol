@@ -36,14 +36,13 @@
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  83,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  95,
-                  97,
+                  65,
                   99,
                   99,
                   111,
@@ -51,10 +50,6 @@
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "election_account"
               }
             ]
           }
@@ -1648,7 +1643,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "election_pda",
+            "name": "election_account",
             "type": "pubkey"
           },
           {

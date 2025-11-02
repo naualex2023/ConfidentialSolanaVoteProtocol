@@ -384,6 +384,10 @@ pub struct DebugPdaCheck<'info> {
         election.encrypted_tally = o.ciphertexts.try_into().map_err(|_| ErrorCode::ConstraintRaw)?;
         election.nonce = o.nonce;
         election.total_votes += 1; // Увеличиваем публичный счетчик
+
+        emit!(VoteEvent {
+            timestamp: Clock::get()?.unix_timestamp,
+        });
         
         Ok(())
     }

@@ -98,35 +98,7 @@
           "writable": true
         },
         {
-          "name": "voter_proof_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  118,
-                  111,
-                  116,
-                  101,
-                  114,
-                  115,
-                  95,
-                  114,
-                  101,
-                  103,
-                  105,
-                  115,
-                  116,
-                  114,
-                  121
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "voter_hash"
-              }
-            ]
-          }
+          "name": "voter_proof_account"
         },
         {
           "name": "registration_program",

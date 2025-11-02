@@ -36,14 +36,13 @@
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  83,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  95,
-                  97,
+                  65,
                   99,
                   99,
                   111,
@@ -51,10 +50,6 @@
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "election_account"
               }
             ]
           }
@@ -103,38 +98,7 @@
           "writable": true
         },
         {
-          "name": "election"
-        },
-        {
-          "name": "voter_proof_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  118,
-                  111,
-                  116,
-                  101,
-                  114,
-                  115,
-                  95,
-                  114,
-                  101,
-                  103,
-                  105,
-                  115,
-                  116,
-                  114,
-                  121
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "voter_hash"
-              }
-            ]
-          }
+          "name": "voter_proof_account"
         },
         {
           "name": "registration_program",
@@ -204,15 +168,71 @@
         },
         {
           "name": "nullifier_hash",
-          "type": {
-            "array": [
-              "u8",
-              32
+          "type": "pubkey"
+        },
+        {
+          "name": "voter_hash",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "debug_pda_check",
+      "discriminator": [
+        89,
+        206,
+        158,
+        250,
+        214,
+        106,
+        89,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "debug_pda_account",
+          "docs": [
+            "Аккаунт, в который мы запишем вычисленный PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  98,
+                  117,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              }
             ]
           }
         },
         {
-          "name": "voter_hash",
+          "name": "election_account",
+          "docs": [
+            "Аккаунт выборов, ключ которого используется в сидах нуллификатора"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nullifier_hash_argument",
           "type": "pubkey"
         }
       ]
@@ -398,6 +418,58 @@
       "args": []
     },
     {
+      "name": "init_signer_pda",
+      "discriminator": [
+        161,
+        15,
+        24,
+        230,
+        94,
+        100,
+        214,
+        180
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sign_pda_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  105,
+                  103,
+                  110,
+                  101,
+                  114,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "init_vote_comp_def",
       "discriminator": [
         227,
@@ -568,6 +640,10 @@
                   110,
                   116
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "election_account"
               }
             ]
           }
@@ -778,6 +854,19 @@
         104,
         172,
         200
+      ]
+    },
+    {
+      "name": "DebugPda",
+      "discriminator": [
+        7,
+        18,
+        63,
+        113,
+        7,
+        159,
+        35,
+        99
       ]
     },
     {
@@ -1252,6 +1341,21 @@
       }
     },
     {
+      "name": "DebugPda",
+      "docs": [
+        "Временный аккаунт для отладки PDA"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pda_value",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
       "name": "Election",
       "docs": [
         "Главный аккаунт выборов (Election)"
@@ -1511,17 +1615,12 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "election_pda",
+            "name": "election_account",
             "type": "pubkey"
           },
           {
             "name": "nullifier_hash",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
+            "type": "pubkey"
           },
           {
             "name": "bump",

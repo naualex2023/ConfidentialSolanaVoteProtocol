@@ -4,6 +4,7 @@ import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { setTimeout } from "timers/promises";
 import { randomBytes } from "crypto";
+import { program } from "@coral-xyz/anchor/dist/cjs/native/system";
 
 // --- Константы из state.rs ---
 export const ELECTION_SEED = Buffer.from("election");
@@ -29,6 +30,20 @@ export const findElectionPda = (
   );
 };
 
+export const findElectionVoteSignPda = (
+  programId: PublicKey,
+  election: PublicKey,
+  
+): [PublicKey, number] => {
+  return PublicKey.findProgramAddressSync(
+    [
+      ELECTION_SEED,
+      election.toBuffer(),
+      
+    ],
+    programId
+  );
+};
 /**
  * Находит PDA для аккаунта-подписанта Arcium (SignerAccount)
  */
@@ -61,19 +76,32 @@ export const findVoterProofPda = (
   );
 };
 
+export const findFalseVoterProofPda = (
+  programId: PublicKey,
+  voterHash: PublicKey // Должен быть Pubkey
+): [PublicKey, number] => {
+  // Сиды: [b"voters_registry", voter_hash.as_ref()]
+  return PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("voters_registry"), // Имя сида должно совпадать с VOTER_REGISTRY_SEED
+      voterHash.toBuffer(),            // Pubkey должен быть преобразован в 32-байтовый буфер
+    ],
+    programId // ID программы, которая владеет аккаунтом VoterProof
+  );
+};
 /**
  * Находит PDA для нуллификатора (NullifierAccount)
  */
 export const findNullifierPda = (
   programId: PublicKey,
   electionPda: PublicKey,
-  nullifierHash: Buffer | Uint8Array
+  nullifierHash: PublicKey
 ): [PublicKey, number] => {
   return PublicKey.findProgramAddressSync(
     [
       NULLIFIER_SEED,
       electionPda.toBuffer(),
-      Buffer.from(nullifierHash),
+      nullifierHash.toBuffer(),
     ],
     programId
   );

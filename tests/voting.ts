@@ -35,6 +35,8 @@ import {
   findSignPda,
   findVoterProofPda,
   findNullifierPda,
+  findElectionVoteSignPda,
+  findFalseVoterProofPda
 } from "./helpers";
 
 // @ts-ignore
@@ -82,7 +84,7 @@ describe("CsvpProtocol", () => {
     // Generate fake hashes for registration and nullifier
     // In a real application, these would be cryptographically generated
     //const voterHash = Array.from(randomBytes(32));
-    const nullifierHash = Array.from(randomBytes(32));
+    const rawNullifierHashBytes = randomBytes(32);
     
     const rawVoterHashBytes = randomBytes(32);
         
@@ -90,6 +92,8 @@ describe("CsvpProtocol", () => {
     // This is required because the Rust instruction expects a Pubkey.
     // The Anchor SDK automatically serializes this object.
     const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
+    console.log("Generated voter_hash is: ", voterHashKey.toBase58());
+    const nullifierHashKey = new anchor.web3.PublicKey(rawNullifierHashBytes);
     
     // --- Calculate all necessary PDAs ---
     // const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
@@ -99,17 +103,20 @@ describe("CsvpProtocol", () => {
 const [voterProofPDA] = findVoterProofPda(
   voterHashKey // Ваш 32-байтовый Pubkey, переданный как аргумент инструкции
 );
-    
+    const [falsevoterProofPDA] = findFalseVoterProofPda(program.programId,
+  voterHashKey // Ваш 32-байтовый Pubkey, переданный как аргумент инструкции
+);
     // --- Calculate all necessary PDAs ---
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
     const [signPda, _signBump] = findSignPda(program.programId, electionPda);
-    //const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, electionPda, VOTER_CHUNK_INDEX);
-    const [nullifierPda, _nullifierBump] = findNullifierPda(program.programId, electionPda, Buffer.from(nullifierHash));
-
+    const [electionVoteSignPda, _evsBump] = findElectionVoteSignPda(program.programId, electionPda);
+    
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
     console.log("Voter proof PDA:", voterProofPDA.toBase58());
-    console.log("Nullifier PDA:", nullifierPda.toBase58());
+    console.log("FALSE Voter proof PDA:", falsevoterProofPDA.toBase58());
+    console.log("Election Vote Sign PDA:", electionVoteSignPda.toBase58());
+    
 
     // --- 2. INITIALIZE MPC SCHEMAS ---
     console.log("Initializing vote stats computation definition");
@@ -160,6 +167,7 @@ const [voterProofPDA] = findVoterProofPda(
           Buffer.from(getCompDefAccOffset("init_vote_stats")).readUInt32LE()
         ),
         clusterAccount: arciumEnv.arciumClusterPubkey,
+        //signPdaAccount: signPda,
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
 
@@ -173,7 +181,9 @@ const [voterProofPDA] = findVoterProofPda(
     );
     console.log("... Election finalized (MPC init_vote_stats executed):", finalizeInitSig);
     
-    
+    const electionAccount = await program.account.election.fetch(electionPda);
+    console.log("... Election account data:", electionAccount);
+
     // --- 4. REGISTER VOTER (register_voters) ---
     console.log(`\n📝 Registering voter ...`);
     
@@ -205,9 +215,71 @@ const [voterProofPDA] = findVoterProofPda(
     const registryAccount = await Registrationprogram.account.voterProof.fetch(voterProofPDA);
     console.log("... VoterProof account data:", registryAccount);
 
+  // Проверяем, существует ли аккаунт, чтобы избежать ошибки "already initialized"
+  const accountInfo = await provider.connection.getAccountInfo(signPda);
+  
+  if (!accountInfo) {
+    console.log("Initializing Signer PDA...");
+    
+    const tx = await program.methods
+      .initSignerPda()
+      .accounts({
+        authority: owner.publicKey, // Предполагаем, что owner - это плательщик
+        signPdaAccount: signPda,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([owner])
+      .rpc({ skipPreflight: true, commitment: "confirmed" });
+      
+    await provider.connection.confirmTransaction(tx, "confirmed");
+    console.log("Signer PDA initialized:", tx);
+  } else {
+    console.log("Signer PDA already exists.");
+  }
+
     // --- 5. CAST VOTE (cast_vote) ---
     console.log(`\n🗳️  Casting vote for candidate index ${CHOICE_INDEX}...`);
     
+    const [nullifierPda, _nullifierBump] = findNullifierPda(program.programId, electionPda, nullifierHashKey);
+    console.log("Nullifier PDA:", nullifierPda.toBase58());
+    console.log("Nullifier hashkey:", nullifierHashKey.toBase58());
+
+// 1. Вычисляем PDA Debug-аккаунта
+const [debugPda, debugBump] = PublicKey.findProgramAddressSync(
+    [Buffer.from("debug"), voter.publicKey.toBuffer()],
+    program.programId
+);
+
+const sig = await program.methods
+    .debugPdaCheck(nullifierHashKey)// Передаем nullifier_hash как Pubkey
+    .accounts({
+        payer: voter.publicKey,
+        debugPdaAccount: debugPda,
+        electionAccount: electionPda,
+        nullifierHashAccount: nullifierHashKey, // Передаем тот же хэш как Pubkey
+        systemProgram: SystemProgram.programId,
+    })
+    .signers([voter])
+    .rpc();
+
+console.log("Debug PDA Check transaction signature:", sig);
+
+// 4. Считываем данные из Debug-аккаунта
+const debugAccountData = await program.account.debugPda.fetch(debugPda);
+
+const programNullifierPda = debugAccountData.pdaValue;
+
+console.log("Program recorded Nullifier PDA:", programNullifierPda.toBase58());
+
+const voterProofData = await Registrationprogram.account.voterProof.fetch(
+    voterProofPDA
+);
+
+// 3. Выводим записанный хэш
+const recordedVoterHash = voterProofData.voterHash.toBase58();
+
+console.log("Recorded voter_hash is: ", recordedVoterHash);
+
     const voteCompOffset = getRandomBigNumber();
     
     // Encrypt our vote (candidate index)
@@ -222,7 +294,7 @@ const [voterProofPDA] = findVoterProofPda(
         Array.from(ciphertext[0]), // vote_ciphertext
         Array.from(publicKey), // vote_encryption_pubkey
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce
-        nullifierHash, // nullifier_hash
+        nullifierHashKey, // nullifier_hash
         voterHashKey, // voter_hash
       )
       .accountsPartial({
@@ -230,10 +302,10 @@ const [voterProofPDA] = findVoterProofPda(
         voter: voter.publicKey,
         electionAccount: electionPda,
         voterProofAccount: voterProofPDA,
-        nullifierAccount: nullifierPda,
-        signPdaAccount: signPda,
-        systemProgram: SystemProgram.programId,
-        arciumProgram: getArciumProgAddress(),
+        //nullifierAccount: nullifierPda,
+        //signPdaAccount: signPda,
+        // systemProgram: SystemProgram.programId,
+        // arciumProgram: getArciumProgAddress(),
         // Arcium accounts
         mxeAccount: mxeAccountPda,
         mempoolAccount: getMempoolAccAddress(program.programId),

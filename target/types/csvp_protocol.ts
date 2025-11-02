@@ -42,14 +42,13 @@ export type CsvpProtocol = {
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  83,
                   105,
                   103,
                   110,
                   101,
                   114,
-                  95,
-                  97,
+                  65,
                   99,
                   99,
                   111,
@@ -57,10 +56,6 @@ export type CsvpProtocol = {
                   110,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "electionAccount"
               }
             ]
           }
@@ -109,38 +104,7 @@ export type CsvpProtocol = {
           "writable": true
         },
         {
-          "name": "election"
-        },
-        {
-          "name": "voterProofAccount",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  118,
-                  111,
-                  116,
-                  101,
-                  114,
-                  115,
-                  95,
-                  114,
-                  101,
-                  103,
-                  105,
-                  115,
-                  116,
-                  114,
-                  121
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "voterHash"
-              }
-            ]
-          }
+          "name": "voterProofAccount"
         },
         {
           "name": "registrationProgram",
@@ -210,15 +174,71 @@ export type CsvpProtocol = {
         },
         {
           "name": "nullifierHash",
-          "type": {
-            "array": [
-              "u8",
-              32
+          "type": "pubkey"
+        },
+        {
+          "name": "voterHash",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "debugPdaCheck",
+      "discriminator": [
+        89,
+        206,
+        158,
+        250,
+        214,
+        106,
+        89,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "debugPdaAccount",
+          "docs": [
+            "Аккаунт, в который мы запишем вычисленный PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  98,
+                  117,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              }
             ]
           }
         },
         {
-          "name": "voterHash",
+          "name": "electionAccount",
+          "docs": [
+            "Аккаунт выборов, ключ которого используется в сидах нуллификатора"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nullifierHashArgument",
           "type": "pubkey"
         }
       ]
@@ -404,6 +424,58 @@ export type CsvpProtocol = {
       "args": []
     },
     {
+      "name": "initSignerPda",
+      "discriminator": [
+        161,
+        15,
+        24,
+        230,
+        94,
+        100,
+        214,
+        180
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "signPdaAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  105,
+                  103,
+                  110,
+                  101,
+                  114,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "initVoteCompDef",
       "discriminator": [
         227,
@@ -574,6 +646,10 @@ export type CsvpProtocol = {
                   110,
                   116
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "electionAccount"
               }
             ]
           }
@@ -784,6 +860,19 @@ export type CsvpProtocol = {
         104,
         172,
         200
+      ]
+    },
+    {
+      "name": "debugPda",
+      "discriminator": [
+        7,
+        18,
+        63,
+        113,
+        7,
+        159,
+        35,
+        99
       ]
     },
     {
@@ -1258,6 +1347,21 @@ export type CsvpProtocol = {
       }
     },
     {
+      "name": "debugPda",
+      "docs": [
+        "Временный аккаунт для отладки PDA"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pdaValue",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
       "name": "election",
       "docs": [
         "Главный аккаунт выборов (Election)"
@@ -1517,17 +1621,12 @@ export type CsvpProtocol = {
         "kind": "struct",
         "fields": [
           {
-            "name": "electionPda",
+            "name": "electionAccount",
             "type": "pubkey"
           },
           {
             "name": "nullifierHash",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
+            "type": "pubkey"
           },
           {
             "name": "bump",

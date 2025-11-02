@@ -103,6 +103,70 @@ pub mod csvp_protocol {
                 is_writable: true,
             }])],
         )?;
+// 1. Получаем бамп
+// let sign_pda_key = ctx.accounts.sign_pda_account.key();
+
+// // Константа ELECTION_SIGN_PDA_SEED должна быть определена:
+// // const ELECTION_SIGN_PDA_SEED: &[u8] = b"signer_account"; 
+// let signer_seeds_prefix: &[&[u8]] = &[
+//     ELECTION_SIGN_PDA_SEED,
+//     ctx.accounts.election_account.key().as_ref(), // Ключ созданного аккаунта
+// ];
+
+// let (_, sign_pda_bump) = Pubkey::find_program_address(
+//     signer_seeds_prefix,
+//     ctx.program_id,
+// );
+
+// // 2. Формируем полный массив сидов для invoke_signed (включая бамп)
+// let signer_seeds: &[&[&[u8]]] = &[
+//     &[
+//         ELECTION_SIGN_PDA_SEED,
+//         ctx.accounts.election_account.key().as_ref(),
+//         &[sign_pda_bump], // !!! БАМП
+//     ],
+// ];
+// let comp_def_offset = COMP_DEF_OFFSET_INIT_VOTE_STATS;
+// let args: &[u8] = &[];
+
+// // 3. Создаем инструкцию Arcium
+// let ix = arcium_client::instruction::queue_computation(
+//     *ctx.accounts.arcium_program.key,
+//     *ctx.accounts.cluster_account.key,
+//     *ctx.accounts.mxe_account.key,
+//     *ctx.accounts.mempool_account.key,
+//     *ctx.accounts.comp_def_account.key,
+//     *ctx.accounts.executing_pool_account.key,
+//     *ctx.accounts.computation_account.key,
+    
+//     comp_def_offset,
+//     args.to_vec(),
+//     None, // arcium_proof
+//     vec![InitVoteStatsCallback::callback_ix(&[CallbackAccount {
+//         pubkey: ctx.accounts.election_account.key(),
+//         is_writable: true,
+//     }])],
+// );
+
+// // 4. Формируем список AccountInfo для CPI
+// let account_infos = vec![
+//     ctx.accounts.arcium_program.to_account_info(),
+//     ctx.accounts.cluster_account.to_account_info(),
+//     ctx.accounts.mxe_account.to_account_info(),
+//     ctx.accounts.mempool_account.to_account_info(),
+//     ctx.accounts.comp_def_account.to_account_info(),
+//     ctx.accounts.executing_pool_account.to_account_info(),
+//     ctx.accounts.computation_account.to_account_info(),
+//     ctx.accounts.sign_pda_account.to_account_info(), // PDA (который должен подписать)
+// ];
+
+// // 5. Вызываем с invoke_signed!
+// // (ctx.accounts.arcium_program.key должен быть ID программы Arcium)
+// anchor_lang::solana_program::program::invoke_signed(
+//     &ix,
+//     &account_infos,
+//     signer_seeds, // <--- КЛЮЧЕВОЙ АРГУМЕНТ ДЛЯ PDA
+// )?;
 
         msg!("Election account created. Awaiting Arcium callback to set initial tally.");
         Ok(())
@@ -135,7 +199,88 @@ pub mod csvp_protocol {
 
         Ok(())
     }
+pub fn init_signer_pda(ctx: Context<InitSignerPda>) -> Result<()> {
+    // Аккаунт уже инициализирован макросом #[account(init, ...)]
+    // Внутри функции ничего делать не нужно, кроме Ok(())
+    msg!("Signer PDA initialized.");
+    Ok(())
+}
 
+// =================================================================
+
+#[derive(Accounts)]
+pub struct InitSignerPda<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>, // Тот, кто платит за инициализацию
+    
+    // Используем те же сиды, что и в Arcium (глобальный сид b"signer_account")
+    #[account(
+        init,
+        payer = authority,
+        space = 8 + 1, // 8 (дискриминатор) + размер SignerAccount (если он пуст, то 1 байт для буфера)
+        seeds = [b"signer_account"], // Ваш сид из IDL
+        bump
+    )]
+    pub sign_pda_account: Account<'info, SignerAccount>,
+    
+    pub system_program: Program<'info, System>,
+}
+
+/// Временный аккаунт для отладки PDA
+#[account]
+#[derive(InitSpace)]
+pub struct DebugPda {
+    pub pda_value: Pubkey, // Здесь будем хранить вычисленный PDA
+}
+// Добавляем новую функцию-инструкцию для отладки
+pub fn debug_pda_check(ctx: Context<DebugPdaCheck>, nullifier_hash_argument: Pubkey) -> Result<()> {
+    
+    // 1. Получаем PDA, который передал клиент (это адрес самого DebugPda)
+    // let debug_pda_key = ctx.accounts.debug_pda_account.key(); // Не используется, можно удалить
+
+    // 2. Вычисляем ожидаемый адрес Nullifier'а, используя сиды из CastVote
+    // СИДЫ: [NULLIFIER_SEED, election_account.key(), nullifier_hash]
+    
+    let (nullifier_pda, _bump) = Pubkey::find_program_address(
+        &[
+            NULLIFIER_SEED,
+            ctx.accounts.election_account.key().as_ref(),
+            // ИСПРАВЛЕНО: Обращение к аргументу напрямую из сигнатуры функции
+            nullifier_hash_argument.to_bytes().as_ref(), 
+        ],
+        ctx.program_id,
+    );
+    
+    // 3. Записываем вычисленный PDA нуллификатора в аккаунт DebugPda
+    ctx.accounts.debug_pda_account.pda_value = nullifier_pda;
+
+    Ok(())
+}
+
+#[derive(Accounts)]
+#[instruction(nullifier_hash_argument: Pubkey)] // Атрибут оставляем для генерации IDL
+pub struct DebugPdaCheck<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
+    /// Аккаунт, в который мы запишем вычисленный PDA
+    #[account(
+        init,
+        payer = payer,
+        space = 8 + DebugPda::INIT_SPACE, 
+        seeds = [b"debug", payer.key().as_ref()], 
+        bump
+    )]
+    pub debug_pda_account: Account<'info, DebugPda>,
+    
+    /// Аккаунт выборов, ключ которого используется в сидах нуллификатора
+    pub election_account: Account<'info, Election>,
+
+    // УДАЛЕНО: nullifier_hash_account, так как его значение теперь в сигнатуре функции.
+    // Его Pubkey используется только для вычисления сида, а не как отдельный аккаунт.
+
+    pub system_program: Program<'info, System>,
+}
     // ----------------------
     // 4. Голосование (Arcium)
     // ----------------------
@@ -150,9 +295,10 @@ pub mod csvp_protocol {
         vote_encryption_pubkey: [u8; 32],
         vote_nonce: u128,
         // Аргументы для проверок
-        nullifier_hash: [u8; 32],
+        nullifier_hash: Pubkey,
         voter_hash: Pubkey,
     ) -> Result<()> {
+        msg!("Vote cast begining...");
         let election = & ctx.accounts.election_account;
         let el_key = election.key();
         let clock = Clock::get()?;
@@ -176,7 +322,7 @@ pub mod csvp_protocol {
         // `init` в `#[derive(Accounts)]` атомарно создает PDA.
         // Если он уже существует, транзакция упадет (AccountAlreadyInitialized).
         let nullifier = &mut ctx.accounts.nullifier_account;
-        nullifier.election_pda = election.key();
+        nullifier.election_account = election.key();
         nullifier.nullifier_hash = nullifier_hash;
         nullifier.bump = ctx.bumps.nullifier_account;
 
@@ -238,6 +384,10 @@ pub mod csvp_protocol {
         election.encrypted_tally = o.ciphertexts.try_into().map_err(|_| ErrorCode::ConstraintRaw)?;
         election.nonce = o.nonce;
         election.total_votes += 1; // Увеличиваем публичный счетчик
+
+        emit!(VoteEvent {
+            timestamp: Clock::get()?.unix_timestamp,
+        });
         
         Ok(())
     }
@@ -386,7 +536,8 @@ pub struct InitializeElection<'info> {
         init_if_needed, // 👈 Обязательно init
         payer = authority,
         space = 9, 
-        seeds = [&SIGN_PDA_SEED],
+        //seeds = [&ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
+        seeds =[&SIGN_PDA_SEED],
         bump, // 👈 Обязательно bump
         address = derive_sign_pda!(),
     )]
@@ -405,7 +556,7 @@ pub struct InitializeElection<'info> {
     //     init, // 👈 Обязательно init
     //     payer = authority,
     //     space = 8 + Election::INIT_SPACE, 
-    //     seeds = [SIGN_PDA_SEED, election_account.key().as_ref()],
+    //     seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
     //     bump // 👈 Обязательно bump
     // )]
     // pub sign_pda_account: Account<'info, SignerAccount>,
@@ -491,13 +642,13 @@ pub struct InitVoteStatsCallback<'info> {
 
 #[queue_computation_accounts("vote", voter)]
 #[derive(Accounts)]
-#[instruction(
+#[instruction(computation_offset: u64,
     voter_chunk_index: u32,
     vote_ciphertext: [u8; 32],
     vote_encryption_pubkey: [u8; 32],
     vote_nonce: u128,
-    nullifier_hash: [u8; 32], 
-    voter_hash: [u8; 32],computation_offset: u64
+    nullifier_hash: Pubkey, 
+    voter_hash: Pubkey,
 )]
 pub struct CastVote<'info> {
     #[account(mut)]
@@ -505,15 +656,25 @@ pub struct CastVote<'info> {
         //pub sign_pda_account: Account<'info, SignerAccount>,
 // 🔥 ДОБАВИТЬ ЭТОТ АККАУНТ ДЛЯ ПОДПИСИ MPC
     // Он должен быть помечен #[account(mut)] для использования в queue_computation
+    // #[account(
+    //     mut, 
+    //     // Ищем PDA, используя те же сиды, что и при инициализации
+    //     seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
+    //     // Указываем, что бамп должен совпадать с полем в аккаунте
+    //     bump = sign_pda_account.bump, 
+    // )]
+    // // ВНИМАНИЕ: Если вы переименовали его в `mpc_signer_pda` в InitializeElection,
+    // // вы должны использовать здесь то же имя: `mpc_signer_pda`!
+    // pub sign_pda_account: Account<'info, SignerAccount>,
+        // Add this new required account
     #[account(
-        mut, 
-        // Ищем PDA, используя те же сиды, что и при инициализации
-        seeds = [ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
-        // Указываем, что бамп должен совпадать с полем в аккаунте
-        bump = sign_pda_account.bump, 
+        init_if_needed,
+        space = 9,
+        payer = voter,
+        seeds = [&SIGN_PDA_SEED],
+        bump,
+        address = derive_sign_pda!(),
     )]
-    // ВНИМАНИЕ: Если вы переименовали его в `mpc_signer_pda` в InitializeElection,
-    // вы должны использовать здесь то же имя: `mpc_signer_pda`!
     pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(
         address = derive_mxe_pda!()
@@ -538,7 +699,7 @@ pub struct CastVote<'info> {
     /// CHECK: computation_account, checked by the arcium program.
     pub computation_account: UncheckedAccount<'info>,
     #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_INIT_VOTE_STATS)
+        address = derive_comp_def_pda!(COMP_DEF_OFFSET_VOTE)
     )]
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
@@ -573,22 +734,25 @@ pub struct CastVote<'info> {
     //     has_one = creator
     // )]
     // pub election_account: Account<'info, Election>,
-    #[account(
-        //address = voter_registry.election,
-    )]
-    pub election: UncheckedAccount<'info>,
+    // #[account(
+    //     //address = voter_registry.election,
+    // )]
+    // pub election: UncheckedAccount<'info>,
     #[account(
         // 1. Указываем, что аккаунт не должен быть mut, т.к. мы его только читаем
         // 2. Указываем PDA-сиды, чтобы Anchor проверил, что аккаунт 
         //    принадлежит программе Registration и что его адрес вычислен правильно.
         seeds = [
             b"voters_registry", // Используем сид из программы Registration
-            voter_hash.as_ref() // Главный сид — хэш избирателя
+            voter_hash.to_bytes().as_ref() // Главный сид — хэш избирателя
         ],
         bump,
+        seeds::program = registration_program.key, // Указываем Program ID программы Registration
         // Опционально: Проверить, что владелец аккаунта VoterProof — 
         // это Program ID вашей программы Registration
-        owner = registration::ID // ID вашей программы регистрации
+        //owner = registration::ID, // ID вашей программы регистрации
+        //owner = registration_program,
+        owner=VOTER_REGISTRATION_ID,
     )]
     // Мы ожидаем, что этот аккаунт уже существует и содержит Pubkey избирателя.
     //pub voter_proof_account: Account<'info, registration::state::VoterProof>, 
@@ -602,7 +766,7 @@ pub struct CastVote<'info> {
         init, // init = атомарная проверка на существование
         payer = voter,
         space = 8 + NullifierAccount::INIT_SPACE,
-        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.as_ref()],
+        seeds = [NULLIFIER_SEED, election_account.key().as_ref(), nullifier_hash.to_bytes().as_ref()],
         bump,
     )]
     pub nullifier_account: Account<'info, NullifierAccount>,
@@ -641,9 +805,9 @@ pub struct RevealResult<'info> {
         init_if_needed, // 👈 Обязательно init
         payer = authority,
         space = 9, 
-        seeds = [&ELECTION_SIGN_PDA_SEED],
+        seeds = [&ELECTION_SIGN_PDA_SEED, election_account.key().as_ref()],
         bump, // 👈 Обязательно bump
-        address = derive_sign_pda!(),
+        //address = derive_sign_pda!(),
     )]
     pub sign_pda_account: Account<'info, SignerAccount>,
     #[account(

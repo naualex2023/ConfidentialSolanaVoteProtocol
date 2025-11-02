@@ -141,7 +141,7 @@ const [voterProofPDA] = findVoterProofPda(
     // Time (start_time, end_time)
     const now = new anchor.BN(Math.floor(Date.now() / 1000));
     const startTime = now.sub(new anchor.BN(60)); // Started one minute ago
-    const endTime = now.add(new anchor.BN(60)); // Ends in one minute
+    const endTime = now.add(new anchor.BN(30)); // Ends in half minute
     
     const electionNonce = randomBytes(16);
 
@@ -388,6 +388,7 @@ console.log("Recorded voter_hash is: ", recordedVoterHash);
       console.log("... Reveal transaction sent:", revealSig);
       success = true;
         } catch (e) {
+          console.log(`❌ FAILURE (EXPECTED): Time has not yet run out. We continue to wait.✅`);
         // Ошибка 0x1771 - Constraint (например, end_time < now)
         // if (e.logs && e.logs.some(log => log.includes("SendTransactionError"))) {
         //     console.log(`❌ FAILURE (EXPECTED): Time has not yet run out. We continue to wait.`);

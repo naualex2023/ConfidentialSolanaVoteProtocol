@@ -201,12 +201,7 @@
         },
         {
           "name": "nullifier_hash",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
+          "type": "pubkey"
         },
         {
           "name": "voter_hash",
@@ -1569,12 +1564,7 @@
           },
           {
             "name": "nullifier_hash",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
+            "type": "pubkey"
           },
           {
             "name": "bump",

@@ -207,12 +207,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "nullifierHash",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
+          "type": "pubkey"
         },
         {
           "name": "voterHash",
@@ -1575,12 +1570,7 @@ export type CsvpProtocol = {
           },
           {
             "name": "nullifierHash",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
+            "type": "pubkey"
           },
           {
             "name": "bump",

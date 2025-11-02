@@ -82,7 +82,7 @@ describe("CsvpProtocol", () => {
     // Generate fake hashes for registration and nullifier
     // In a real application, these would be cryptographically generated
     //const voterHash = Array.from(randomBytes(32));
-    const nullifierHash = Array.from(randomBytes(32));
+    const rawNullifierHashBytes = randomBytes(32);
     
     const rawVoterHashBytes = randomBytes(32);
         
@@ -90,6 +90,7 @@ describe("CsvpProtocol", () => {
     // This is required because the Rust instruction expects a Pubkey.
     // The Anchor SDK automatically serializes this object.
     const voterHashKey = new anchor.web3.PublicKey(rawVoterHashBytes);
+    const nullifierHashKey = new anchor.web3.PublicKey(rawNullifierHashBytes);
     
     // --- Calculate all necessary PDAs ---
     // const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
@@ -104,12 +105,11 @@ const [voterProofPDA] = findVoterProofPda(
     const [electionPda, _electionBump] = findElectionPda(program.programId, owner.publicKey, ELECTION_ID);
     const [signPda, _signBump] = findSignPda(program.programId, electionPda);
     //const [voterChunkPda, _voterBump] = findVoterChunkPda(program.programId, electionPda, VOTER_CHUNK_INDEX);
-    const [nullifierPda, _nullifierBump] = findNullifierPda(program.programId, electionPda, Buffer.from(nullifierHash));
-
+    
     console.log("Election PDA:", electionPda.toBase58());
     console.log("Signer PDA:", signPda.toBase58());
     console.log("Voter proof PDA:", voterProofPDA.toBase58());
-    console.log("Nullifier PDA:", nullifierPda.toBase58());
+    
 
     // --- 2. INITIALIZE MPC SCHEMAS ---
     console.log("Initializing vote stats computation definition");
@@ -174,7 +174,9 @@ const [voterProofPDA] = findVoterProofPda(
     );
     console.log("... Election finalized (MPC init_vote_stats executed):", finalizeInitSig);
     
-    
+    const electionAccount = await program.account.election.fetch(electionPda);
+    console.log("... Election account data:", electionAccount);
+
     // --- 4. REGISTER VOTER (register_voters) ---
     console.log(`\n📝 Registering voter ...`);
     
@@ -231,6 +233,9 @@ const [voterProofPDA] = findVoterProofPda(
     // --- 5. CAST VOTE (cast_vote) ---
     console.log(`\n🗳️  Casting vote for candidate index ${CHOICE_INDEX}...`);
     
+    const [nullifierPda, _nullifierBump] = findNullifierPda(program.programId, electionPda, nullifierHashKey);
+    console.log("Nullifier PDA:", nullifierPda.toBase58());
+
     const voteCompOffset = getRandomBigNumber();
     
     // Encrypt our vote (candidate index)
@@ -245,7 +250,7 @@ const [voterProofPDA] = findVoterProofPda(
         Array.from(ciphertext[0]), // vote_ciphertext
         Array.from(publicKey), // vote_encryption_pubkey
         new anchor.BN(deserializeLE(voteNonce).toString()), // vote_nonce
-        nullifierHash, // nullifier_hash
+        nullifierHashKey, // nullifier_hash
         voterHashKey, // voter_hash
       )
       .accountsPartial({

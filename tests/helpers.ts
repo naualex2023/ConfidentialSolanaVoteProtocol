@@ -67,13 +67,13 @@ export const findVoterProofPda = (
 export const findNullifierPda = (
   programId: PublicKey,
   electionPda: PublicKey,
-  nullifierHash: Buffer | Uint8Array
+  nullifierHash: PublicKey
 ): [PublicKey, number] => {
   return PublicKey.findProgramAddressSync(
     [
       NULLIFIER_SEED,
       electionPda.toBuffer(),
-      Buffer.from(nullifierHash),
+      nullifierHash.toBuffer(),
     ],
     programId
   );

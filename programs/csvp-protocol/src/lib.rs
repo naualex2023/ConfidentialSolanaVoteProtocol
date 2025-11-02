@@ -239,7 +239,7 @@ pub struct InitSignerPda<'info> {
         vote_encryption_pubkey: [u8; 32],
         vote_nonce: u128,
         // Аргументы для проверок
-        nullifier_hash: [u8; 32],
+        nullifier_hash: Pubkey,
         voter_hash: Pubkey,
     ) -> Result<()> {
         let election = & ctx.accounts.election_account;

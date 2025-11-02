@@ -78,7 +78,7 @@ pub const HASH_LEN: usize = 32;
 #[derive(InitSpace)] // <<---- ЭТО КРИТИЧНО!
 pub struct NullifierAccount {
     pub election_pda: Pubkey,
-    pub nullifier_hash: [u8; 32],
+    pub nullifier_hash: Pubkey,
     pub bump: u8, // <<---- ДОБАВЛЕНО
 }
 

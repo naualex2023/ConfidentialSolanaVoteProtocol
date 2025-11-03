@@ -1,4 +1,4 @@
-﻿# Confidential Solana Vote Protocol (CSVP)
+﻿# Confidential Solana Voting Protocol (CSVP)
 ## Complete Project Presentation
 
 ---How to run

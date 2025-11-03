@@ -156,7 +156,124 @@ User → Biometric Device → CSVP Client → Arcium CPC Cluster → Solana Smar
    - Independent result verification
    - Public proof of correctness
    - Immutable audit trail
+#### Low-level technical review
+Here is a technical description of the Confidential Solana Vote Protocol (CSVP) project, focusing on its data structures and its integration with the Solana blockchain and the Arcium framework.
 
+## 1. Project Overview
+
+The **Confidential Solana Vote Protocol (CSVP)** is a decentralized application designed to conduct secure and private voting on the Solana blockchain.
+
+It utilizes a hybrid architecture:
+* **Solana (L1 Blockchain):** Serves as the high-availability, verifiable layer for managing election state, registering voters, and recording the final, public results. It uses the Anchor framework for smart contract development.
+* **Arcium (Confidential Compute Layer):** Serves as the privacy-preserving execution environment (using Multi-Party Computation or MPC). All sensitive operations—such as tallying votes and decrypting results—occur within the Arcium network. This ensures that individual votes and intermediate tallies are never exposed on the public blockchain.
+
+The system is split into two primary on-chain programs:
+1.  **Registration Program (`CGZp3y...`):** A simple program responsible for creating an on-chain "whitelist" of eligible voters.
+2.  **CSVP Protocol Program (`GXvE4L...`):** The main program that manages the election lifecycle, from creation and vote casting to the final revealing of results.
+
+---
+
+## 2. On-Chain Data Structures (Solana)
+
+These are the primary accounts (data structures) stored on the Solana blockchain. Their addresses are typically Program Derived Addresses (PDAs), making them verifiable and globally addressable.
+
+### `Election` (CSVP Program)
+This is the central state account for a single election.
+
+* **PDA Seeds:** `[ELECTION_SEED, authority.key, election_id]`
+* **Purpose:** To store all public metadata and the *encrypted* state of an election.
+* **Key Fields:**
+    * `creator: Pubkey`: The wallet authorized to manage the election (e.g., reveal results).
+    * `election_id: u64`: A unique identifier for the election.
+    * `title: String`: The human-readable name of the election.
+    * `start_time: u64`, `end_time: u64`: The Unix timestamps defining the voting period.
+    * `state: u64`: A numerical enum representing the election's status (e.g., `0=Draft`, `1=Active`, `2=Tallying`, `3=Completed`).
+    * `total_votes: u32`: A public counter of how many votes have been successfully cast.
+    * `nonce: u128`: A cryptographic nonce provided by Arcium, required for subsequent encryptions/decryptions of the tally.
+    * `encrypted_tally: [[u8; 32]; 5]`: **(Arcium Integration)** An array (for `MAX_CANDIDATES = 5`) of 32-byte ciphertexts. This is the *confidential vote tally*. It is only ever updated by an Arcium callback and remains encrypted on-chain.
+    * `final_result: [u64; 5]`: The public, plaintext results. This field is zero-filled until the `reveal_result_callback` from Arcium populates it at the end of the election.
+
+### `VoterProof` (Registration Program)
+This account acts as a simple, verifiable "whitelist" entry.
+
+* **PDA Seeds:** `[VOTER_REGISTRY_SEED, voter_hash.as_ref()]`
+* **Purpose:** To prove that a specific `voter_hash` is registered and eligible to vote. Its *existence* is what matters, not just its data.
+* **Key Fields:**
+    * `voter_hash: Pubkey`: Stores the hash of the voter being registered. This allows the `cast_vote` instruction to verify eligibility by simply checking if this PDA account exists.
+
+### `NullifierAccount` (CSVP Program)
+This account is used to prevent double-voting.
+
+* **PDA Seeds:** `[NULLIFIER_SEED, election_account.key, nullifier_hash.as_ref()]`
+* **Purpose:** To consume a unique "nullifier" provided by the voter.
+* **Mechanism:** The `cast_vote` instruction uses an `#[account(init...)]` constraint on this PDA. When a voter submits a `nullifier_hash`, the program attempts to *create* this account.
+    * **First Vote:** The account is created successfully.
+    * **Second Vote (with same nullifier):** The transaction fails because the account "already exists," atomically preventing a double-vote.
+* **Key Fields:**
+    * `election_account: Pubkey`: Links the nullifier to a specific election.
+    * `nullifier_hash: Pubkey`: The unique, secret-derived hash provided by the voter.
+
+### `SignerAccount` (CSVP Program)
+This is a utility PDA required by the Arcium Anchor integration.
+
+* **PDA Seeds:** `[SIGN_PDA_SEED]` (a constant global seed)
+* **Purpose:** To sign the Cross-Program Invocation (CPI) from the CSVP program to the Arcium program (`queue_computation`).
+
+---
+
+## 3. Off-Chain Data Structures (Arcium Circuits)
+
+These structs are defined in Rust (`lib-ixs.rs`) but are *not* smart contracts. They represent the data structures used *inside* the confidential Arcium MPC network.
+
+### `UserVote`
+Represents the voter's confidential choice.
+
+* **Purpose:** To securely package the voter's selection for confidential processing.
+* **Fields:**
+    * `candidate_index: u64`: The index of the candidate the voter chose (e.g., `2`).
+* **Confidentiality:** This struct is **never** seen on-chain. The client encrypts it using the Arcium `RescueCipher` and a shared secret. The resulting `[u8; 32]` ciphertext is what is passed to the `cast_vote` instruction.
+
+### `VoteStats`
+Represents the confidential tally of all votes.
+
+* **Purpose:** To securely aggregate votes inside the MPC network.
+* **Fields:**
+    * `candidate_counts: [u64; MAX_CANDIDATES]`: An array holding the vote count for each candidate.
+* **Confidentiality:** This struct exists *only* in its decrypted form within the Arcium network. Its encrypted representation is what is stored on-chain in the `Election.encrypted_tally` field.
+
+---
+
+## 4. Process Flow & Arcium Integration
+
+The protocol follows a strict, stateful flow that relies on a "call-and-callback" pattern between Solana and Arcium.
+
+### Step 1: Election Initialization (On-Chain -> Off-Chain -> On-Chain)
+1.  **Solana (`init_election`):** The `authority` calls `init_election`. This creates the `Election` PDA on Solana with metadata and an `Active` state.
+2.  **Arcium CPI:** The instruction concludes by calling `queue_computation` to the Arcium program, invoking the `init_vote_stats` circuit.
+3.  **Arcium (MPC):** The `init_vote_stats` circuit runs, creates a `VoteStats` struct (e.g., `[0, 0, 0, 0, 0]`), and encrypts it using the cluster's key.
+4.  **Solana Callback (`init_vote_stats_callback`):** Arcium calls this function on the CSVP program, passing the encrypted tally and nonce as output. The program writes this `encrypted_tally` to the `Election` account. The election is now ready.
+
+### Step 2: Vote Casting (On-Chain -> Off-Chain -> On-Chain)
+1.  **Client-Side:** The voter generates their `voter_hash` and a unique `nullifier_hash`. They encrypt their `UserVote` (e.g., `{ candidate_index: 2 }`) to produce a `vote_ciphertext`.
+2.  **Solana (`cast_vote`):** The voter calls `cast_vote` with all the generated data.
+3.  **Solana (Checks):** The program performs critical on-chain checks:
+    * **Time Check:** `Clock::get()` is within `start_time` and `end_time`.
+    * **Registration Check:** Verifies the `VoterProof` PDA (derived from `voter_hash`) *exists*.
+    * **Nullifier Check:** `#[account(init...)]` attempts to create the `NullifierAccount` PDA (derived from `nullifier_hash`). This fails on a double-vote.
+4.  **Arcium CPI:** If checks pass, the program calls `queue_computation` to the Arcium program, invoking the `vote` circuit. It passes two main arguments: the encrypted `UserVote` (new vote) and the current `encrypted_tally` (read from the `Election` account).
+5.  **Arcium (MPC):** The `vote` circuit securely:
+    * Decrypts the current `VoteStats` (e.g., `[5, 3, 1, 0, 0]`).
+    * Decrypts the new `UserVote` (e.g., `{ 2 }`).
+    * Adds the vote to the tally, resulting in a new `VoteStats` (e.g., `[5, 3, 2, 0, 0]`).
+    * Re-encrypts the *new* `VoteStats`.
+6.  **Solana Callback (`vote_callback`):** Arcium calls back with the newly encrypted tally. The CSVP program overwrites the `Election.encrypted_tally` with this new value and increments the public `total_votes` counter.
+
+### Step 3: Result Reveal (On-Chain -> Off-Chain -> On-Chain)
+1.  **Solana (`reveal_result`):** After the `end_time` has passed, the `authority` calls `reveal_result`.
+2.  **Solana (Checks):** Verifies `Clock::get()` is past `end_time`.
+3.  **Arcium CPI:** The program calls `queue_computation` to the Arcium program, invoking the `reveal_result` circuit. It passes the final `encrypted_tally`.
+4.  **Arcium (MPC):** The `reveal_result` circuit decrypts the final `VoteStats` (e.g., `[25, 15, 30, 8, 2]`) and *reveals* it as a public, plaintext array.
+5.  **Solana Callback (`reveal_result_callback`):** Arcium calls back with the plaintext `[u64; 5]` array. The CSVP program writes this array to the `Election.final_result` field and sets the `state` to `Completed`. The election is now finished, and the results are public.
 ---
 
 ## Tokenomics

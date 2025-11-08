@@ -1,8 +1,16 @@
 ﻿# Confidential Solana Voting Protocol (CSVP)
 ## Complete Project Presentation
 
----How to run
+## To Run
 
+- Install Arcium
+- Use older Anchor 
+`avm use 0.31.1`
+- use custom version of Rust Arcium wants:
+- `unset RUSTUP_TOOLCHAIN`
+- Use older Solana 2.3.13
+`agave-install init 2.3.13`
+  
 arcium clean
 arcium build
 

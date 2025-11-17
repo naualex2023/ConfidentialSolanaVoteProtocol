@@ -423,6 +423,55 @@ console.log("Recorded voter_hash is: ", recordedVoterHash);
     // Verify that our vote (index 2) was counted
     assert.equal(pollAccount.finalResult[CHOICE_INDEX].toNumber(), 1, "Vote for candidate 2 should be 1");
     assert.equal(pollAccount.finalResult[0].toNumber(), 0, "Vote for candidate 0 should be 0");
+
+      console.log("🔍 Fetching all voter accounts for authority:", owner.publicKey.toBase58());
+    
+      // 2. Получаем ВСЕ аккаунты VoterProof
+      // (Anchor позволяет фильтровать по полям, если нужно, но здесь берем все и фильтруем в JS)
+      const allVoters = await Registrationprogram.account.voterProof.all([
+        {
+          memcmp: {
+            offset: 8 + 32, // Пропускаем Discriminator (8) + voter_hash (32), попадаем на authority
+            bytes: owner.publicKey.toBase58(),
+          },
+        },
+      ]);
+    
+      console.log(`found ${allVoters.length} accounts to close.`);
+    
+      if (allVoters.length === 0) return;
+    
+      // 3. Пакетирование транзакций (Solana вмещает ~20-30 инструкций в одну tx, но для безопасности берем 10)
+      const BATCH_SIZE = 10;
+      
+      for (let i = 0; i < allVoters.length; i += BATCH_SIZE) {
+        const batch = allVoters.slice(i, i + BATCH_SIZE);
+        const tx = new anchor.web3.Transaction();
+    
+        console.log(`Processing batch ${i / BATCH_SIZE + 1}...`);
+    
+        for (const acc of batch) {
+          // Добавляем инструкцию закрытия для каждого аккаунта
+          const ix = await Registrationprogram.methods
+            .closeVoterProof()
+            .accounts({
+              authority: owner.publicKey,
+              voterProof: acc.publicKey,
+            })
+            .instruction();
+          
+          tx.add(ix);
+        }
+    
+        try {
+          const sig = await provider.sendAndConfirm(tx, [], { skipPreflight: true });
+          console.log(`✅ Batch closed. Tx: ${sig}`);
+        } catch (e) {
+          console.error(`❌ Error closing batch:`, e);
+        }
+      }
+    
+      console.log("🎉 All accounts closed. Rent recovered!");
     
     console.log("\n✅ Test passed successfully!");
 

@@ -5,7 +5,7 @@ use anchor_lang::prelude::*;
 
 use crate::state::*;
 
-declare_id!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
+declare_id!("F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j");
 //pub use self::registration as RegistrationProgram;
 #[program]
 pub mod registration {
@@ -22,11 +22,17 @@ pub mod registration {
         
         // Мы сохраняем хэш, чтобы его можно было прочитать (хотя он и так в адресе)
         ctx.accounts.voter_proof.voter_hash = voter_hash;
-        
+        // СОХРАНЯЕМ АДМИНИСТРАТОРА, чтобы только он мог потом вернуть деньги
+        ctx.accounts.voter_proof.authority = ctx.accounts.authority.key();
         msg!("Voter registered with hash: {}", voter_hash);
         Ok(())
     }
-
+// 2. Закрытие аккаунта (Возврат средств)
+    // Эта функция удаляет аккаунт и пересылает все lamports на authority
+    pub fn close_voter_proof(_ctx: Context<CloseVoterProof>) -> Result<()> {
+        msg!("Voter proof account closed, rent returned to authority.");
+        Ok(())
+    }
     // register_voters теперь не нужен или потребует 
     // передачи Vec<AccountInfo> для инициализации
 }
@@ -50,6 +56,7 @@ pub mod state {
         
         // Сам хэш, просто для удобства чтения
         pub voter_hash: Pubkey, // (32 байта)
+        pub authority: Pubkey,  // 32 bytes (Добавили для безопасности)
     }
 }
 
@@ -99,7 +106,25 @@ pub struct RegisterVoter<'info> {
 }
 
 // ... (структура RegisterVoters удалена для простоты) ...
+// Контекст для закрытия
+#[derive(Accounts)]
+pub struct CloseVoterProof<'info> {
+    // Тот, кто получает деньги обратно (должен подписать транзакцию)
+    #[account(mut)]
+    pub authority: Signer<'info>,
 
+    #[account(
+        mut,
+        // 🔥 МАГИЯ ANCHOR: close = authority
+        // Это удаляет аккаунт и отправляет все средства на authority
+        close = authority, 
+        // Проверяем, что закрывает именно тот, кто создавал (authority совпадают)
+        has_one = authority,
+        seeds = [state::VOTER_REGISTRY_SEED, voter_proof.voter_hash.as_ref()],
+        bump
+    )]
+    pub voter_proof: Account<'info, VoterProof>,
+}
 // =========================================================================
 // ERRORS
 // =========================================================================

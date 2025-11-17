@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/csvp_protocol.json`.
  */
 export type CsvpProtocol = {
-  "address": "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs",
+  "address": "9kBPnnyFPdoQT68phgSS3QcLNYU4AVeM3A5tGUG8mwrF",
   "metadata": {
     "name": "csvpProtocol",
     "version": "0.2.0",
@@ -85,11 +85,11 @@ export type CsvpProtocol = {
         {
           "name": "poolAccount",
           "writable": true,
-          "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+          "address": "FsWbPQcJQ2cCyr9ndse13fDqds4F2Ezx2WgTL25Dke4M"
         },
         {
           "name": "clockAccount",
-          "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+          "address": "AxygBawEvVwZPetj3yPJb9sGdZvaJYsVguET1zFUQkV"
         },
         {
           "name": "systemProgram",
@@ -97,7 +97,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "electionAccount",
@@ -108,7 +108,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "registrationProgram",
-          "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"
+          "address": "F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j"
         },
         {
           "name": "nullifierAccount",
@@ -315,11 +315,11 @@ export type CsvpProtocol = {
         {
           "name": "poolAccount",
           "writable": true,
-          "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+          "address": "FsWbPQcJQ2cCyr9ndse13fDqds4F2Ezx2WgTL25Dke4M"
         },
         {
           "name": "clockAccount",
-          "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+          "address": "AxygBawEvVwZPetj3yPJb9sGdZvaJYsVguET1zFUQkV"
         },
         {
           "name": "systemProgram",
@@ -327,7 +327,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "electionAccount",
@@ -414,7 +414,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "systemProgram",
@@ -503,7 +503,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "systemProgram",
@@ -530,7 +530,7 @@ export type CsvpProtocol = {
       "accounts": [
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "compDefAccount"
@@ -593,7 +593,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "systemProgram",
@@ -674,11 +674,11 @@ export type CsvpProtocol = {
         {
           "name": "poolAccount",
           "writable": true,
-          "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+          "address": "FsWbPQcJQ2cCyr9ndse13fDqds4F2Ezx2WgTL25Dke4M"
         },
         {
           "name": "clockAccount",
-          "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+          "address": "AxygBawEvVwZPetj3yPJb9sGdZvaJYsVguET1zFUQkV"
         },
         {
           "name": "systemProgram",
@@ -686,7 +686,7 @@ export type CsvpProtocol = {
         },
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "creator",
@@ -728,7 +728,7 @@ export type CsvpProtocol = {
       "accounts": [
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "compDefAccount"
@@ -781,7 +781,7 @@ export type CsvpProtocol = {
       "accounts": [
         {
           "name": "arciumProgram",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "compDefAccount"
@@ -1232,10 +1232,6 @@ export type CsvpProtocol = {
             }
           },
           {
-            "name": "finalizeDuringCallback",
-            "type": "bool"
-          },
-          {
             "name": "cuAmount",
             "type": "u64"
           },
@@ -1514,10 +1510,20 @@ export type CsvpProtocol = {
             }
           },
           {
-            "name": "x25519Pubkey",
+            "name": "utilityPubkeys",
             "type": {
               "defined": {
-                "name": "x25519Pubkey"
+                "name": "setUnset",
+                "generics": [
+                  {
+                    "kind": "type",
+                    "type": {
+                      "defined": {
+                        "name": "utilityPubkeys"
+                      }
+                    }
+                  }
+                ]
               }
             }
           },
@@ -1703,6 +1709,9 @@ export type CsvpProtocol = {
           },
           {
             "name": "plaintextFloat"
+          },
+          {
+            "name": "plaintextPoint"
           }
         ]
       }
@@ -1797,6 +1806,39 @@ export type CsvpProtocol = {
       }
     },
     {
+      "name": "setUnset",
+      "generics": [
+        {
+          "kind": "type",
+          "name": "t"
+        }
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "set",
+            "fields": [
+              {
+                "generic": "t"
+              }
+            ]
+          },
+          {
+            "name": "unset",
+            "fields": [
+              {
+                "generic": "t"
+              },
+              {
+                "vec": "bool"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "signerAccount",
       "type": {
         "kind": "struct",
@@ -1816,6 +1858,50 @@ export type CsvpProtocol = {
           {
             "name": "timestamp",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "utilityPubkeys",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "x25519Pubkey",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "ed25519VerifyingKey",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "elgamalPubkey",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "pubkeyValidityProof",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
           }
         ]
       }
@@ -1866,39 +1952,10 @@ export type CsvpProtocol = {
           {
             "name": "voterHash",
             "type": "pubkey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "x25519Pubkey",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "set",
-            "fields": [
-              {
-                "array": [
-                  "u8",
-                  32
-                ]
-              }
-            ]
           },
           {
-            "name": "unset",
-            "fields": [
-              {
-                "array": [
-                  "u8",
-                  32
-                ]
-              },
-              {
-                "vec": "bool"
-              }
-            ]
+            "name": "authority",
+            "type": "pubkey"
           }
         ]
       }

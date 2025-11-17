@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/registration.json`.
  */
 export type Registration = {
-  "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu",
+  "address": "F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j",
   "metadata": {
     "name": "registration",
     "version": "0.2.0",
@@ -13,6 +13,63 @@ export type Registration = {
     "description": "Register voters for Confidential Solana Vote Protocol"
   },
   "instructions": [
+    {
+      "name": "closeVoterProof",
+      "discriminator": [
+        178,
+        123,
+        147,
+        163,
+        43,
+        28,
+        246,
+        145
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "voterProof"
+          ]
+        },
+        {
+          "name": "voterProof",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114,
+                  115,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "voter_proof.voter_hash",
+                "account": "voterProof"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
     {
       "name": "registerVoter",
       "discriminator": [
@@ -110,6 +167,10 @@ export type Registration = {
         "fields": [
           {
             "name": "voterHash",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
             "type": "pubkey"
           }
         ]

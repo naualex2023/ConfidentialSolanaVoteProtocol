@@ -1,5 +1,5 @@
 {
-  "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu",
+  "address": "F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j",
   "metadata": {
     "name": "registration",
     "version": "0.2.0",
@@ -7,6 +7,63 @@
     "description": "Register voters for Confidential Solana Vote Protocol"
   },
   "instructions": [
+    {
+      "name": "close_voter_proof",
+      "discriminator": [
+        178,
+        123,
+        147,
+        163,
+        43,
+        28,
+        246,
+        145
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "voter_proof"
+          ]
+        },
+        {
+          "name": "voter_proof",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114,
+                  115,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "voter_proof.voter_hash",
+                "account": "VoterProof"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
     {
       "name": "register_voter",
       "discriminator": [
@@ -104,6 +161,10 @@
         "fields": [
           {
             "name": "voter_hash",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
             "type": "pubkey"
           }
         ]

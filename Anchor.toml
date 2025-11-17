@@ -6,8 +6,8 @@ resolution = true
 skip-lint = true
 
 [programs.localnet]
-csvp_protocol = "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"
-registration = "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu" 
+csvp_protocol = "9kBPnnyFPdoQT68phgSS3QcLNYU4AVeM3A5tGUG8mwrF"
+registration = "F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j"
 
 [registry]
 url = "https://api.apr.dev"

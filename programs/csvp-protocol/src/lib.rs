@@ -26,9 +26,9 @@ use crate::error::VoteError; // Содержит ваши кастомные о�
 const COMP_DEF_OFFSET_INIT_VOTE_STATS: u32 = comp_def_offset("init_vote_stats");
 const COMP_DEF_OFFSET_VOTE: u32 = comp_def_offset("vote");
 const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
-pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::solana_program::pubkey!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
+pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::prelude::pubkey!("F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j");
 
-declare_id!("GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"); // Ваш Program ID
+declare_id!("9kBPnnyFPdoQT68phgSS3QcLNYU4AVeM3A5tGUG8mwrF"); // Ваш Program ID
 
 #[arcium_program]
 pub mod csvp_protocol {
@@ -41,17 +41,17 @@ pub mod csvp_protocol {
     // ------------------------------------
 
     pub fn init_vote_stats_comp_def(ctx: Context<InitVoteStatsCompDef>) -> Result<()> {
-        init_comp_def(ctx.accounts, true, 0, None, None)?;
+        init_comp_def(ctx.accounts,  0, None, None)?;
         Ok(())
     }
 
     pub fn init_vote_comp_def(ctx: Context<InitVoteCompDef>) -> Result<()> {
-        init_comp_def(ctx.accounts, true, 0, None, None)?;
+        init_comp_def(ctx.accounts, 0, None, None)?;
         Ok(())
     }
 
     pub fn init_reveal_result_comp_def(ctx: Context<InitRevealResultCompDef>) -> Result<()> {
-        init_comp_def(ctx.accounts, true, 0, None, None)?;
+        init_comp_def(ctx.accounts,  0, None, None)?;
         Ok(())
     }
 
@@ -102,6 +102,7 @@ pub mod csvp_protocol {
                 pubkey: ctx.accounts.election_account.key(),
                 is_writable: true,
             }])],
+            1,
         )?;
 // 1. Получаем бамп
 // let sign_pda_key = ctx.accounts.sign_pda_account.key();
@@ -354,6 +355,7 @@ pub struct DebugPdaCheck<'info> {
                 pubkey: el_key,
                 is_writable: true,
             }])],
+            1,
         )?;
         
               
@@ -438,6 +440,7 @@ pub struct DebugPdaCheck<'info> {
                 pubkey: ctx.accounts.election_account.key(),
                 is_writable: true,
             }])],
+            1,
         )?;
         
         msg!("Reveal requested. Awaiting Arcium callback for final results.");
@@ -588,7 +591,7 @@ pub struct InitializeElection<'info> {
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
         mut,
-        address = derive_cluster_pda!(mxe_account)
+        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
     )]
     pub cluster_account: Account<'info, Cluster>,
     #[account(
@@ -708,7 +711,7 @@ pub struct CastVote<'info> {
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
         mut,
-        address = derive_cluster_pda!(mxe_account)
+        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
     )]
     pub cluster_account: Account<'info, Cluster>,
     #[account(
@@ -843,7 +846,7 @@ pub struct RevealResult<'info> {
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
         mut,
-        address = derive_cluster_pda!(mxe_account)
+        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
     )]
     pub cluster_account: Account<'info, Cluster>,
     #[account(

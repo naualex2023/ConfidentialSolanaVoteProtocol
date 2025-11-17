@@ -2,23 +2,23 @@
 # yarn lockfile v1
 
 
-"@arcium-hq/client@0.3.0", "@arcium-hq/client@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@arcium-hq/client/-/client-0.3.0.tgz#7a308c77dff2bdcbe6459693ca08308cd52ef90d"
-  integrity sha512-iruU/StNbjb3iOkOo6jPYCSsBY8wUdNLf/YMY0CaSy4T4oIuPFirA0F9f1W+i2Md0aNLdhgXPa6oTbel/reY+w==
+"@arcium-hq/client@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@arcium-hq/client/-/client-0.4.0.tgz#b495b477c9bd792c066d1a1fefdaef8a4f683939"
+  integrity sha512-l78oSMGb1bYG67d82hQd/STByyhYd+MoSK8Ef/BWsdM8sg2pOW/XwtD/OAnR2bqnaxcHyJkJFHjJyADc7FKFwA==
   dependencies:
     "@coral-xyz/anchor" "0.31"
     "@noble/curves" "^1.9.5"
     "@noble/hashes" "^1.7.1"
     "@solana/web3.js" "^1.95.4"
 
-"@arcium-hq/reader@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@arcium-hq/reader/-/reader-0.3.0.tgz#82ca20412b9010060eb1da4913b55dd41ed37947"
-  integrity sha512-NYHzslNxOq4B2l7tH8dY0kKOpzulSwoLRB9ElOn5ukLRkS2EgIokkVHj/upsST+bfsu0fsma9yVSj0FoGT64Xg==
+"@arcium-hq/reader@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@arcium-hq/reader/-/reader-0.4.0.tgz#a328963ddcf2e6561b514dfd54a48b7dfdf2a6f0"
+  integrity sha512-4xU5r6kCvDxx4NZ9kheKKWHanP1U8o9plb8VYkSqsl3+ZbE/upIEJ+ik9A/uh9LvnAy7VeYktalo4bSU/n1dZg==
   dependencies:
-    "@arcium-hq/client" "0.3.0"
-    "@coral-xyz/anchor" "^0.31.1"
+    "@arcium-hq/client" "0.4.0"
+    "@coral-xyz/anchor" "^0.32.1"
     "@noble/curves" "^1.9.5"
     "@noble/hashes" "^1.7.1"
 
@@ -37,10 +37,29 @@
   resolved "https://registry.yarnpkg.com/@coral-xyz/anchor-errors/-/anchor-errors-0.31.1.tgz#d635cbac2533973ae6bfb5d3ba1de89ce5aece2d"
   integrity sha512-NhNEku4F3zzUSBtrYz84FzYWm48+9OvmT1Hhnwr6GnPQry2dsEqH/ti/7ASjjpoFTWRnPXrjAIT1qM6Isop+LQ==
 
-"@coral-xyz/anchor@0.31", "@coral-xyz/anchor@^0.31.1":
+"@coral-xyz/anchor@0.31":
   version "0.31.1"
   resolved "https://registry.yarnpkg.com/@coral-xyz/anchor/-/anchor-0.31.1.tgz#0fdeebf45a3cb2e47e8ebbb815ca98542152962c"
   integrity sha512-QUqpoEK+gi2S6nlYc2atgT2r41TT3caWr/cPUEL8n8Md9437trZ68STknq897b82p5mW0XrTBNOzRbmIRJtfsA==
+  dependencies:
+    "@coral-xyz/anchor-errors" "^0.31.1"
+    "@coral-xyz/borsh" "^0.31.1"
+    "@noble/hashes" "^1.3.1"
+    "@solana/web3.js" "^1.69.0"
+    bn.js "^5.1.2"
+    bs58 "^4.0.1"
+    buffer-layout "^1.2.2"
+    camelcase "^6.3.0"
+    cross-fetch "^3.1.5"
+    eventemitter3 "^4.0.7"
+    pako "^2.0.3"
+    superstruct "^0.15.4"
+    toml "^3.0.0"
+
+"@coral-xyz/anchor@0.32.1", "@coral-xyz/anchor@^0.32.1":
+  version "0.32.1"
+  resolved "https://registry.yarnpkg.com/@coral-xyz/anchor/-/anchor-0.32.1.tgz#a07440d9d267840f4f99f1493bd8ce7d7f128e57"
+  integrity sha512-zAyxFtfeje2FbMA1wzgcdVs7Hng/MijPKpRijoySPCicnvcTQs/+dnPZ/cR+LcXM9v9UYSyW81uRNYZtN5G4yg==
   dependencies:
     "@coral-xyz/anchor-errors" "^0.31.1"
     "@coral-xyz/borsh" "^0.31.1"
@@ -441,9 +460,9 @@
     "@types/node" "*"
 
 "@types/node@*", "@types/node@^24.9.1":
-  version "24.9.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.9.2.tgz#90ded2422dbfcafcf72080f28975adc21366148d"
-  integrity sha512-uWN8YqxXxqFMX2RqGOrumsKeti4LlmIMIyV0lgut4jx7KQBcBiW6vkDtIBvHnHIquwNfJhk8v2OtmO8zXWHfPA==
+  version "24.10.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.10.1.tgz#91e92182c93db8bd6224fca031e2370cef9a8f01"
+  integrity sha512-GNWcUTRBgIRJD5zj+Tq0fKOJ5XZajIiBroOF0yvj2bSU1WvNdYS/dn9UxwsujGW4JX06dnHyjV2y9rRaybH0iQ==
   dependencies:
     undici-types "~7.16.0"
 
@@ -791,9 +810,9 @@ resolve-pkg-maps@^1.0.0:
   integrity sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==
 
 rpc-websockets@^9.0.2:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/rpc-websockets/-/rpc-websockets-9.2.0.tgz#c95633929ca92c311ed6e169f4c986623f001505"
-  integrity sha512-DS/XHdPxplQTtNRKiBCRWGBJfjOk56W7fyFUpiYi9fSTWTzoEMbUkn3J4gB0IMniIEVeAGR1/rzFQogzD5MxvQ==
+  version "9.3.1"
+  resolved "https://registry.yarnpkg.com/rpc-websockets/-/rpc-websockets-9.3.1.tgz#d817a59d812f68bae1215740a3f78fcdd3813698"
+  integrity sha512-bY6a+i/lEtBJ/mUxwsCTgevoV1P0foXTVA7UoThzaIWbM+3NDqorf8NBWs5DmqKTFeA1IoNzgvkWjFCPgnzUiQ==
   dependencies:
     "@swc/helpers" "^0.5.11"
     "@types/uuid" "^8.3.4"

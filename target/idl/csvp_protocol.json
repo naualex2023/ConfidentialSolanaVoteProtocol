@@ -1946,6 +1946,10 @@
           {
             "name": "voter_hash",
             "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
           }
         ]
       }

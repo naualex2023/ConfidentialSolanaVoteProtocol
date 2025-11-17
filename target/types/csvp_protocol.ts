@@ -1952,6 +1952,10 @@ export type CsvpProtocol = {
           {
             "name": "voterHash",
             "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
           }
         ]
       }

@@ -14,6 +14,63 @@ export type Registration = {
   },
   "instructions": [
     {
+      "name": "closeVoterProof",
+      "discriminator": [
+        178,
+        123,
+        147,
+        163,
+        43,
+        28,
+        246,
+        145
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "voterProof"
+          ]
+        },
+        {
+          "name": "voterProof",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114,
+                  115,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "voter_proof.voter_hash",
+                "account": "voterProof"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "registerVoter",
       "discriminator": [
         229,
@@ -110,6 +167,10 @@ export type Registration = {
         "fields": [
           {
             "name": "voterHash",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
             "type": "pubkey"
           }
         ]

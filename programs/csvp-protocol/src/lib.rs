@@ -26,7 +26,7 @@ use crate::error::VoteError; // Содержит ваши кастомные о�
 const COMP_DEF_OFFSET_INIT_VOTE_STATS: u32 = comp_def_offset("init_vote_stats");
 const COMP_DEF_OFFSET_VOTE: u32 = comp_def_offset("vote");
 const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
-pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::prelude::pubkey!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
+pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::prelude::pubkey!("F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j");
 
 declare_id!("9kBPnnyFPdoQT68phgSS3QcLNYU4AVeM3A5tGUG8mwrF"); // Ваш Program ID
 

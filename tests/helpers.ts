@@ -61,7 +61,7 @@ export const findSignPda = (
 };
 
 // ID ВАШЕЙ ПРОГРАММЫ РЕГИСТРАЦИИ
-const REG_PROGRAM_ID = new PublicKey("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"); 
+const REG_PROGRAM_ID = new PublicKey("F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j"); 
 
 export const findVoterProofPda = (
   voterHash: PublicKey // Должен быть Pubkey

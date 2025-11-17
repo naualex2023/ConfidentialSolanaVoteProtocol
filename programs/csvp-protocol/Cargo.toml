@@ -16,11 +16,11 @@ idl-build = ["anchor-lang/idl-build"]
 thiserror = "1.0.0"
 num-derive = "0.3.0"
 num-traits = "0.2.0"
-anchor-lang = { version = "0.31.1", features = ["init-if-needed","derive"] }
+anchor-lang = { version = "0.32.1", features = ["init-if-needed","derive"] }
 # Используйте актуальные версии Arcium
-arcium-client = { version = "0.3.0", default-features = false }
-arcium-macros = { version = "0.3.0" }
-arcium-anchor = { version = "0.3.0" }
+arcium-client = { version = "0.4.0", default-features = false }
+arcium-macros = { version = "0.4.0" }
+arcium-anchor = { version = "0.4.0" }
 registration = { path = "../../programs/register-voters", features = ["no-entrypoint"] }
 
 [lib]

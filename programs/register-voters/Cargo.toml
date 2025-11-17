@@ -16,7 +16,7 @@ idl-build = ["anchor-lang/idl-build"]
 thiserror = "1.0.0"
 num-derive = "0.3.0"
 num-traits = "0.2.0"
-anchor-lang = { version = "0.31.1", features = ["init-if-needed","derive"] }
+anchor-lang = { version = "0.32.1", features = ["init-if-needed","derive"] }
 
 [lib]
 crate-type = ["cdylib", "lib"]

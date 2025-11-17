@@ -26,7 +26,7 @@ use crate::error::VoteError; // Содержит ваши кастомные о�
 const COMP_DEF_OFFSET_INIT_VOTE_STATS: u32 = comp_def_offset("init_vote_stats");
 const COMP_DEF_OFFSET_VOTE: u32 = comp_def_offset("vote");
 const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
-pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::solana_program::pubkey!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
+pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::prelude::pubkey!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
 
 declare_id!("GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"); // Ваш Program ID
 
@@ -591,7 +591,7 @@ pub struct InitializeElection<'info> {
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
         mut,
-        address = derive_cluster_pda!(mxe_account)
+        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
     )]
     pub cluster_account: Account<'info, Cluster>,
     #[account(
@@ -711,7 +711,7 @@ pub struct CastVote<'info> {
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
         mut,
-        address = derive_cluster_pda!(mxe_account)
+        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
     )]
     pub cluster_account: Account<'info, Cluster>,
     #[account(
@@ -846,7 +846,7 @@ pub struct RevealResult<'info> {
     pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
     #[account(
         mut,
-        address = derive_cluster_pda!(mxe_account)
+        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
     )]
     pub cluster_account: Account<'info, Cluster>,
     #[account(

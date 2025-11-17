@@ -1,5 +1,5 @@
-   0.279427833s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
-   0.279468760s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp_protocol-44827dd4416b7766/lib-csvp_protocol`
+   0.277119093s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
+   0.277163652s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp_protocol-44827dd4416b7766/lib-csvp_protocol`
 
 Caused by:
     No such file or directory (os error 2)
@@ -43,8 +43,8 @@ Stack backtrace:
   25: __libc_start_main_impl
              at ./csu/../csu/libc-start.c:360:3
   26: <unknown>
-   0.352510853s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
-   0.352533761s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp_protocol-5b9dd6befa60f181/test-lib-csvp_protocol`
+   0.350200201s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("csvp_protocol", ["cdylib", "lib"], "/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol/src/lib.rs", Edition2021) }
+   0.350226811s  INFO prepare_target{force=false package_id=csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol) target="csvp_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/alex/source/repos/ConfidentialSolanaVoteProtocol/target/debug/.fingerprint/csvp_protocol-5b9dd6befa60f181/test-lib-csvp_protocol`
 
 Caused by:
     No such file or directory (os error 2)
@@ -89,6 +89,4 @@ Stack backtrace:
              at ./csu/../csu/libc-start.c:360:3
   26: <unknown>
     Checking csvp_protocol v0.2.0 (/home/alex/source/repos/ConfidentialSolanaVoteProtocol/programs/csvp-protocol)
-error: could not compile `csvp_protocol` (lib) due to 4 previous errors; 4 warnings emitted
-warning: build failed, waiting for other jobs to finish...
-error: could not compile `csvp_protocol` (lib test) due to 4 previous errors; 4 warnings emitted
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.49s

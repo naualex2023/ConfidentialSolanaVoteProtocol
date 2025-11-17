@@ -1,5 +1,5 @@
 {
-  "address": "GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs",
+  "address": "9kBPnnyFPdoQT68phgSS3QcLNYU4AVeM3A5tGUG8mwrF",
   "metadata": {
     "name": "csvp_protocol",
     "version": "0.2.0",
@@ -79,11 +79,11 @@
         {
           "name": "pool_account",
           "writable": true,
-          "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+          "address": "FsWbPQcJQ2cCyr9ndse13fDqds4F2Ezx2WgTL25Dke4M"
         },
         {
           "name": "clock_account",
-          "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+          "address": "AxygBawEvVwZPetj3yPJb9sGdZvaJYsVguET1zFUQkV"
         },
         {
           "name": "system_program",
@@ -91,7 +91,7 @@
         },
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "election_account",
@@ -102,7 +102,7 @@
         },
         {
           "name": "registration_program",
-          "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu"
+          "address": "F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j"
         },
         {
           "name": "nullifier_account",
@@ -309,11 +309,11 @@
         {
           "name": "pool_account",
           "writable": true,
-          "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+          "address": "FsWbPQcJQ2cCyr9ndse13fDqds4F2Ezx2WgTL25Dke4M"
         },
         {
           "name": "clock_account",
-          "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+          "address": "AxygBawEvVwZPetj3yPJb9sGdZvaJYsVguET1zFUQkV"
         },
         {
           "name": "system_program",
@@ -321,7 +321,7 @@
         },
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "election_account",
@@ -408,7 +408,7 @@
         },
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "system_program",
@@ -497,7 +497,7 @@
         },
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "system_program",
@@ -524,7 +524,7 @@
       "accounts": [
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "comp_def_account"
@@ -587,7 +587,7 @@
         },
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "system_program",
@@ -668,11 +668,11 @@
         {
           "name": "pool_account",
           "writable": true,
-          "address": "7MGSS4iKNM4sVib7bDZDJhVqB6EcchPwVnTKenCY1jt3"
+          "address": "FsWbPQcJQ2cCyr9ndse13fDqds4F2Ezx2WgTL25Dke4M"
         },
         {
           "name": "clock_account",
-          "address": "FHriyvoZotYiFnbUzKFjzRSb2NiaC8RPWY7jtKuKhg65"
+          "address": "AxygBawEvVwZPetj3yPJb9sGdZvaJYsVguET1zFUQkV"
         },
         {
           "name": "system_program",
@@ -680,7 +680,7 @@
         },
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "creator",
@@ -722,7 +722,7 @@
       "accounts": [
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "comp_def_account"
@@ -775,7 +775,7 @@
       "accounts": [
         {
           "name": "arcium_program",
-          "address": "BKck65TgoKRokMjQM3datB9oRwJ8rAj2jxPXvHXUvcL6"
+          "address": "Bv3Fb9VjzjWGfX18QTUcVycAfeLoQ5zZN6vv2g3cTZxp"
         },
         {
           "name": "comp_def_account"
@@ -1226,10 +1226,6 @@
             }
           },
           {
-            "name": "finalize_during_callback",
-            "type": "bool"
-          },
-          {
             "name": "cu_amount",
             "type": "u64"
           },
@@ -1508,10 +1504,20 @@
             }
           },
           {
-            "name": "x25519_pubkey",
+            "name": "utility_pubkeys",
             "type": {
               "defined": {
-                "name": "X25519Pubkey"
+                "name": "SetUnset",
+                "generics": [
+                  {
+                    "kind": "type",
+                    "type": {
+                      "defined": {
+                        "name": "UtilityPubkeys"
+                      }
+                    }
+                  }
+                ]
               }
             }
           },
@@ -1697,6 +1703,9 @@
           },
           {
             "name": "PlaintextFloat"
+          },
+          {
+            "name": "PlaintextPoint"
           }
         ]
       }
@@ -1791,6 +1800,39 @@
       }
     },
     {
+      "name": "SetUnset",
+      "generics": [
+        {
+          "kind": "type",
+          "name": "T"
+        }
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Set",
+            "fields": [
+              {
+                "generic": "T"
+              }
+            ]
+          },
+          {
+            "name": "Unset",
+            "fields": [
+              {
+                "generic": "T"
+              },
+              {
+                "vec": "bool"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "SignerAccount",
       "type": {
         "kind": "struct",
@@ -1810,6 +1852,50 @@
           {
             "name": "timestamp",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UtilityPubkeys",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "x25519_pubkey",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "ed25519_verifying_key",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "elgamal_pubkey",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "pubkey_validity_proof",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
           }
         ]
       }
@@ -1860,39 +1946,6 @@
           {
             "name": "voter_hash",
             "type": "pubkey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "X25519Pubkey",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "Set",
-            "fields": [
-              {
-                "array": [
-                  "u8",
-                  32
-                ]
-              }
-            ]
-          },
-          {
-            "name": "Unset",
-            "fields": [
-              {
-                "array": [
-                  "u8",
-                  32
-                ]
-              },
-              {
-                "vec": "bool"
-              }
-            ]
           }
         ]
       }

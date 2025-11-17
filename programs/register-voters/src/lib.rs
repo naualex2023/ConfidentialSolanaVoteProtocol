@@ -5,7 +5,7 @@ use anchor_lang::prelude::*;
 
 use crate::state::*;
 
-declare_id!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
+declare_id!("F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j");
 //pub use self::registration as RegistrationProgram;
 #[program]
 pub mod registration {

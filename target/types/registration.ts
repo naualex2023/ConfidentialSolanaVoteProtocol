@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/registration.json`.
  */
 export type Registration = {
-  "address": "CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu",
+  "address": "F9QNYA8Bp36Hg3N79k3C6NNuc98zAUtE1qv9nxMkAN9j",
   "metadata": {
     "name": "registration",
     "version": "0.2.0",

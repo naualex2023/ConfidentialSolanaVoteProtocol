@@ -28,7 +28,7 @@ const COMP_DEF_OFFSET_VOTE: u32 = comp_def_offset("vote");
 const COMP_DEF_OFFSET_REVEAL: u32 = comp_def_offset("reveal_result");
 pub const VOTER_REGISTRATION_ID: Pubkey = anchor_lang::prelude::pubkey!("CGZp3yAZwuL9WQbQYpWRgw3fTyXesExjtoSi7sfC29zu");
 
-declare_id!("GXvE4L1kKLdQZpGruFQbg9i8jR2GFBbZqDT3uvXAEfGs"); // Ваш Program ID
+declare_id!("9kBPnnyFPdoQT68phgSS3QcLNYU4AVeM3A5tGUG8mwrF"); // Ваш Program ID
 
 #[arcium_program]
 pub mod csvp_protocol {

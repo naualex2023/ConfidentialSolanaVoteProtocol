@@ -3,9 +3,9 @@
 
 ## To Run
 
-- Install Arcium
-- Use older Anchor 
-`avm use 0.31.1`
+- Install Arcium 0.4.0
+- Use Anchor 
+`avm use 0.32.1`
 - use custom version of Rust Arcium wants:
 - `unset RUSTUP_TOOLCHAIN`
 - Use older Solana 2.3.13
@@ -208,6 +208,7 @@ This account acts as a simple, verifiable "whitelist" entry.
 * **Purpose:** To prove that a specific `voter_hash` is registered and eligible to vote. Its *existence* is what matters, not just its data.
 * **Key Fields:**
     * `voter_hash: Pubkey`: Stores the hash of the voter being registered. This allows the `cast_vote` instruction to verify eligibility by simply checking if this PDA account exists.
+    * `authority: Pubkey`: Stores the hash of the election authority to rent return.
 
 ### `NullifierAccount` (CSVP Program)
 This account is used to prevent double-voting.
@@ -282,6 +283,8 @@ The protocol follows a strict, stateful flow that relies on a "call-and-callback
 3.  **Arcium CPI:** The program calls `queue_computation` to the Arcium program, invoking the `reveal_result` circuit. It passes the final `encrypted_tally`.
 4.  **Arcium (MPC):** The `reveal_result` circuit decrypts the final `VoteStats` (e.g., `[25, 15, 30, 8, 2]`) and *reveals* it as a public, plaintext array.
 5.  **Solana Callback (`reveal_result_callback`):** Arcium calls back with the plaintext `[u64; 5]` array. The CSVP program writes this array to the `Election.final_result` field and sets the `state` to `Completed`. The election is now finished, and the results are public.
+
+### Step 4: Rent Return
 ---
 
 ## Tokenomics
